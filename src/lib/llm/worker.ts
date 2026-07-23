@@ -288,6 +288,17 @@ async function handleExport() {
 	return { checkpoint: flat.buffer, __transfer: [flat.buffer] };
 }
 
+/** Swap the optimizer's learning rate. Rebuilds Adam state (moments reset —
+ * honest cost of changing γ mid-flight; the lab says so). */
+function handleSetLr(req: RpcRequest) {
+	const lr = req.lr as number;
+	if (!(lr > 0)) throw new Error(`bad lr: ${lr}`);
+	if (optState) disposeTree(optState);
+	solver = adam(lr, { b1: 0.9, b2: 0.99 });
+	optState = solver.init(tree.ref(params));
+	return { lr };
+}
+
 /** Mean loss over a few FIXED held-out batches (deterministic seed, so calls
  * across training are comparable — the curve is real validation loss). */
 function handleValLoss() {
@@ -376,6 +387,7 @@ const handlers: Record<string, (req: RpcRequest) => unknown | Promise<unknown>> 
 	valloss: handleValLoss,
 	gradnorms: handleGradNorms,
 	attention: handleAttention,
+	setlr: handleSetLr,
 	dispose: () => {
 		if (params) disposeTree(params);
 		if (optState) disposeTree(optState);

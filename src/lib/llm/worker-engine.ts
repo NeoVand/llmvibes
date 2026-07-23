@@ -122,6 +122,11 @@ export class WorkerEngine implements LlmEngine {
 		return r.perToken.map((t) => ({ ...t, text: this.opts.decodeOne(t.id) }));
 	}
 
+	/** Change the learning rate (Adam moments reset). */
+	async setLr(lr: number): Promise<void> {
+		await this.call('setlr', { lr });
+	}
+
 	/** Mean loss over fixed held-out batches (deterministic across calls). */
 	async valLoss(): Promise<number> {
 		const r = await this.call<{ valLoss: number }>('valloss');
