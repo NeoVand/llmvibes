@@ -10,14 +10,18 @@ export interface ExerciseFocus {
 	words: ReadonlySet<string>;
 }
 
-export function commandWordsOf(_line: string): string[] {
+export function commandWordsOf(line: string): string[] {
+	void line;
 	return [];
 }
 
-export function exerciseFocusOf(_anchorId: string | null): ExerciseFocus | null {
+export function exerciseFocusOf(anchorId: string | null): ExerciseFocus | null {
+	void anchorId;
 	return null;
 }
 
-export function rowUsesWords(_rowCommand: string, _words: ReadonlySet<string>): boolean {
+export function rowUsesWords(rowCommand: string, words: ReadonlySet<string>): boolean {
+	void rowCommand;
+	void words;
 	return false;
 }

@@ -195,7 +195,7 @@ Remember: only simple words!`}
 				The deep asymmetry this whole chapter rests on:
 				<strong style="color: var(--color-text);">checking is easier than creating.</strong>
 				Writing a story that includes "lantern" is generation; checking whether "lantern" appears is one
-				<Code code={'includes("lantern")'} /> call. Whenever a sample has
+				<Code code="includes(&quot;lantern&quot;)" /> call. Whenever a sample has
 				<strong style="color: var(--color-text);">checkable properties</strong>, you can pass a
 				generator's sloppy output through a strict verifier and keep only what survives — a weak
 				generator plus a strong verifier yields strong data. The course's verifier stack makes this

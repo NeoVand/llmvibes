@@ -15,6 +15,7 @@ export const allChallenges: readonly Challenge[] = [];
 
 export const challengeIds: readonly string[] = [];
 
-export function challengeForPart(_part: number): Challenge | undefined {
+export function challengeForPart(part: number): Challenge | undefined {
+	void part;
 	return undefined;
 }

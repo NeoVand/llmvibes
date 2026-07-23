@@ -91,7 +91,7 @@
 			<CodeBlock
 				title="One emoji, four byte tokens"
 				lang="text"
-				code={`"🦉"  →  UTF-8 bytes  240 159 166 137  →  4 tokens`}
+				code="&quot;🦉&quot;  →  UTF-8 bytes  240 159 166 137  →  4 tokens"
 			/>
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">

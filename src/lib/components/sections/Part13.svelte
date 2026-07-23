@@ -249,7 +249,7 @@ with cache      token n costs a forward pass over 1 position
 			<CodeBlock
 				title="What the cache costs"
 				lang="text"
-				code={`cache_bytes = 2 (K and V) x layers x kv_heads x head_dim x positions x bytes_per_value`}
+				code="cache_bytes = 2 (K and V) x layers x kv_heads x head_dim x positions x bytes_per_value"
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">

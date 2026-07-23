@@ -260,7 +260,7 @@ a button on her shirt.`}
 			<CodeBlock
 				title="rook-tokens — the first game, decoded"
 				lang="text"
-				code={`<game> a2a3 b8a6 g1h3 g7g6 d2d4 c7c5 f2f4 f8h6 g2g3 g6g5 ...`}
+				code="<game> a2a3 b8a6 g1h3 g7g6 d2d4 c7c5 f2f4 f8h6 g2g3 g6g5 ..."
 			/>
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">

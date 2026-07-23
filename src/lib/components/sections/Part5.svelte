@@ -11,7 +11,6 @@
 	import Callout from '../ui/Callout.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import TrainingLab from '../lab/TrainingLab.svelte';
-	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>

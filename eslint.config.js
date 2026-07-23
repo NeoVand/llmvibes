@@ -14,6 +14,9 @@ export default defineConfig(
 	includeIgnoreFile(gitignorePath),
 	// Vendored agent skills are third-party code with their own conventions
 	{ ignores: ['.agents/**'] },
+	// The M0 benchmark spike is a standalone harness with its own conventions
+	// (jax-js interop is any-heavy by nature). Not part of the app build.
+	{ ignores: ['spikes/**'] },
 	// A git worktree checked out under .claude/ is a second full copy of this
 	// repo. Linting it reports every finding twice and buries the real ones.
 	{ ignores: ['.claude/**'] },

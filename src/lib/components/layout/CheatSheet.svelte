@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { asset } from '$app/paths';
-
 	import { autohideScroll } from '$lib/actions/autohide-scroll';
 	import {
 		X,
