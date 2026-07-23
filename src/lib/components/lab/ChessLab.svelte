@@ -285,17 +285,17 @@
 		<div class="flex flex-wrap gap-5">
 			<div class="min-w-[260px] flex-1">
 				<svg
-					viewBox="0 0 8 8"
+					viewBox="0 0 800 800"
 					class="w-full max-w-[380px] rounded-lg"
 					role="img"
 					aria-label="chess board"
 				>
 					{#each cells as c (c.sq)}
 						<rect
-							x={c.x}
-							y={c.y}
-							width="1"
-							height="1"
+							x={c.x * 100}
+							y={c.y * 100}
+							width="100"
+							height="100"
 							fill={c.dark ? 'var(--color-surface-hover)' : 'var(--color-surface)'}
 							stroke={lastMove && (c.sq === lastMove.from || c.sq === lastMove.to)
 								? 'var(--color-important)'
@@ -303,10 +303,10 @@
 									? 'var(--color-tip)'
 									: 'var(--color-border-light)'}
 							stroke-width={lastMove && (c.sq === lastMove.from || c.sq === lastMove.to)
-								? 0.06
+								? 6
 								: selected === c.sq
-									? 0.06
-									: 0.015}
+									? 6
+									: 1.5}
 							role="button"
 							tabindex="0"
 							aria-label="square {c.sq}"
@@ -316,9 +316,9 @@
 						/>
 						{#if legalTargets.includes(c.sq)}
 							<circle
-								cx={c.x + 0.5}
-								cy={c.y + 0.5}
-								r="0.12"
+								cx={c.x * 100 + 50}
+								cy={c.y * 100 + 50}
+								r="14"
 								fill="var(--color-tip)"
 								opacity="0.7"
 								pointer-events="none"
@@ -326,10 +326,10 @@
 						{/if}
 						{#if c.glyph}
 							<text
-								x={c.x + 0.5}
-								y={c.y + 0.78}
+								x={c.x * 100 + 50}
+								y={c.y * 100 + 78}
 								text-anchor="middle"
-								font-size="0.8"
+								font-size="76"
 								pointer-events="none"
 								fill={c.white ? 'var(--color-text)' : 'var(--color-text-secondary)'}
 								style="user-select: none;">{c.glyph}</text
