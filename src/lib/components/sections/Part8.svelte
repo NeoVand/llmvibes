@@ -4,7 +4,7 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import SelfInstructPipeline from '../diagrams/SelfInstructPipeline.svelte';
 	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
@@ -133,16 +133,7 @@ Remember: only simple words!`}
 				small human-written seed set into a large task distribution, filtering as you go.
 			</p>
 
-			<MermaidDiagram
-				definition={`graph TD
-  A(["Seed tasks — a few hundred, human-written"]) --> B(["Generator LLM writes new instructions,<br/>prompted with random seeds as examples"])
-  B --> C(["Filter: drop near-duplicates of the pool,<br/>malformed or unanswerable tasks"])
-  C --> D(["Generator LLM writes a response<br/>for each surviving instruction"])
-  D --> E(["Verifier / quality filter"])
-  E --> F(["Fine-tune the student model"])
-  C -->|survivors join the seed pool| A`}
-				id="self-instruct-pipeline"
-			/>
+			<SelfInstructPipeline />
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
 				The loop matters more than any single pass: new instructions join the pool, so the next

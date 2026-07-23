@@ -3,11 +3,12 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import CourseLifecycle from '../diagrams/CourseLifecycle.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 	import QuillCorpusLab from '../lab/QuillCorpusLab.svelte';
 	import RookGamesLab from '../lab/RookGamesLab.svelte';
+	import NextTokenLab from '../lab/NextTokenLab.svelte';
 </script>
 
 <section id="part-1" class="py-10">
@@ -75,6 +76,14 @@
 				bird makes it concrete. That's why there are two.
 			</p>
 
+			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
+				And here is the quiet miracle that makes the whole enterprise affordable: the data labels
+				itself. Watch a window slide over one sentence and mint training examples for free — then
+				flip to Rook's tab and watch the identical machine do it to chess:
+			</p>
+
+			<NextTokenLab />
+
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
 				The road both birds travel
 			</h4>
@@ -85,16 +94,7 @@
 				gets its own act of the course:
 			</p>
 
-			<MermaidDiagram
-				definition={`graph LR
-  A(["Raw corpus"]) --> B(["Tokens"])
-  B --> C(["Pretraining"])
-  C --> D(["SFT"])
-  D --> E(["Preference tuning"])
-  E --> F(["RLVR"])
-  F --> G(["Quill & Rook, raised"])`}
-				id="course-lifecycle"
-			/>
+			<CourseLifecycle />
 
 			<ul
 				class="mt-4 mb-5 list-inside list-disc space-y-1.5 text-[13px]"

@@ -10,10 +10,11 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import LoraBypass from '../diagrams/LoraBypass.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 	import PromptLab from '../lab/PromptLab.svelte';
+	import LoraLab from '../lab/LoraLab.svelte';
 </script>
 
 <section id="part-7" class="py-10">
@@ -256,29 +257,15 @@ mask = 1  →  this is the behavior we are paying gradient for`}
 				ones and learn those:
 			</p>
 
-			<CodeBlock
-				title="LoRA in three lines"
-				lang="text"
-				code={`h = W·x + (α/r) · B(A·x)
+			<LoraBypass />
 
-W : d×d   FROZEN     the pretrained weight, never touched
-A : d→r   trainable  projects the activation down to rank r  (random init)
-B : r→d   trainable  projects it back up                     (init to ZERO)
+			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
+				Now make it physical. Drag the rank and watch the adapter blocks — and the parameter bill —
+				shrink against the frozen slab; then flip to the merged view to see why serving a LoRA costs
+				nothing extra:
+			</p>
 
-r is tiny (4–32) while d is hundreds — A and B together are a sliver of W.
-α is a scale knob; α/r keeps behavior stable when you change r.`}
-			/>
-
-			<MermaidDiagram
-				definition={`graph LR
-  X(["input x"]) --> W(["W — frozen<br/>all the pretrained knowledge"])
-  X --> A(["A — trainable<br/>down-project to rank r"])
-  A --> B(["B — trainable, starts at 0<br/>up-project back to d"])
-  W --> S(["add"])
-  B --> S
-  S --> H(["output h"])`}
-				id="lora-bypass"
-			/>
+			<LoraLab />
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
 				Concretely: a <Code code="512×512" /> attention projection holds 262,144 weights. A rank-8 adapter

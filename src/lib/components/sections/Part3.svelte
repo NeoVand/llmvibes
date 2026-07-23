@@ -3,9 +3,12 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import AttentionDataflow from '../diagrams/AttentionDataflow.svelte';
+	import ResidualStream from '../diagrams/ResidualStream.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import ArchExplorer from '../lab/ArchExplorer.svelte';
+	import AttentionLab from '../lab/AttentionLab.svelte';
+	import JaxPlayground from '../lab/JaxPlayground.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
 
@@ -78,21 +81,7 @@
 				by addition, layer after layer.
 			</p>
 
-			<MermaidDiagram
-				definition={`graph TD
-  A(["Token IDs"]) --> B(["Embedding lookup — one row per token"])
-  B --> S1(["Residual stream"])
-  S1 --> N1(["Norm"]) --> ATT(["Attention — mix info between positions"])
-  ATT -->|add back| S2(["Residual stream"])
-  S1 -->|unchanged copy| S2
-  S2 --> N2(["Norm"]) --> MLP(["MLP — process each position alone"])
-  MLP -->|add back| S3(["Residual stream"])
-  S2 -->|unchanged copy| S3
-  S3 --> R(["… repeat the block N times …"])
-  R --> U(["Unembedding — score every token in the vocab"])
-  U --> P(["Next-token probabilities"])`}
-				id="residual-stream-flow"
-			/>
+			<ResidualStream />
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Two kinds of workers alternate along the highway. <strong style="color: var(--color-text);"
@@ -169,29 +158,30 @@
 				weighted mix of the corresponding values into its stream. The whole mechanism is four lines:
 			</p>
 
-			<CodeBlock
-				title="Scaled dot-product attention, one head"
-				lang="text"
-				code={`scores  = Q · Kᵀ / √d_head        # every query against every key
-scores[i, j] = -infinity  for j > i   # causal mask: no looking ahead
-weights = softmax(scores)             # each row becomes a distribution
-output  = weights · V                 # weighted mix of value vectors`}
+			<JaxPlayground
+				title="one head of attention, by hand"
+				code={`// scaled dot-product attention for 4 tokens, 8-dim head —
+// the real thing, running on your GPU. Edit and re-run.
+const S = 4, d = 8;
+const Q = random.normal(random.key(1), [S, d]);
+const K = random.normal(random.key(2), [S, d]);
+const V = random.normal(random.key(3), [S, d]);
+
+let scores = np.dot(Q, K.transpose()).mul(1 / Math.sqrt(d));
+
+// causal mask: -1e9 above the diagonal (no looking ahead)
+const rows = [];
+for (let i = 0; i < S; i++)
+  rows.push(Array.from({ length: S }, (_, j) => (j <= i ? 0 : -1e9)));
+scores = scores.add(np.array(rows));
+
+const weights = nn.softmax(scores, -1);
+log('attention weights =', weights.ref);
+log('each row sums to', np.sum(weights.ref, -1));
+log('output = weights · V =', np.dot(weights, V));`}
 			/>
 
-			<MermaidDiagram
-				definition={`graph LR
-  X(["Residual stream, all positions"]) --> Q(["Q = X·Wq"])
-  X --> K(["K = X·Wk"])
-  X --> V(["V = X·Wv"])
-  Q --> S(["scores = Q·Kᵀ / √d_head"])
-  K --> S
-  S --> M(["causal mask + softmax"])
-  M --> W(["attention weights"])
-  W --> O(["output = weights · V"])
-  V --> O
-  O --> P(["project (Wo), add to stream"])`}
-				id="attention-dataflow"
-			/>
+			<AttentionDataflow />
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Two details earn their keep. The <Code code="√d_head" /> scaling keeps dot products from growing
@@ -231,6 +221,15 @@ output  = weights · V                 # weighted mix of value vectors`}
 				knight on f3) is a claim you can check against the rules of chess. One mechanism, two pictures;
 				the formal world makes the informal one legible.
 			</p>
+
+			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
+				Don't take the head stories on faith either. The lab below trains a fresh Quill on your GPU
+				and shows its <em>actual</em> attention rows — every cell a real number read back from the model
+				you just made. Hunt across layers and heads for the patterns named above (Rook's arrows-on-a-board
+				version of this lab lives in Part 6):
+			</p>
+
+			<AttentionLab bird="quill" />
 
 			<VibeBox
 				prompts={[

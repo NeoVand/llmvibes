@@ -3,7 +3,7 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import BpeMergeTree from '../diagrams/BpeMergeTree.svelte';
 	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
@@ -161,16 +161,7 @@ end while`}
 				in the language:
 			</p>
 
-			<MermaidDiagram
-				definition={`graph BT
-  t["byte 116 · t"] --> th["token 258 · th (merge 3)"]
-  h["byte 104 · h"] --> th
-  e["byte 101 · e"] --> e_["token 256 · e‿ (merge 1)"]
-  sp["byte 32 · space"] --> e_
-  th --> the["token 268 · the‿ (merge 13)"]
-  e_ --> the`}
-				id="bpe-merge-tree"
-			/>
+			<BpeMergeTree />
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				(The ‿ marks a trailing space — merges happily cross the letter/space boundary, which is why

@@ -5,10 +5,13 @@
 	import Math from '../ui/Math.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import SoftmaxLossPipeline from '../diagrams/SoftmaxLossPipeline.svelte';
+	import TrainingLoopCycle from '../diagrams/TrainingLoopCycle.svelte';
 	import PseudoCode from '../ui/PseudoCode.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 	import OptimizerLab from '../lab/OptimizerLab.svelte';
+	import GrokkingLab from '../lab/GrokkingLab.svelte';
+	import JaxPlayground from '../lab/JaxPlayground.svelte';
 </script>
 
 <section id="part-4" class="py-10">
@@ -90,14 +93,7 @@ the biggest logit becomes the biggest probability.`}
 				sharpening is a feature, and in Part 5 you'll meet the dial (temperature) that controls it.
 			</p>
 
-			<MermaidDiagram
-				definition={`graph LR
-  A(["Final layer output:<br/>one logit per vocab token"]) --> B(["Softmax"])
-  B --> C(["Probability distribution<br/>over the whole vocab"])
-  C --> D(["Look up p of the<br/>ACTUAL next token"])
-  D --> E(["loss = -log p"])`}
-				id="softmax-loss-pipeline"
-			/>
+			<SoftmaxLossPipeline />
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
 				Cross-Entropy: Scoring One Prediction
@@ -264,19 +260,29 @@ end for`}
 				>
 			</p>
 
+			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
+				You don't have to take the chain rule's word for it. This is the actual autodiff engine the
+				course trains with — ask it for a gradient and check it against the calculus you know:
+			</p>
+
+			<JaxPlayground
+				title="autodiff, for real"
+				code={`// f(w) = sum(w²)  →  ∇f = 2w. Ask the engine:
+const f = (w) => np.sum(np.square(w));
+const w = np.array([1.0, 2.0, 3.0]);
+log('f(w)  =', f(w.ref));
+log('∇f(w) =', grad(f)(w));   // expect [2, 4, 6]
+
+// now something you'd rather not differentiate by hand:
+const g = (x) => np.sum(np.tanh(np.dot(x.ref, x)));
+log('∇g at [0.5, -1] =', grad(g)(np.array([0.5, -1.0])));`}
+			/>
+
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
 				The Loop You'll Run in Part 5
 			</h4>
 
-			<MermaidDiagram
-				definition={`graph TD
-  A(["Sample a batch of sequences<br/>from the corpus"]) --> B(["Forward pass:<br/>predict every next token"])
-  B --> C(["Cross-entropy:<br/>average surprise → one loss"])
-  C --> D(["Backward pass:<br/>one gradient per weight"])
-  D --> E(["Optimizer step:<br/>nudge every weight downhill"])
-  E --> A`}
-				id="training-loop-cycle"
-			/>
+			<TrainingLoopCycle />
 
 			<PseudoCode
 				number={2}
@@ -560,16 +566,7 @@ end for`}
 				What Happens
 			</h4>
 
-			<CodeBlock
-				title="A grokking run, schematically"
-				lang="text"
-				code={`steps      train accuracy    val accuracy
-~300           100%              ~1%       memorized the table
-1,000          100%              ~1%       flat.
-5,000          100%              ~2%       still flat. anyone sane stops here.
-10,000         100%             ~30%       ...wait
-11,000         100%             ~100%      it groks — general algorithm found`}
-			/>
+			<GrokkingLab />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Phase one is exactly section 4.4's nightmare: the model memorizes its slice of the table in
@@ -599,11 +596,14 @@ end for`}
 				like that, found by opening up a trained model, is exactly what Part 6 does to Rook.
 			</p>
 
-			<Callout type="note" title="The recorded run">
-				Canonical grokking needs 10,000+ steps — beyond this course's coffee-break budget for live
-				training. A recorded run with a scrubber (plus a patient live mode you can leave running in
-				the background) arrives with a later milestone. The phenomenon is what matters here, and
-				it's fully real: this exact experiment reproduces on a laptop.
+			<Callout type="note" title="About the recorded run">
+				The scrubber above replays a real run recorded for this course (the script is in the repo:
+				<Code code="scripts/data/run-grokking.mjs" />). One honest detail: it uses the fast-grokking
+				variant — a tiny MLP with a squared activation instead of a full transformer — because the
+				canonical transformer setup needs tens of thousands of steps to record. Same task, same
+				held-out split, same weight decay mechanism, same delayed snap; it just arrives soon enough
+				to fit in a JSON file. The original Power et al. experiment reproduces on a laptop if you
+				leave it running.
 			</Callout>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">

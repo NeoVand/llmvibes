@@ -86,7 +86,7 @@ export interface ReflowWatcherOptions {
  *
  * This page reflows for the whole session, not just at startup:
  *
- *  - MermaidDiagram reserves 180px for a diagram that is usually taller, and
+ *  - diagram components reserve less height than they usually render at, and
  *    renders it lazily behind an IntersectionObserver with a dynamic import —
  *    so diagrams grow the page AS THE READER SCROLLS, and again on theme flip.
  *  - LessonActivity does the same with a 500px placeholder and a dynamically

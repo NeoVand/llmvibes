@@ -62,7 +62,6 @@
 		"d3-scale-chromatic": "^3.1.0",
 		"katex": "^0.18.1",
 		"lucide-svelte": "^1.0.1",
-		"mermaid": "^11.16.0",
 		"zod": "^4.4.3"
 	}
 }

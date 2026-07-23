@@ -4,8 +4,10 @@
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import ActivationPatching from '../diagrams/ActivationPatching.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
+	import ProbeLab from '../lab/ProbeLab.svelte';
+	import AttentionLab from '../lab/AttentionLab.svelte';
 </script>
 
 <section id="part-6" class="py-10">
@@ -120,6 +122,13 @@
 				copy of the model and they fail. Whatever the probes are reading, training put it there.
 			</p>
 
+			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
+				The explorer below walks the whole argument: slide through the layers to see where the board
+				is most readable, then flip to the untrained control and watch the readability vanish.
+			</p>
+
+			<ProbeLab />
+
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
 				The Mine/Theirs Twist
 			</h4>
@@ -143,6 +152,15 @@
 				predict. Probe training on flagship Rook, square by square on your screen, ships with the
 				flagship milestone.
 			</Callout>
+
+			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
+				But you don't have to wait to look inside a real Rook. Attention weights are activations too
+				— and Part 3 promised you this lab: train a pocket Rook right here, then watch which earlier <em
+					>moves</em
+				> each head consults, drawn as arrows on the board it's implicitly tracking.
+			</p>
+
+			<AttentionLab bird="rook" />
 		</div>
 
 		<div id="section-6-2" class="mb-14">
@@ -178,15 +196,7 @@
 				belief.
 			</p>
 
-			<MermaidDiagram
-				definition={`graph TD
-  A(["Input: move tokens so far"]) --> B(["Layers 1..k run normally"])
-  B --> C(["Capture residual-stream vector"])
-  C --> D(["Edit it along the probe's direction:<br/>flip one square's contents"])
-  D --> E(["Layers k+1..end run on the<br/>edited activation"])
-  E --> F(["Compare: which move does the<br/>model choose now?"])`}
-				id="activation-patching-flow"
-			/>
+			<ActivationPatching />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Then ask the only question that matters: did the <em>behavior</em> change to match the
