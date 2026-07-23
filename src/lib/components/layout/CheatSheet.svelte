@@ -19,8 +19,7 @@
 		Wrench,
 		Check,
 		Copy,
-		Maximize2,
-		Download
+		Maximize2
 	} from 'lucide-svelte';
 	import { SvelteSet } from 'svelte/reactivity';
 	import {
