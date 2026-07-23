@@ -39,7 +39,10 @@ export function initParams(cfg: ModelConfig, seed: number): ModelParams {
 			wk: random.uniform(nk(), [cfg.nEmbd, cfg.nEmbd], { minval: -s, maxval: s }),
 			wv: random.uniform(nk(), [cfg.nEmbd, cfg.nEmbd], { minval: -s, maxval: s }),
 			wo: random.uniform(nk(), [cfg.nEmbd, cfg.nEmbd], { minval: -0.2 * s, maxval: 0.2 * s }),
-			mlpFc1: random.uniform(nk(), [cfg.nEmbd, 4 * cfg.nEmbd], { minval: -0.4 * s, maxval: 0.4 * s }),
+			mlpFc1: random.uniform(nk(), [cfg.nEmbd, 4 * cfg.nEmbd], {
+				minval: -0.4 * s,
+				maxval: 0.4 * s
+			}),
 			mlpFc2: random.uniform(nk(), [4 * cfg.nEmbd, cfg.nEmbd], {
 				minval: -0.2 * s,
 				maxval: 0.2 * s
@@ -59,7 +62,13 @@ function rmsnorm(x: any) {
  * (≤ cfg.blockSize) — generation calls this with growing prompts.
  * Consumes tokenOH/posOH; params leaves are each consumed exactly once.
  */
-export function forwardLogprobs(params: any, cfg: ModelConfig, seqLen: number, tokenOH: any, posOH: any) {
+export function forwardLogprobs(
+	params: any,
+	cfg: ModelConfig,
+	seqLen: number,
+	tokenOH: any,
+	posOH: any
+) {
 	const headDim = cfg.nEmbd / cfg.nHead;
 	let x = np.dot(tokenOH.reshape([-1, cfg.vocab]), params.wte);
 	const posEmb = np.dot(posOH.reshape([-1, cfg.blockSize]), params.wpe);

@@ -59,7 +59,12 @@ export class WorkerEngine implements LlmEngine {
 		else p.reject(new Error(msg.error));
 	}
 
-	private call<T>(op: string, payload: Record<string, unknown> = {}, transfer: Transferable[] = [], onMetrics?: (m: TrainStepMetrics) => void): Promise<T> {
+	private call<T>(
+		op: string,
+		payload: Record<string, unknown> = {},
+		transfer: Transferable[] = [],
+		onMetrics?: (m: TrainStepMetrics) => void
+	): Promise<T> {
 		const id = this.nextId++;
 		return new Promise<T>((resolve, reject) => {
 			this.pending.set(id, { resolve: resolve as (v: unknown) => void, reject, onMetrics });

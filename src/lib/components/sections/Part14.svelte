@@ -126,7 +126,9 @@
 				<li>The tokenizer algorithm — Part 2's byte-BPE, with a bigger merge table.</li>
 				<li>The train/val discipline, and the eval anxiety that comes with it (Parts 4–5).</li>
 				<li>The post-training arc: SFT, then preferences, then verifiable rewards (Parts 7–11).</li>
-				<li>The serving stack: temperature, top-p, KV cache, quantization, speculation (Part 13).</li>
+				<li>
+					The serving stack: temperature, top-p, KV cache, quantization, speculation (Part 13).
+				</li>
 			</ul>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -139,10 +141,10 @@
 			</p>
 
 			<Callout type="note" title="The exponents are the moat">
-				Nothing conceptual separates your birds from the frontier — that's the course's thesis,
-				and by now it's your lived experience. What separates them is tokens, chips, and time.
-				That should feel both comforting and sobering: comforting because you actually understand
-				these systems now; sobering because understanding was never the bottleneck.
+				Nothing conceptual separates your birds from the frontier — that's the course's thesis, and
+				by now it's your lived experience. What separates them is tokens, chips, and time. That
+				should feel both comforting and sobering: comforting because you actually understand these
+				systems now; sobering because understanding was never the bottleneck.
 			</Callout>
 		</div>
 
@@ -166,9 +168,8 @@
 				You watched it in Part 4: a hatchling memorizes its training set, sits at chance on
 				validation for thousands of steps, then abruptly generalizes. There are stories — weight
 				decay slowly favoring simpler circuits over lookup tables, competing sub-networks trading
-				places — but no theory that predicts <em>when</em> a given run will grok, or whether it
-				will at all. A phenomenon you can replay on demand in a browser remains genuinely
-				unexplained.
+				places — but no theory that predicts <em>when</em> a given run will grok, or whether it will at
+				all. A phenomenon you can replay on demand in a browser remains genuinely unexplained.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -177,9 +178,9 @@
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Part 6's linear probes read a board off Rook's residual stream, and patching flipped its
 				move by editing its belief about one square. Convincing — and still contested. Does the
-				model <em>use</em> a world model, or a bag of heuristics that happens to be linearly
-				decodable? Where is the line between representing and correlating? Interpretability has
-				sharp tools and no agreed success criterion, at 25M parameters or at a trillion.
+				model <em>use</em> a world model, or a bag of heuristics that happens to be linearly decodable?
+				Where is the line between representing and correlating? Interpretability has sharp tools and no
+				agreed success criterion, at 25M parameters or at a trillion.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -187,10 +188,10 @@
 			</h4>
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Parts 9 through 11 gave you the honest arc: learned rewards get hacked, KL is a leash and
-				not a proof, and verifiable rewards close the gap only where a verifier exists. Most of
-				what we actually want from models — honesty, judgment, care — has no checker. Whether
-				oversight can scale to systems more capable than their overseers is arguably the field's
-				most consequential open problem, and your reward-hacking scars are a miniature of why.
+				not a proof, and verifiable rewards close the gap only where a verifier exists. Most of what
+				we actually want from models — honesty, judgment, care — has no checker. Whether oversight
+				can scale to systems more capable than their overseers is arguably the field's most
+				consequential open problem, and your reward-hacking scars are a miniature of why.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -217,9 +218,9 @@
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				None of these are homework the field forgot to finish. They are the frontier — and the
-				point of listing them here is that you now know enough to read the papers arguing about
-				every single one.
+				None of these are homework the field forgot to finish. They are the frontier — and the point
+				of listing them here is that you now know enough to read the papers arguing about every
+				single one.
 			</p>
 		</div>
 
@@ -247,9 +248,8 @@
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Rook went from random mover to legal player to something stranger: a model that holds a
 				board in its activations, whose belief about one square you once flipped with your own
-				cursor. It hung its king for a queen when you paid it to, and learned better when the
-				reward was checkmate itself. Its Elo is on the stat sheet. Its opening habits are yours to
-				blame.
+				cursor. It hung its king for a queen when you paid it to, and learned better when the reward
+				was checkmate itself. Its Elo is on the stat sheet. Its opening habits are yours to blame.
 			</p>
 
 			<Callout type="warning" title="What tiny birds cannot teach">
@@ -264,8 +264,8 @@
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The weights are yours — sitting in your browser's storage, scrubbable back to the moment
 				they were noise. So is the recipe: every stage a frontier lab runs, you have run, small.
-				When the next paper drops — a new optimizer, a routing trick, a post-training loop — it
-				will land somewhere on a map you have personally walked. The field is young, its biggest
+				When the next paper drops — a new optimizer, a routing trick, a post-training loop — it will
+				land somewhere on a map you have personally walked. The field is young, its biggest
 				questions are open, and the distance from your two birds to the frontier is exponents, not
 				magic.
 			</p>

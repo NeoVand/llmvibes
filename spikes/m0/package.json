@@ -1,18 +1,18 @@
 {
-  "name": "llmvibes-m0-spike",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build"
-  },
-  "dependencies": {
-    "@jax-js/jax": "^0.1.18",
-    "@jax-js/optax": "^0.1.2"
-  },
-  "devDependencies": {
-    "typescript": "^5.6.0",
-    "vite": "^7.0.0"
-  }
+	"name": "llmvibes-m0-spike",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build"
+	},
+	"dependencies": {
+		"@jax-js/jax": "^0.1.18",
+		"@jax-js/optax": "^0.1.2"
+	},
+	"devDependencies": {
+		"typescript": "^5.6.0",
+		"vite": "^7.0.0"
+	}
 }

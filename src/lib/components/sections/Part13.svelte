@@ -50,8 +50,8 @@
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The surgery happens in the block you built in Part 3. Attention stays. The one big MLP is
 				replaced by <Code code="E" /> small ones — the experts — plus a <em>router</em>: a tiny
-				linear layer that scores all <Code code="E" /> experts for each token. Keep the top-k
-				scorers, run the token through only those, and blend their outputs by the router's weights:
+				linear layer that scores all <Code code="E" /> experts for each token. Keep the top-k scorers,
+				run the token through only those, and blend their outputs by the router's weights:
 			</p>
 
 			<CodeBlock
@@ -65,8 +65,8 @@ out    = w3 * expert3(x) + w7 * expert7(x) + shared(x)`}
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The unit of routing is the <em>token</em>, and that's worth sitting with. Not the prompt,
 				not the sentence — every single token, at every MoE layer, gets its own routing decision.
-				"dragon" might light up experts 3 and 7 while the "the" right before it went to 1 and 5.
-				The routing visualization in the lab makes this visible: feed a story through and watch the
+				"dragon" might light up experts 3 and 7 while the "the" right before it went to 1 and 5. The
+				routing visualization in the lab makes this visible: feed a story through and watch the
 				expert lanes flicker token by token.
 			</p>
 
@@ -86,16 +86,15 @@ out    = w3 * expert3(x) + w7 * expert7(x) + shared(x)`}
 				Two DeepSeek-flavored refinements are now standard. <em>Fine-grained experts:</em> instead
 				of a few large experts picking one or two, use many small ones and activate several — more
 				combinations of specialists per token, finer division of labor. And a
-				<em>shared expert</em> that every token visits unconditionally: it absorbs the common
-				patterns (grammar, punctuation, glue) so the specialists don't all waste capacity
-				relearning them.
+				<em>shared expert</em> that every token visits unconditionally: it absorbs the common patterns
+				(grammar, punctuation, glue) so the specialists don't all waste capacity relearning them.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				The classic failure mode is <em>router collapse</em>: a couple of experts win early, get
-				all the tokens, therefore all the gradient, therefore keep winning — while the rest go
-				dead. The textbook fix is an auxiliary load-balancing loss nudging usage toward uniform,
-				but it literally fights the language-modeling objective: you pay model quality for balance.
+				The classic failure mode is <em>router collapse</em>: a couple of experts win early, get all
+				the tokens, therefore all the gradient, therefore keep winning — while the rest go dead. The
+				textbook fix is an auxiliary load-balancing loss nudging usage toward uniform, but it
+				literally fights the language-modeling objective: you pay model quality for balance.
 				DeepSeek-V3's aux-loss-free alternative is sneakier — give each expert a bias added to its
 				routing score <em>only for the top-k selection</em>, not for the mixing weights, and have a
 				controller nudge each bias up when its expert is underused and down when overused. Balance
@@ -104,10 +103,10 @@ out    = w3 * expert3(x) + w7 * expert7(x) + shared(x)`}
 
 			<Callout type="warning" title="Verdict at our scale">
 				Honest verdict: at 25M parameters, MoE shows <em>mechanism, not wins</em>. Slicing a small
-				MLP into eight tiny experts leaves each too small to specialize meaningfully, and our
-				corpus is too narrow to demand it. MoE pays off when the dense model you'd otherwise want
-				can't fit your hardware — ours fits with room to spare. Watch the routing come alive;
-				don't expect a better loss curve.
+				MLP into eight tiny experts leaves each too small to specialize meaningfully, and our corpus
+				is too narrow to demand it. MoE pays off when the dense model you'd otherwise want can't fit
+				your hardware — ours fits with room to spare. Watch the routing come alive; don't expect a
+				better loss curve.
 			</Callout>
 		</div>
 
@@ -130,12 +129,12 @@ out    = w3 * expert3(x) + w7 * expert7(x) + shared(x)`}
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Your loss has always asked one question per position: what comes next? Multi-token
-				prediction adds a second: what comes <em>after</em> next? DeepSeek-V3 bolts a small extra
-				module onto the trunk that predicts one token further ahead, as an auxiliary objective
-				during training only. The claim is data efficiency — every position now supplies two
-				gradients instead of one, and planning two tokens out seems to build slightly better
-				representations. At inference you can throw the module away, or keep it as a built-in
-				draft generator for speculative decoding (13.5 explains why that's valuable).
+				prediction adds a second: what comes <em>after</em> next? DeepSeek-V3 bolts a small extra module
+				onto the trunk that predicts one token further ahead, as an auxiliary objective during training
+				only. The claim is data efficiency — every position now supplies two gradients instead of one,
+				and planning two tokens out seems to build slightly better representations. At inference you can
+				throw the module away, or keep it as a built-in draft generator for speculative decoding (13.5
+				explains why that's valuable).
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">Muon</h4>
@@ -143,36 +142,37 @@ out    = w3 * expert3(x) + w7 * expert7(x) + shared(x)`}
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				AdamW, your loyal optimizer since Part 4, keeps two scalars of bookkeeping per weight and
 				treats every weight as an island. Muon's observation: most of a transformer is weight
-				<em>matrices</em>, and a matrix update has structure a per-weight view can't see. Muon
-				takes the momentum-averaged gradient of each matrix and <em>orthogonalizes</em> it (a few
-				Newton-Schulz iterations — cheap matrix multiplies) before applying it, so the update
-				pushes in many independent directions instead of piling onto a dominant few. Pedigree:
-				Muon powers the nanoGPT speedrun leaderboard, and Kimi scaled it to K2's
-				trillion-parameter training as half of MuonClip. Embeddings, norms, and other non-matrix
-				parameters stay on AdamW. The lab demo is a straight race: same model, same data, same
-				token budget, two optimizers, two loss curves.
+				<em>matrices</em>, and a matrix update has structure a per-weight view can't see. Muon takes
+				the momentum-averaged gradient of each matrix and <em>orthogonalizes</em> it (a few Newton-Schulz
+				iterations — cheap matrix multiplies) before applying it, so the update pushes in many independent
+				directions instead of piling onto a dominant few. Pedigree: Muon powers the nanoGPT speedrun leaderboard,
+				and Kimi scaled it to K2's trillion-parameter training as half of MuonClip. Embeddings, norms,
+				and other non-matrix parameters stay on AdamW. The lab demo is a straight race: same model, same
+				data, same token budget, two optimizers, two loss curves.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">QK-clip</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				A failure mode you can summon on demand. Attention logits are dot products between queries
-				and keys; if the <Code code="Wq" /> and <Code code="Wk" /> matrices grow during training,
-				those logits can explode — softmax saturates into one-hot attention, gradients spike, and
-				long runs die with a loss chart that looks like a heart attack. Kimi's fix for K2 is
-				blunt and effective: watch the maximum attention logit per head, and whenever it exceeds a
-				threshold, rescale <Code code="Wq" /> and <Code code="Wk" /> down to cap it. Muon plus this
-				guard is MuonClip, and K2's famously spike-free loss curve over 15 trillion tokens is its
-				advertisement. Our demo: provoke the explosion at toy scale — aggressive learning rate,
-				weakened normalization — watch the max-logit gauge climb and the loss spike, then switch
-				the clip on and rerun the same seed.
+				and keys; if the <Code code="Wq" /> and <Code code="Wk" /> matrices grow during training, those
+				logits can explode — softmax saturates into one-hot attention, gradients spike, and long runs
+				die with a loss chart that looks like a heart attack. Kimi's fix for K2 is blunt and effective:
+				watch the maximum attention logit per head, and whenever it exceeds a threshold, rescale <Code
+					code="Wq"
+				/> and <Code code="Wk" /> down to cap it. Muon plus this guard is MuonClip, and K2's famously
+				spike-free loss curve over 15 trillion tokens is its advertisement. Our demo: provoke the explosion
+				at toy scale — aggressive learning rate, weakened normalization — watch the max-logit gauge climb
+				and the loss spike, then switch the clip on and rerun the same seed.
 			</p>
 
 			<div class="my-4 overflow-x-auto rounded-lg" style="background: var(--color-bg-secondary);">
 				<table class="w-full text-[13px]">
 					<thead>
 						<tr style="background: var(--color-bg-tertiary);">
-							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);">Trick</th>
+							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);"
+								>Trick</th
+							>
 							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);"
 								>What it buys the frontier</th
 							>
@@ -254,11 +254,10 @@ with cache      token n costs a forward pass over 1 position
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				For Quill that's a few megabytes — invisible. For a frontier model serving long contexts,
-				the cache outweighs the activations and becomes the thing engineers fight. That fight is
-				why grouped-query attention exists (several query heads share one K/V head — fewer
-				<Code code="kv_heads" /> in the formula) and why DeepSeek's MLA compresses K and V into a
-				small latent vector and reconstructs them on the fly. Different tactics, same target: that
-				formula.
+				the cache outweighs the activations and becomes the thing engineers fight. That fight is why
+				grouped-query attention exists (several query heads share one K/V head — fewer
+				<Code code="kv_heads" /> in the formula) and why DeepSeek's MLA compresses K and V into a small
+				latent vector and reconstructs them on the fly. Different tactics, same target: that formula.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -268,18 +267,20 @@ with cache      token n costs a forward pass over 1 position
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Part 5 gave you temperature: scale the logits before softmax to sharpen or flatten the
 				distribution. Two truncation dials complete the set. <strong>Top-k</strong> keeps only the
-				<Code code="k" /> most probable tokens and renormalizes — simple, but blunt: it keeps the
-				same count whether the model is confident or lost. <strong>Top-p</strong> (nucleus
-				sampling) keeps the smallest set of tokens whose cumulative probability reaches
-				<Code code="p" /> — it adapts, trimming to a handful of candidates when the model is sure
-				and widening when it isn't.
+				<Code code="k" /> most probable tokens and renormalizes — simple, but blunt: it keeps the same
+				count whether the model is confident or lost. <strong>Top-p</strong> (nucleus sampling)
+				keeps the smallest set of tokens whose cumulative probability reaches
+				<Code code="p" /> — it adapts, trimming to a handful of candidates when the model is sure and
+				widening when it isn't.
 			</p>
 
 			<div class="my-4 overflow-x-auto rounded-lg" style="background: var(--color-bg-secondary);">
 				<table class="w-full text-[13px]">
 					<thead>
 						<tr style="background: var(--color-bg-tertiary);">
-							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);">Dial</th>
+							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);"
+								>Dial</th
+							>
 							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);"
 								>What it does</th
 							>
@@ -310,9 +311,9 @@ with cache      token n costs a forward pass over 1 position
 
 			<Callout type="tip" title="Order of operations">
 				The dials compose in sequence: temperature reshapes the distribution, then top-k and top-p
-				truncate it, then what survives is renormalized and sampled. Typical defaults you'll meet
-				in the wild — temperature around 0.7 with top-p around 0.9 — are taste, not law. The lab
-				lets you feel each one against Quill's prose.
+				truncate it, then what survives is renormalized and sampled. Typical defaults you'll meet in
+				the wild — temperature around 0.7 with top-p around 0.9 — are taste, not law. The lab lets
+				you feel each one against Quill's prose.
 			</Callout>
 		</div>
 
@@ -331,11 +332,10 @@ with cache      token n costs a forward pass over 1 position
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Training needs precision — gradients are tiny nudges, and fp16 is about as coarse as
-				training tolerates. Inference is more forgiving: the weights are frozen, and what matters
-				is that the matmuls land close enough. So store each block of weights as small integers
-				plus one shared scale factor — <Code code="w ≈ scale × q" /> with <Code code="q" /> an
-				int8 (256 levels) or int4 (16 levels) — and expand them on the fly inside the matmul. The
-				memory math is immediate:
+				training tolerates. Inference is more forgiving: the weights are frozen, and what matters is
+				that the matmuls land close enough. So store each block of weights as small integers plus
+				one shared scale factor — <Code code="w ≈ scale × q" /> with <Code code="q" /> an int8 (256 levels)
+				or int4 (16 levels) — and expand them on the fly inside the matmul. The memory math is immediate:
 			</p>
 
 			<CodeBlock
@@ -353,21 +353,20 @@ int4   25M x 0.5 bytes  =  ~13 MB   (+ a few percent for the scales)`}
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				The quality cost is real but smaller than intuition suggests. Naive rounding hurts; the
-				good methods — small per-group scales, error-compensating rounding, activation-aware
-				choices about which weights deserve precision (the GPTQ/AWQ family) — keep 4-bit
-				surprisingly close to full quality, with degradation showing up first in long-tail
-				precision: rare words, delicate phrasing. The lab makes it a reading exercise: the same
-				prompt at fp16, int8, and int4, side by side. Expect int8 to be imperceptible and int4 to
-				occasionally flatten a phrase — a cost you can now see rather than take on faith.
+				The quality cost is real but smaller than intuition suggests. Naive rounding hurts; the good
+				methods — small per-group scales, error-compensating rounding, activation-aware choices
+				about which weights deserve precision (the GPTQ/AWQ family) — keep 4-bit surprisingly close
+				to full quality, with degradation showing up first in long-tail precision: rare words,
+				delicate phrasing. The lab makes it a reading exercise: the same prompt at fp16, int8, and
+				int4, side by side. Expect int8 to be imperceptible and int4 to occasionally flatten a
+				phrase — a cost you can now see rather than take on faith.
 			</p>
 
 			<Callout type="note" title="You've been using it all course">
 				The time machine's scrubbable checkpoints ship as int4/int8 — that's what makes carrying a
 				dozen snapshots per bird affordable. But the designated resume points ship fp16, because
-				<em>training</em> on top of quantized weights with fresh optimizer state is not something
-				that works, and we don't pretend otherwise. Inference forgives rounding; optimization
-				doesn't.
+				<em>training</em> on top of quantized weights with fresh optimizer state is not something that
+				works, and we don't pretend otherwise. Inference forgives rounding; optimization doesn't.
 			</Callout>
 		</div>
 
@@ -387,9 +386,8 @@ int4   25M x 0.5 bytes  =  ~13 MB   (+ a few percent for the scales)`}
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The trick rides on an asymmetry: generating is sequential, checking is parallel. A big
 				model's per-token latency is dominated by reading its weights from memory — and one forward
-				pass over <em>five</em> tokens reads the weights once, same as a pass over one. Verifying a
-				burst costs about the same as generating a single token. So let something cheap write the
-				burst.
+				pass over <em>five</em> tokens reads the weights once, same as a pass over one. Verifying a burst
+				costs about the same as generating a single token. So let something cheap write the burst.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -414,11 +412,10 @@ int4   25M x 0.5 bytes  =  ~13 MB   (+ a few percent for the scales)`}
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The startling part is the guarantee. The acceptance rule — take a drafted token with
 				probability <Code code="min(1, p_target / p_draft)" />, and on rejection sample from the
-				renormalized excess <Code code="max(0, p_target − p_draft)" /> — makes the output
-				distribution <em>exactly</em> what the target alone would have produced. Not approximately:
-				token for token, mathematically identical. Speculative decoding is that rare deal —
-				speed for free, quality untouched — paid for only in extra compute when the draft guesses
-				wrong.
+				renormalized excess <Code code="max(0, p_target − p_draft)" /> — makes the output distribution
+				<em>exactly</em> what the target alone would have produced. Not approximately: token for token,
+				mathematically identical. Speculative decoding is that rare deal — speed for free, quality untouched
+				— paid for only in extra compute when the draft guesses wrong.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -472,11 +469,11 @@ training tokens  ~100M (offline run)   hundreds of billions`}
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				What actually changed is the exponents — above all the data: thousands of times more
-				tokens, from carefully curated mixtures. And here's the kicker for anyone who took Part 8:
-				a large share of SmolLM's training diet is <em>synthetic textbooks</em>, generated and
-				filtered at industrial scale. The reveal that TinyStories was synthetic wasn't a toy-course
-				curiosity — it's how real small models are fed now.
+				What actually changed is the exponents — above all the data: thousands of times more tokens,
+				from carefully curated mixtures. And here's the kicker for anyone who took Part 8: a large
+				share of SmolLM's training diet is <em>synthetic textbooks</em>, generated and filtered at
+				industrial scale. The reveal that TinyStories was synthetic wasn't a toy-course curiosity —
+				it's how real small models are fed now.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">

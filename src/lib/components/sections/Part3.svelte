@@ -54,10 +54,10 @@
 				Here's the part that deserves a pause: <strong style="color: var(--color-text);"
 					>those numbers are learned</strong
 				>. The table starts as random noise and gets nudged by training like every other parameter.
-				Nobody tells Rook that <Code code="e2e4" /> and <Code code="d2d4" /> are similar moves;
-				training discovers that treating them similarly reduces prediction error, and their rows
-				drift together. Meaning ends up encoded as geometry — directions and distances in a
-				128-dimensional space — because that's the only language the rest of the network speaks.
+				Nobody tells Rook that <Code code="e2e4" /> and <Code code="d2d4" /> are similar moves; training
+				discovers that treating them similarly reduces prediction error, and their rows drift together.
+				Meaning ends up encoded as geometry — directions and distances in a 128-dimensional space — because
+				that's the only language the rest of the network speaks.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -68,10 +68,10 @@
 				After embedding, each position in the sequence owns one 128-dimensional vector. That
 				per-position vector, flowing from the bottom of the network to the top, is the
 				<strong style="color: var(--color-text);">residual stream</strong> — and it is the single
-				most useful mental model in this course. Every sub-layer in the transformer has the same
-				job description: <em>read</em> the stream, <em>compute</em> something, and
-				<em>add</em> the result back into the stream. Nothing gets overwritten; information is
-				accumulated by addition, layer after layer.
+				most useful mental model in this course. Every sub-layer in the transformer has the same job
+				description: <em>read</em> the stream, <em>compute</em> something, and
+				<em>add</em> the result back into the stream. Nothing gets overwritten; information is accumulated
+				by addition, layer after layer.
 			</p>
 
 			<MermaidDiagram
@@ -95,20 +95,20 @@
 					>Attention</strong
 				>
 				is the only place where positions exchange information — where move 31 gets to look at move 4.
-				The <strong style="color: var(--color-text);">MLP</strong> processes each position by itself,
-				no peeking at neighbors. Everything else — the norms, the residual additions — is plumbing that
-				keeps the highway stable. At the very top, the stream's final vector is compared against every
-				row of an <em>unembedding</em> matrix, producing one score per vocabulary token: the model's
-				bets on what comes next.
+				The <strong style="color: var(--color-text);">MLP</strong> processes each position by
+				itself, no peeking at neighbors. Everything else — the norms, the residual additions — is
+				plumbing that keeps the highway stable. At the very top, the stream's final vector is
+				compared against every row of an <em>unembedding</em> matrix, producing one score per vocabulary
+				token: the model's bets on what comes next.
 			</p>
 
 			<Callout type="tip" title="Why 'residual'?">
 				Because each sub-layer's output is added to its input, the sub-layer only has to learn the
-				<em>difference</em> — the residual — between what the stream already says and what it should
-				say next. Small refinements are easier to learn than full rewrites, and the additive highway
-				also gives gradients a clean, unobstructed path from the loss back to the earliest layers
-				(Part 4 will make you care about that). This one wiring decision is much of why deep stacks
-				train at all — and in Part 6, it's the surface we'll press our probes against.
+				<em>difference</em> — the residual — between what the stream already says and what it should say
+				next. Small refinements are easier to learn than full rewrites, and the additive highway also
+				gives gradients a clean, unobstructed path from the loss back to the earliest layers (Part 4 will
+				make you care about that). This one wiring decision is much of why deep stacks train at all —
+				and in Part 6, it's the surface we'll press our probes against.
 			</Callout>
 
 			<VibeBox
@@ -136,9 +136,9 @@
 				The problem attention solves: when Rook is predicting move 32, the information it needs is
 				scattered across the whole game — which pieces already moved, where they went, what got
 				captured. A fixed rule like "look at the previous 3 tokens" would be useless; <em>which</em>
-				earlier moves matter depends entirely on the position. Attention makes the lookup itself
-				learned and content-dependent. Every position produces three vectors, each a learned linear
-				projection of its residual stream:
+				earlier moves matter depends entirely on the position. Attention makes the lookup itself learned
+				and content-dependent. Every position produces three vectors, each a learned linear projection
+				of its residual stream:
 			</p>
 
 			<ul
@@ -146,16 +146,16 @@
 				style="color: var(--color-text-secondary);"
 			>
 				<li>
-					a <strong style="color: var(--color-text);">query</strong> — "here's what I'm looking
-					for" (what would help predict my next token)
+					a <strong style="color: var(--color-text);">query</strong> — "here's what I'm looking for" (what
+					would help predict my next token)
 				</li>
 				<li>
-					a <strong style="color: var(--color-text);">key</strong> — "here's what I can be found
-					by" (an advertisement of what this position holds)
+					a <strong style="color: var(--color-text);">key</strong> — "here's what I can be found by" (an
+					advertisement of what this position holds)
 				</li>
 				<li>
-					a <strong style="color: var(--color-text);">value</strong> — "here's what you get if you
-					pick me" (the payload actually delivered)
+					a <strong style="color: var(--color-text);">value</strong> — "here's what you get if you pick
+					me" (the payload actually delivered)
 				</li>
 			</ul>
 
@@ -190,10 +190,10 @@ output  = weights · V                 # weighted mix of value vectors`}
 			/>
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Two details earn their keep. The <Code code="√d_head" /> scaling keeps dot products from
-				growing with vector width — unscaled, softmax saturates into winner-take-all and its
-				gradients die. And the <strong style="color: var(--color-text);">causal mask</strong> is the
-				transformer honoring the deal it made: it's a next-token predictor, so position <em>i</em>
+				Two details earn their keep. The <Code code="√d_head" /> scaling keeps dot products from growing
+				with vector width — unscaled, softmax saturates into winner-take-all and its gradients die. And
+				the <strong style="color: var(--color-text);">causal mask</strong> is the transformer
+				honoring the deal it made: it's a next-token predictor, so position <em>i</em>
 				may only attend to positions at or before <em>i</em>. During training the model predicts
 				every position of the sequence at once, and the mask is what keeps each prediction honest —
 				no copying tomorrow's answer from tomorrow.
@@ -220,10 +220,12 @@ output  = weights · V                 # weighted mix of value vectors`}
 				positions, and for Quill you render them the standard way: spans of earlier text glowing
 				brighter where weight is higher. Interpretable, but fuzzy — language relationships are
 				gradient things. Rook's positions are <em>moves</em>, so the identical numbers render as
-				<strong style="color: var(--color-text);">arrows between moves drawn over a chessboard</strong
-				> — and an arrow from <Code code="f3g5" /> back to <Code code="g1f3" /> (the move that put
-				that knight on f3) is a claim you can check against the rules of chess. One mechanism, two
-				pictures; the formal world makes the informal one legible.
+				<strong style="color: var(--color-text);"
+					>arrows between moves drawn over a chessboard</strong
+				>
+				— and an arrow from <Code code="f3g5" /> back to <Code code="g1f3" /> (the move that put that
+				knight on f3) is a claim you can check against the rules of chess. One mechanism, two pictures;
+				the formal world makes the informal one legible.
 			</p>
 
 			<VibeBox
@@ -249,13 +251,13 @@ output  = weights · V                 # weighted mix of value vectors`}
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Look back at the attention equations: nothing in them mentions order. Shuffle the tokens
-				and every query–key dot product gives the same score — attention treats the sequence as a
+				Look back at the attention equations: nothing in them mentions order. Shuffle the tokens and
+				every query–key dot product gives the same score — attention treats the sequence as a
 				<em>bag</em>. For chess that's fatal: <Code code="e2e4" /> as move one and
-				<Code code="e2e4" /> as a replayed idea on move forty mean different things, and "the
-				previous move" must be findable. Position information has to be injected, and <strong
-					style="color: var(--color-text);">RoPE</strong
-				> — rotary position embeddings, the modern standard — injects it with a trick of geometry:
+				<Code code="e2e4" /> as a replayed idea on move forty mean different things, and "the previous
+				move" must be findable. Position information has to be injected, and
+				<strong style="color: var(--color-text);">RoPE</strong> — rotary position embeddings, the modern
+				standard — injects it with a trick of geometry:
 			</p>
 
 			<CodeBlock
@@ -270,23 +272,23 @@ DIFFERENCE of their positions — how far apart, not where.`}
 			/>
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				That relative-position property is the entire sales pitch. A dot product between two
-				rotated vectors depends on the angle <em>between</em> them, and that angle is proportional
-				to the gap between their positions. So a head can learn "attend two tokens back" as a fixed
+				That relative-position property is the entire sales pitch. A dot product between two rotated
+				vectors depends on the angle <em>between</em> them, and that angle is proportional to the
+				gap between their positions. So a head can learn "attend two tokens back" as a fixed
 				geometric relationship that works identically at position 10 and position 90 — the pattern
 				travels. Each dimension pair rotates at its own frequency <Code code="θ" />, fast pairs
-				resolving nearby order precisely while slow pairs keep long-range gaps distinguishable —
-				a clock with many hands, from seconds to hours.
+				resolving nearby order precisely while slow pairs keep long-range gaps distinguishable — a
+				clock with many hands, from seconds to hours.
 			</p>
 
 			<Callout type="warning" title="What the pocket pair actually uses">
 				Honesty checkpoint. The pocket models you'll train live in Part 5 do <em>not</em> use RoPE —
 				they use the older recipe: a second learned table, one row per <em>position</em>, added to
-				the token embedding at the bottom of the stack. It's simpler, it's fast, and at a
-				128-token window it works fine — but position 7 is just an arbitrary learned vector, and
-				nothing generalizes across positions. RoPE is taught here because it's the modern standard,
-				and it arrives with the offline-trained flagship models. When the course can show you both
-				side by side, the difference stops being trivia.
+				the token embedding at the bottom of the stack. It's simpler, it's fast, and at a 128-token
+				window it works fine — but position 7 is just an arbitrary learned vector, and nothing
+				generalizes across positions. RoPE is taught here because it's the modern standard, and it
+				arrives with the offline-trained flagship models. When the course can show you both side by
+				side, the difference stops being trivia.
 			</Callout>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -294,12 +296,12 @@ DIFFERENCE of their positions — how far apart, not where.`}
 			</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				The <strong style="color: var(--color-text);">context window</strong> is the block of
-				tokens the model can see at once — the width of the attention computation. The pocket pair's
-				window is 128 tokens. For Quill, at 2.34 characters per token, that's roughly 300 characters
-				of story — a paragraph. For Rook it's about two full random-legal games, or one long game
-				with room to spare. Anything before the window's left edge does not exist: not "remembered
-				vaguely," but architecturally invisible — attention has nothing to dot against.
+				The <strong style="color: var(--color-text);">context window</strong> is the block of tokens the
+				model can see at once — the width of the attention computation. The pocket pair's window is 128
+				tokens. For Quill, at 2.34 characters per token, that's roughly 300 characters of story — a paragraph.
+				For Rook it's about two full random-legal games, or one long game with room to spare. Anything
+				before the window's left edge does not exist: not "remembered vaguely," but architecturally invisible
+				— attention has nothing to dot against.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -369,8 +371,8 @@ step — dropping it turns out to cost nothing and saves work.`}
 				After attention has gathered information <em>between</em> positions, the MLP processes each
 				position on its own: expand the 128-wide vector to 4× the width, apply a nonlinearity,
 				project back down, add to the stream. This is the transformer's per-token thinking space —
-				and its biggest line item in the parameter budget. The modern nonlinearity is a gated
-				design called <strong style="color: var(--color-text);">SwiGLU</strong>:
+				and its biggest line item in the parameter budget. The modern nonlinearity is a gated design
+				called <strong style="color: var(--color-text);">SwiGLU</strong>:
 			</p>
 
 			<CodeBlock
@@ -388,8 +390,8 @@ weight matrix; wins consistently in practice.`}
 			<Callout type="warning" title="What the pocket pair actually uses">
 				Same honesty rule as RoPE: the live pocket models use the classic ReLU MLP — two matrices,
 				no gate — because at pocket scale it's fast and the difference is small. They <em>do</em>
-				use RMSNorm and pre-norm wiring exactly as taught above. SwiGLU arrives with the flagships,
-				where the recipe matches what frontier models actually ship.
+				use RMSNorm and pre-norm wiring exactly as taught above. SwiGLU arrives with the flagships, where
+				the recipe matches what frontier models actually ship.
 			</Callout>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -397,11 +399,10 @@ weight matrix; wins consistently in practice.`}
 			</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				That's every part. One <strong style="color: var(--color-text);">block</strong> is:
-				norm, attention, add — then norm, MLP, add. Stack N blocks between the embedding and the
-				unembedding and you have the whole architecture. The pocket pair stacks 4 blocks; the
-				flagships stack more and go wider; frontier models stack around a hundred. Here's exactly
-				where pocket Quill's parameters sit:
+				That's every part. One <strong style="color: var(--color-text);">block</strong> is: norm, attention,
+				add — then norm, MLP, add. Stack N blocks between the embedding and the unembedding and you have
+				the whole architecture. The pocket pair stacks 4 blocks; the flagships stack more and go wider;
+				frontier models stack around a hundred. Here's exactly where pocket Quill's parameters sit:
 			</p>
 
 			<div class="my-4 overflow-hidden rounded-lg" style="background: var(--color-bg-secondary);">
@@ -461,9 +462,9 @@ weight matrix; wins consistently in practice.`}
 				quarter, and the embeddings the rest. Pocket Rook is the identical stack with different
 				bookends — its 1,931-token vocabulary makes the embedding and unembedding bigger, for about
 				1.3M parameters total. Same blocks, same highway, different menu. Right now every one of
-				those parameters is random noise, and both birds predict static. Part 4 is about the
-				machine that turns noise into knowledge: the loss, the gradient, and the loop that runs
-				them a few thousand times.
+				those parameters is random noise, and both birds predict static. Part 4 is about the machine
+				that turns noise into knowledge: the loss, the gradient, and the loop that runs them a few
+				thousand times.
 			</p>
 
 			<VibeBox

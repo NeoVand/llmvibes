@@ -119,8 +119,8 @@
 			<p class="mb-4 text-[14.5px] leading-relaxed" style="color: var(--color-text-secondary);">
 				Byte-pair encoding is simple enough to watch happen: start from raw bytes, repeatedly merge
 				the most frequent pair, and a vocabulary grows in front of you — "th", then "the", then
-				whole words. The box below runs Quill's actual tokenizer — byte-level BPE with 512
-				tokens, trained on the same TinyStories slice Quill pretrains on in Part 5.
+				whole words. The box below runs Quill's actual tokenizer — byte-level BPE with 512 tokens,
+				trained on the same TinyStories slice Quill pretrains on in Part 5.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -161,11 +161,11 @@ while vocab is smaller than the target:
 			/>
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				(The ‿ marks a trailing space — merges happily cross the letter/space boundary, which is
-				why so many tokens carry their following space along.) Later merges climb from fragments to
+				(The ‿ marks a trailing space — merges happily cross the letter/space boundary, which is why
+				so many tokens carry their following space along.) Later merges climb from fragments to
 				whole words: by the end of training, Quill's vocabulary contains
-				<Code code="looked " />, <Code code="would " />, and — fittingly for TinyStories — token 511,
-				the final merge, is <Code code="day " />. Nobody chose those words. The corpus did.
+				<Code code="looked " />, <Code code="would " />, and — fittingly for TinyStories — token
+				511, the final merge, is <Code code="day " />. Nobody chose those words. The corpus did.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -225,12 +225,12 @@ while vocab is smaller than the target:
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Why design instead of learn? Because in chess, unlike English, <em>we already know the
-				units</em>. Language has no clean atomic unit — words blur into morphemes, spellings vary,
-				vocabulary is open-ended — so we let BPE discover units statistically. Chess has a perfect
-				unit handed to us by the rules: the move. When the domain gives you natural atoms, take
-				them. When it doesn't, learn them. That's the whole design space of tokenization in two
-				sentences.
+				Why design instead of learn? Because in chess, unlike English, <em
+					>we already know the units</em
+				>. Language has no clean atomic unit — words blur into morphemes, spellings vary, vocabulary
+				is open-ended — so we let BPE discover units statistically. Chess has a perfect unit handed
+				to us by the rules: the move. When the domain gives you natural atoms, take them. When it
+				doesn't, learn them. That's the whole design space of tokenization in two sentences.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -264,8 +264,8 @@ board state is handed over on a plate:
 					<p class="text-xs leading-relaxed" style="color: var(--color-text-secondary);">
 						Sequences run three to five times longer, and the natural unit is destroyed: the model
 						must first learn that <Code code="e" />, <Code code="2" />, <Code code="e" />,
-						<Code code="4" /> form one action before it can learn anything about the action. All
-						cost, no benefit — chess has no "rare words" needing byte fallback.
+						<Code code="4" /> form one action before it can learn anything about the action. All cost,
+						no benefit — chess has no "rare words" needing byte fallback.
 					</p>
 				</div>
 				<div class="rounded-lg p-4" style="background: var(--color-caution-bg);">
@@ -274,9 +274,9 @@ board state is handed over on a plate:
 					</p>
 					<p class="text-xs leading-relaxed" style="color: var(--color-text-secondary);">
 						FEN spells out the full board every step — so the model never needs to <em>infer</em> the
-						board. Part 6's entire experiment is asking whether Rook builds an internal board from
-						moves alone. Feed it FEN and the experiment evaporates: you can't discover a world model
-						in a model you spoon-fed the world.
+						board. Part 6's entire experiment is asking whether Rook builds an internal board from moves
+						alone. Feed it FEN and the experiment evaporates: you can't discover a world model in a model
+						you spoon-fed the world.
 					</p>
 				</div>
 			</div>
@@ -290,10 +290,10 @@ board state is handed over on a plate:
 
 			<Callout type="note" title="Vocabulary as a control surface">
 				A designed vocabulary can smuggle in information a learned one can't. The flagship Rook's
-				vocabulary adds a few extra designed tokens: <em>Elo-bucket tags</em> that mark the strength
-				of the players in each game. Prefix a game with a strength tag at generation time and you can
-				ask the same model to play weaker or stronger. That trick — conditioning versus fine-tuning —
-				is a Part 7 lesson, but the groundwork is being laid right here, in the token menu.
+				vocabulary adds a few extra designed tokens: <em>Elo-bucket tags</em> that mark the strength of
+				the players in each game. Prefix a game with a strength tag at generation time and you can ask
+				the same model to play weaker or stronger. That trick — conditioning versus fine-tuning — is a
+				Part 7 lesson, but the groundwork is being laid right here, in the token menu.
 			</Callout>
 
 			<VibeBox
@@ -320,9 +320,9 @@ board state is handed over on a plate:
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				You've already used its first slice: the tokenizer box in 2.2 shows text as a row of token
 				chips. The full inspector adds the layer that makes it an instrument rather than a viewer —
-				<strong style="color: var(--color-text);">what the model thought</strong> at every position.
-				A trained model assigns a probability to each token before revealing it; from that
-				probability comes a number worth internalizing now:
+				<strong style="color: var(--color-text);">what the model thought</strong> at every position. A
+				trained model assigns a probability to each token before revealing it; from that probability comes
+				a number worth internalizing now:
 			</p>
 
 			<CodeBlock
@@ -337,10 +337,10 @@ model was unsure           →  p small   →  surprise large`}
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Paint each token's background by its surprise and a text becomes a heatmap: cool where the
 				model coasted, hot where it was caught off guard. On a well-trained Quill, "Once upon a" is
-				ice cold — <Code code="time" /> is nearly free — while the name of a brand-new character
-				burns hot, because no model could have guessed "Marisol" from a cold start. The heatmap is a
-				direct visualization of the training loss itself, token by token: the number training pushes
-				down (Part 4) is exactly the average of these surprises.
+				ice cold — <Code code="time" /> is nearly free — while the name of a brand-new character burns
+				hot, because no model could have guessed "Marisol" from a cold start. The heatmap is a direct
+				visualization of the training loss itself, token by token: the number training pushes down (Part
+				4) is exactly the average of these surprises.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -353,18 +353,19 @@ model was unsure           →  p small   →  surprise large`}
 				style="color: var(--color-text-secondary);"
 			>
 				<li>
-					<strong style="color: var(--color-text);">Part 4:</strong> average surprise, exponentiated,
-					is <em>perplexity</em> — the standard score for a language model, taught on this heatmap.
+					<strong style="color: var(--color-text);">Part 4:</strong> average surprise,
+					exponentiated, is <em>perplexity</em> — the standard score for a language model, taught on this
+					heatmap.
 				</li>
 				<li>
-					<strong style="color: var(--color-text);">Part 5:</strong> watch the same paragraph cool
-					down, checkpoint by checkpoint, as pretraining teaches the model what English is — the
-					loss curve, made spatial.
+					<strong style="color: var(--color-text);">Part 5:</strong> watch the same paragraph cool down,
+					checkpoint by checkpoint, as pretraining teaches the model what English is — the loss curve,
+					made spatial.
 				</li>
 				<li>
-					<strong style="color: var(--color-text);">Part 7:</strong> during instruction tuning, some
-					tokens are deliberately excluded from the loss — the inspector shows masked tokens going
-					grey, and loss masking stops being an abstract config flag.
+					<strong style="color: var(--color-text);">Part 7:</strong> during instruction tuning, some tokens
+					are deliberately excluded from the loss — the inspector shows masked tokens going grey, and
+					loss masking stops being an abstract config flag.
 				</li>
 			</ul>
 

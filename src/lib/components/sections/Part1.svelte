@@ -99,23 +99,22 @@
 				style="color: var(--color-text-secondary);"
 			>
 				<li>
-					<strong style="color: var(--color-text);">Pretraining</strong> (Parts 2–6) — the model
-					reads the corpus and learns to predict the next token. This is where almost all of its
-					ability comes from, and almost all of the compute goes.
+					<strong style="color: var(--color-text);">Pretraining</strong> (Parts 2–6) — the model reads
+					the corpus and learns to predict the next token. This is where almost all of its ability comes
+					from, and almost all of the compute goes.
 				</li>
 				<li>
-					<strong style="color: var(--color-text);">Supervised fine-tuning</strong> (Part 7) — teach
-					the pretrained predictor to follow instructions instead of just continuing text.
+					<strong style="color: var(--color-text);">Supervised fine-tuning</strong> (Part 7) — teach the
+					pretrained predictor to follow instructions instead of just continuing text.
 				</li>
 				<li>
-					<strong style="color: var(--color-text);">Preference tuning</strong> (Parts 9–10) — you
-					personally rate its outputs, and your clicks become a training signal. Then you watch that
-					signal get gamed.
+					<strong style="color: var(--color-text);">Preference tuning</strong> (Parts 9–10) — you personally
+					rate its outputs, and your clicks become a training signal. Then you watch that signal get gamed.
 				</li>
 				<li>
-					<strong style="color: var(--color-text);">Verifiable rewards</strong> (Part 11) — replace
-					human taste with a checker that can't be argued with (did Rook's move win? did Quill's
-					story include the required word?) and let reinforcement learning push against it.
+					<strong style="color: var(--color-text);">Verifiable rewards</strong> (Part 11) — replace human
+					taste with a checker that can't be argued with (did Rook's move win? did Quill's story include
+					the required word?) and let reinforcement learning push against it.
 				</li>
 			</ul>
 
@@ -217,10 +216,10 @@
 				Quill's corpus is a 3,000-story slice of <strong style="color: var(--color-text);"
 					>TinyStories</strong
 				>
-				— a dataset of children's stories written to use only a small vocabulary, the words a young
-				child would understand. That constraint is the whole trick: with a small world of words, a small
-				model can actually master the language instead of drowning in it. The slice is about 2.6&nbsp;MB
-				of plain text. Here is its very first story, exactly as Quill will see it:
+				— a dataset of children's stories written to use only a small vocabulary, the words a young child
+				would understand. That constraint is the whole trick: with a small world of words, a small model
+				can actually master the language instead of drowning in it. The slice is about 2.6&nbsp;MB of
+				plain text. Here is its very first story, exactly as Quill will see it:
 			</p>
 
 			<CodeBlock
@@ -273,10 +272,10 @@ a button on her shirt.`}
 			<Callout type="important" title="The randomness is the point">
 				Training on random-legal games is a deliberate experimental choice, borrowed from a famous
 				interpretability study on the game Othello. Because the games contain <em>zero strategy</em
-				>, anything Rook learns beyond noise must be about the <em>rules and the board itself</em> —
-				which pieces exist, where they stand, what they may legally do. In Part 6 we'll open Rook's head
-				and look for that board directly. If we'd trained on strong human games, we could never separate
-				"understands the position" from "memorized what strong players do." Purity now, payoff later.
+				>, anything Rook learns beyond noise must be about the <em>rules and the board itself</em> — which
+				pieces exist, where they stand, what they may legally do. In Part 6 we'll open Rook's head and
+				look for that board directly. If we'd trained on strong human games, we could never separate "understands
+				the position" from "memorized what strong players do." Purity now, payoff later.
 			</Callout>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -306,13 +305,13 @@ a button on her shirt.`}
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				For perspective: frontier models pretrain on <em>trillions</em> of tokens scraped from the
-				web, books, and code — a pile roughly ten million times larger than Quill's. The pipeline you
-				are about to walk through is the same one those teams run; only the exponents change. And at
-				every scale, the first law of machine learning holds: <strong
-					style="color: var(--color-text);">the model becomes its data</strong
-				>. Quill will write like TinyStories because that's all it has ever read. Rook will play
-				legal-but-aimless chess because that's all it has ever seen. Remember this when a later
-				chapter asks you to fix a model's behavior — the first place to look is always the data.
+				web, books, and code — a pile roughly ten million times larger than Quill's. The pipeline
+				you are about to walk through is the same one those teams run; only the exponents change.
+				And at every scale, the first law of machine learning holds:
+				<strong style="color: var(--color-text);">the model becomes its data</strong>. Quill will
+				write like TinyStories because that's all it has ever read. Rook will play legal-but-aimless
+				chess because that's all it has ever seen. Remember this when a later chapter asks you to
+				fix a model's behavior — the first place to look is always the data.
 			</p>
 
 			<VibeBox
@@ -400,9 +399,9 @@ a button on her shirt.`}
 				fingerprint documents by the sets of short word-chunks they contain and drop pairs whose
 				fingerprints overlap too much — near-copies caught without comparing every document to every
 				other. The same machinery has a second job you'll meet in Part 5:
-				<strong style="color: var(--color-text);">decontamination</strong> — making sure the test
-				questions you'll grade the model on aren't sitting in its training data. A model that has
-				already read the exam is not "smart," and a benchmark it has memorized measures nothing.
+				<strong style="color: var(--color-text);">decontamination</strong> — making sure the test questions
+				you'll grade the model on aren't sitting in its training data. A model that has already read the
+				exam is not "smart," and a benchmark it has memorized measures nothing.
 			</p>
 
 			<Callout type="warning" title="A debt Part 4 will collect">

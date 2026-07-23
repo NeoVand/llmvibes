@@ -3,10 +3,27 @@
 // worker-engine.ts). Training was measured FASTER in a Worker than on the main
 // thread (spikes/m0/RESULTS.md), with the UI staying at 60fps.
 
-import { init, defaultDevice, numpy as np, nn, jit, valueAndGrad, tree, blockUntilReady } from '@jax-js/jax';
+import {
+	init,
+	defaultDevice,
+	numpy as np,
+	nn,
+	jit,
+	valueAndGrad,
+	tree,
+	blockUntilReady
+} from '@jax-js/jax';
 import { adam, applyUpdates } from '@jax-js/optax';
 import type { ModelConfig, PerTokenInfo, TrainStepMetrics } from './engine';
-import { initParams, lossFn, forwardLogprobs, paramCount, flattenParams, loadParams, disposeTree } from './model';
+import {
+	initParams,
+	lossFn,
+	forwardLogprobs,
+	paramCount,
+	flattenParams,
+	loadParams,
+	disposeTree
+} from './model';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -253,7 +270,9 @@ self.onmessage = async (e: MessageEvent<RpcRequest>) => {
 	try {
 		const handler = handlers[req.op];
 		if (!handler) throw new Error(`unknown op: ${req.op}`);
-		const result = (await handler(req)) as Record<string, unknown> & { __transfer?: Transferable[] };
+		const result = (await handler(req)) as Record<string, unknown> & {
+			__transfer?: Transferable[];
+		};
 		const transfer = result?.__transfer;
 		if (transfer) delete result.__transfer;
 		post({ id: req.id, ok: true, result }, transfer);

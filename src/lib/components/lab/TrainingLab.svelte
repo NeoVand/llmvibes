@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import { Play, Square, Sparkles, Cpu, Loader2 } from 'lucide-svelte';
-	import { detectCapability, type ModelConfig, type TrainStepMetrics, type PerTokenInfo } from '$lib/llm/engine';
+	import {
+		detectCapability,
+		type ModelConfig,
+		type TrainStepMetrics,
+		type PerTokenInfo
+	} from '$lib/llm/engine';
 	import { WorkerEngine } from '$lib/llm/worker-engine';
 	import { BpeTokenizer, type BpeVocab } from '$lib/llm/bpe';
 	import { base } from '$app/paths';
@@ -192,9 +197,15 @@
 	});
 </script>
 
-<div class="lab my-6 rounded-xl border p-5" style="border-color: var(--color-border); background: var(--color-surface);">
+<div
+	class="lab my-6 rounded-xl border p-5"
+	style="border-color: var(--color-border); background: var(--color-surface);"
+>
 	<div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-		<div class="flex items-center gap-2 text-sm font-bold tracking-wide uppercase" style="color: var(--color-important); font-family: var(--font-heading); letter-spacing: 0.08em;">
+		<div
+			class="flex items-center gap-2 text-sm font-bold tracking-wide uppercase"
+			style="color: var(--color-important); font-family: var(--font-heading); letter-spacing: 0.08em;"
+		>
 			<Cpu size={16} strokeWidth={2.5} />
 			<span>{title}</span>
 		</div>
@@ -213,7 +224,8 @@
 			<Play size={14} /> Load {bird === 'quill' ? 'Quill' : 'Rook'}'s lab
 		</button>
 		<p class="mt-2 text-xs" style="color: var(--color-text-muted);">
-			Downloads the corpus (~{bird === 'quill' ? '1' : '1'} MB) and initializes a fresh model on your GPU.
+			Downloads the corpus (~{bird === 'quill' ? '1' : '1'} MB) and initializes a fresh model on your
+			GPU.
 		</p>
 	{:else if phase === 'loading'}
 		<div class="flex items-center gap-2 text-sm" style="color: var(--color-text-secondary);">
@@ -241,45 +253,98 @@
 			<label class="flex items-center gap-2 text-xs" style="color: var(--color-text-muted);">
 				temp
 				<input type="range" min="0.1" max="1.5" step="0.1" bind:value={temperature} class="w-24" />
-				<span style="color: var(--color-text-secondary); font-weight: 600; min-width: 2ch;">{temperature.toFixed(1)}</span>
+				<span style="color: var(--color-text-secondary); font-weight: 600; min-width: 2ch;"
+					>{temperature.toFixed(1)}</span
+				>
 			</label>
 		</div>
 
 		<div class="rounded-lg border p-3" style="border-color: var(--color-border-light);">
-			<div class="mb-1 flex items-baseline justify-between text-xs" style="color: var(--color-text-muted);">
+			<div
+				class="mb-1 flex items-baseline justify-between text-xs"
+				style="color: var(--color-text-muted);"
+			>
 				<span>loss (cross-entropy)</span>
 				{#if lastMetrics}
-					<span style="color: var(--color-text-secondary); font-weight: 600;">{lastMetrics.loss.toFixed(3)}</span>
+					<span style="color: var(--color-text-secondary); font-weight: 600;"
+						>{lastMetrics.loss.toFixed(3)}</span
+					>
 				{/if}
 			</div>
-			<svg viewBox="0 0 {W} {H}" class="h-28 w-full" preserveAspectRatio="none" role="img" aria-label="training loss curve">
+			<svg
+				viewBox="0 0 {W} {H}"
+				class="h-28 w-full"
+				preserveAspectRatio="none"
+				role="img"
+				aria-label="training loss curve"
+			>
 				{#if lnVy !== null}
-					<line x1="0" y1={lnVy} x2={W} y2={lnVy} stroke="var(--color-text-muted)" stroke-dasharray="4 4" stroke-width="1" opacity="0.5" />
-					<text x="4" y={lnVy - 4} font-size="10" fill="var(--color-text-muted)">ln(V) = {lnV.toFixed(2)} — a uniform guess</text>
+					<line
+						x1="0"
+						y1={lnVy}
+						x2={W}
+						y2={lnVy}
+						stroke="var(--color-text-muted)"
+						stroke-dasharray="4 4"
+						stroke-width="1"
+						opacity="0.5"
+					/>
+					<text x="4" y={lnVy - 4} font-size="10" fill="var(--color-text-muted)"
+						>ln(V) = {lnV.toFixed(2)} — a uniform guess</text
+					>
 				{/if}
 				{#if path}
 					<path d={path} fill="none" stroke="var(--color-important)" stroke-width="2" />
 				{:else}
-					<text x={W / 2} y={H / 2} text-anchor="middle" font-size="12" fill="var(--color-text-muted)">press Train — the curve draws itself</text>
+					<text
+						x={W / 2}
+						y={H / 2}
+						text-anchor="middle"
+						font-size="12"
+						fill="var(--color-text-muted)">press Train — the curve draws itself</text
+					>
 				{/if}
 			</svg>
 		</div>
 
 		{#if bird === 'rook' && legalRate !== null}
-			<div class="mt-3 flex items-center gap-3 rounded-lg border p-3" style="border-color: var(--color-border-light);">
+			<div
+				class="mt-3 flex items-center gap-3 rounded-lg border p-3"
+				style="border-color: var(--color-border-light);"
+			>
 				<span class="text-xs" style="color: var(--color-text-muted);">legal-move rate</span>
-				<div class="h-2 flex-1 overflow-hidden rounded-full" style="background: var(--color-surface-hover);">
-					<div class="h-full rounded-full" style="width: {(legalRate * 100).toFixed(0)}%; background: var(--color-important); transition: width 400ms ease;"></div>
+				<div
+					class="h-2 flex-1 overflow-hidden rounded-full"
+					style="background: var(--color-surface-hover);"
+				>
+					<div
+						class="h-full rounded-full"
+						style="width: {(legalRate * 100).toFixed(
+							0
+						)}%; background: var(--color-important); transition: width 400ms ease;"
+					></div>
 				</div>
-				<span class="text-xs font-semibold" style="color: var(--color-text);">{(legalRate * 100).toFixed(0)}%</span>
+				<span class="text-xs font-semibold" style="color: var(--color-text);"
+					>{(legalRate * 100).toFixed(0)}%</span
+				>
 			</div>
 		{/if}
 
 		{#if samples.length > 0}
 			<div class="mt-3 space-y-2">
 				{#each samples as s, i (i)}
-					<div class="rounded-lg border p-3 text-[13px] leading-relaxed" style="border-color: var(--color-border-light); color: var(--color-text); font-family: {bird === 'rook' ? 'var(--font-mono)' : 'inherit'};">
-						<span class="mr-1 rounded px-1 text-[10px]" style="background: var(--color-surface-hover); color: var(--color-text-muted);">T={s.temp.toFixed(1)}</span>
+					<div
+						class="rounded-lg border p-3 text-[13px] leading-relaxed"
+						style="border-color: var(--color-border-light); color: var(--color-text); font-family: {bird ===
+						'rook'
+							? 'var(--font-mono)'
+							: 'inherit'};"
+					>
+						<span
+							class="mr-1 rounded px-1 text-[10px]"
+							style="background: var(--color-surface-hover); color: var(--color-text-muted);"
+							>T={s.temp.toFixed(1)}</span
+						>
 						{s.text}
 					</div>
 				{/each}

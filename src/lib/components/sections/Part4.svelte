@@ -63,9 +63,8 @@
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				<strong style="color: var(--color-text);">Softmax</strong> fixes that in one move:
-				exponentiate every logit (now everything is positive), then divide by the total (now
-				everything sums to 1).
+				<strong style="color: var(--color-text);">Softmax</strong> fixes that in one move: exponentiate
+				every logit (now everything is positive), then divide by the total (now everything sums to 1).
 			</p>
 
 			<CodeBlock
@@ -104,8 +103,8 @@ the biggest logit becomes the biggest probability.`}
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				<Code code="loss = -log p(actual next token)" /> — take whatever probability the model
-				assigned to the truth, and take its negative log. Everything else it predicted is ignored.
+				<Code code="loss = -log p(actual next token)" /> — take whatever probability the model assigned
+				to the truth, and take its negative log. Everything else it predicted is ignored.
 			</p>
 
 			<CodeBlock
@@ -119,11 +118,11 @@ p(truth) → 0       →  loss → ∞      confident and wrong — punished har
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				That last line is why the log is there. A loss of <Code code="1 - p" /> would treat "gave
-				the truth 1% chance" and "gave it 0.0001%" as nearly the same mistake. The log makes
-				confident wrongness catastrophically expensive, so the model learns to hedge exactly as much
-				as its actual uncertainty deserves. During training, this per-token loss is averaged over
-				every position in every sequence of the batch — thousands of graded predictions per step.
+				That last line is why the log is there. A loss of <Code code="1 - p" /> would treat "gave the
+				truth 1% chance" and "gave it 0.0001%" as nearly the same mistake. The log makes confident wrongness
+				catastrophically expensive, so the model learns to hedge exactly as much as its actual uncertainty
+				deserves. During training, this per-token loss is averaged over every position in every sequence
+				of the batch — thousands of graded predictions per step.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -157,8 +156,8 @@ Rook:   vocab = 1931  →  starting loss = ln(1931) = 7.57`}
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Loss is in nats — a logarithmic unit nobody has intuitions for. Undo the log and you get
 				<strong style="color: var(--color-text);">perplexity</strong>:
-				<Code code="perplexity = e^loss" />. Read it as: <em>the model is effectively choosing
-				uniformly among this many tokens</em>.
+				<Code code="perplexity = e^loss" />. Read it as:
+				<em>the model is effectively choosing uniformly among this many tokens</em>.
 			</p>
 
 			<CodeBlock
@@ -173,8 +172,8 @@ loss = 1.00  →  perplexity ≈ 2.7   nearly a two-way choice`}
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				This is the number the whole course pushes down. Pretraining (Part 5) attacks it directly;
 				every later stage — instruction tuning, preference training, RL — reshapes <em>which</em>
-				tokens the model bets on while trusting this machinery underneath. When frontier labs report
-				a model's loss, this exact quantity, computed this exact way, is what they mean.
+				tokens the model bets on while trusting this machinery underneath. When frontier labs report a
+				model's loss, this exact quantity, computed this exact way, is what they mean.
 			</p>
 
 			<VibeBox
@@ -199,10 +198,10 @@ loss = 1.00  →  perplexity ≈ 2.7   nearly a two-way choice`}
 			</p>
 
 			<Callout type="note">
-				<strong>The Problem:</strong> The loss says "you were surprised by 4.7 nats." Quill has
-				millions of weights, and every single one of them contributed something to that prediction.
-				Which weights were at fault, and by how much? Guessing weight-by-weight would take millions
-				of forward passes per update. Backprop does it in one.
+				<strong>The Problem:</strong> The loss says "you were surprised by 4.7 nats." Quill has millions
+				of weights, and every single one of them contributed something to that prediction. Which weights
+				were at fault, and by how much? Guessing weight-by-weight would take millions of forward passes
+				per update. Backprop does it in one.
 			</Callout>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -210,12 +209,13 @@ loss = 1.00  →  perplexity ≈ 2.7   nearly a two-way choice`}
 			</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				For each weight, ask: <em>if I nudged this weight up a tiny bit, would the loss go up or
-				down, and how steeply?</em> That per-weight answer is the
-				<strong style="color: var(--color-text);">gradient</strong> — how much each weight moved the
-				loss. A positive gradient means "this weight is making things worse; lower it." A gradient
-				near zero means "this weight is innocent this round." Once you have it, the update rule is
-				one line:
+				For each weight, ask: <em
+					>if I nudged this weight up a tiny bit, would the loss go up or down, and how steeply?</em
+				>
+				That per-weight answer is the
+				<strong style="color: var(--color-text);">gradient</strong> — how much each weight moved the loss.
+				A positive gradient means "this weight is making things worse; lower it." A gradient near zero
+				means "this weight is innocent this round." Once you have it, the update rule is one line:
 			</p>
 
 			<CodeBlock
@@ -240,19 +240,20 @@ The learning rate decides how big "a little way" is.`}
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				So the forward pass builds a graph of everything it computed, and the backward pass walks
-				that <em>same graph</em> in reverse: start at the loss with a gradient of 1, and at each
-				operation, multiply by its local derivative and hand the result upstream. A weight deep in
-				layer one influenced the loss through every path that passes through it — attention heads,
-				MLPs, the residual stream — and the backward sweep sums the blame over all of those paths
-				automatically, in a single pass that costs roughly two forward passes.
+				that <em>same graph</em> in reverse: start at the loss with a gradient of 1, and at each operation,
+				multiply by its local derivative and hand the result upstream. A weight deep in layer one influenced
+				the loss through every path that passes through it — attention heads, MLPs, the residual stream
+				— and the backward sweep sums the blame over all of those paths automatically, in a single pass
+				that costs roughly two forward passes.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				That's credit assignment: the loss doesn't shout at the model as a whole, it whispers a
 				precise, individual instruction to every weight. We won't derive the calculus here — what
-				matters for everything downstream is the shape of the idea: <em>gradients flow backward
-				through the exact structure that predictions flowed forward through, splitting and merging
-				where the computation split and merged.</em>
+				matters for everything downstream is the shape of the idea: <em
+					>gradients flow backward through the exact structure that predictions flowed forward
+					through, splitting and merging where the computation split and merged.</em
+				>
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -281,9 +282,9 @@ The learning rate decides how big "a little way" is.`}
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				That's the entire loop. Not a sketch of it — the actual loop. When you press play in
-				Part 5, a Web Worker runs exactly these five lines against your GPU, thousands of times.
-				GPT-4-class training is this loop with more zeros attached.
+				That's the entire loop. Not a sketch of it — the actual loop. When you press play in Part 5,
+				a Web Worker runs exactly these five lines against your GPU, thousands of times. GPT-4-class
+				training is this loop with more zeros attached.
 			</p>
 		</div>
 
@@ -301,15 +302,15 @@ The learning rate decides how big "a little way" is.`}
 			</p>
 
 			<Callout type="note">
-				<strong>The Problem:</strong> Each gradient is computed from one small batch — a tiny,
-				noisy sample of the corpus. Follow it literally and you zigzag. Worse, different weights
-				need wildly different step sizes: the embedding row for a rare token gets a real gradient
-				once in a thousand batches, while attention weights get hammered every step.
+				<strong>The Problem:</strong> Each gradient is computed from one small batch — a tiny, noisy sample
+				of the corpus. Follow it literally and you zigzag. Worse, different weights need wildly different
+				step sizes: the embedding row for a rare token gets a real gradient once in a thousand batches,
+				while attention weights get hammered every step.
 			</Callout>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				<strong style="color: var(--color-text);">AdamW</strong> — the default optimizer of the
-				entire LLM era — answers with three ingredients:
+				<strong style="color: var(--color-text);">AdamW</strong> — the default optimizer of the entire
+				LLM era — answers with three ingredients:
 			</p>
 
 			<div class="mb-6 grid gap-3 sm:grid-cols-3">
@@ -327,9 +328,9 @@ The learning rate decides how big "a little way" is.`}
 						Per-weight scaling
 					</p>
 					<p class="text-xs" style="color: var(--color-text-secondary);">
-						Also track each weight's average squared gradient, and divide by its square root. Weights
-						with chronically large gradients get small careful steps; quiet, rarely-updated weights
-						get bigger ones.
+						Also track each weight's average squared gradient, and divide by its square root.
+						Weights with chronically large gradients get small careful steps; quiet, rarely-updated
+						weights get bigger ones.
 					</p>
 				</div>
 				<div class="rounded-lg p-4" style="background: var(--color-bg-secondary);">
@@ -356,9 +357,9 @@ w = w - lr * wd * w            # decoupled decay — the W in AdamW
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Note the cost: <Code code="m" /> and <Code code="v" /> are two extra numbers <em>per
-				weight</em> — the optimizer's memory is twice the model's. Harmless at Quill's size;
-				at flagship size it's the reason LoRA exists, which is exactly how Part 7 will use it.
+				Note the cost: <Code code="m" /> and <Code code="v" /> are two extra numbers
+				<em>per weight</em> — the optimizer's memory is twice the model's. Harmless at Quill's size; at
+				flagship size it's the reason LoRA exists, which is exactly how Part 7 will use it.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -366,19 +367,18 @@ w = w - lr * wd * w            # decoupled decay — the W in AdamW
 			</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				<strong style="color: var(--color-text);">Warmup:</strong> at step zero the weights are
-				random, so the first gradients point somewhere confidently wrong. Taking full-size steps on
-				them can distort the model before learning starts. The fix is to begin with a learning rate
-				near zero and ramp it up over the first few hundred steps — let the model earn its step
-				size.
+				<strong style="color: var(--color-text);">Warmup:</strong> at step zero the weights are random,
+				so the first gradients point somewhere confidently wrong. Taking full-size steps on them can distort
+				the model before learning starts. The fix is to begin with a learning rate near zero and ramp
+				it up over the first few hundred steps — let the model earn its step size.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				<strong style="color: var(--color-text);">Cosine decay:</strong> after warmup, glide the
-				learning rate back down along a cosine curve. Big steps early, when everything is wrong and
-				any direction helps; small steps late, so the model can settle into a minimum instead of
-				orbiting it. (You'll also see warm-stable-decay schedules in modern runs — hold the rate
-				flat, then decay at the end — handy when you don't know the run length in advance.)
+				<strong style="color: var(--color-text);">Cosine decay:</strong> after warmup, glide the learning
+				rate back down along a cosine curve. Big steps early, when everything is wrong and any direction
+				helps; small steps late, so the model can settle into a minimum instead of orbiting it. (You'll
+				also see warm-stable-decay schedules in modern runs — hold the rate flat, then decay at the end
+				— handy when you don't know the run length in advance.)
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -394,9 +394,9 @@ w = w - lr * wd * w            # decoupled decay — the W in AdamW
 			</p>
 
 			<Callout type="tip" title="This is not background material">
-				AdamW with warmup, cosine decay, and clipping is <em>the</em> recipe — it's what trains
-				Quill and Rook when you press play in Part 5, and, at different constants, what trained the
-				frontier model you talked to this morning.
+				AdamW with warmup, cosine decay, and clipping is <em>the</em> recipe — it's what trains Quill
+				and Rook when you press play in Part 5, and, at different constants, what trained the frontier
+				model you talked to this morning.
 			</Callout>
 		</div>
 
@@ -414,15 +414,15 @@ w = w - lr * wd * w            # decoupled decay — the W in AdamW
 			</p>
 
 			<Callout type="note">
-				<strong>The Problem:</strong> A student who aces the exact problems from the homework might
-				understand algebra — or might have memorized the answer key. You can't tell from the
-				homework score. You need problems they've never seen.
+				<strong>The Problem:</strong> A student who aces the exact problems from the homework might understand
+				algebra — or might have memorized the answer key. You can't tell from the homework score. You
+				need problems they've never seen.
 			</Callout>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The fix is old and unglamorous: before training, carve off a slice of the corpus — the
-				<strong style="color: var(--color-text);">validation set</strong> — and never, ever train
-				on it. Now you have two loss numbers:
+				<strong style="color: var(--color-text);">validation set</strong> — and never, ever train on it.
+				Now you have two loss numbers:
 			</p>
 
 			<div class="mb-6 grid gap-3 sm:grid-cols-2">
@@ -449,8 +449,9 @@ w = w - lr * wd * w            # decoupled decay — the W in AdamW
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Read them together. Both falling: the model is learning things that transfer. Train falling
 				while val flattens or rises: the model has started spending its capacity on memorizing
-				specifics that don't transfer — <strong style="color: var(--color-text);">overfitting</strong>.
-				The gap between the two curves is memorization made visible.
+				specifics that don't transfer — <strong style="color: var(--color-text);"
+					>overfitting</strong
+				>. The gap between the two curves is memorization made visible.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -477,27 +478,27 @@ w = w - lr * wd * w            # decoupled decay — the W in AdamW
 			</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				This is the payoff of the deduplication you did back in Part 1, and it lands twice. First:
-				a story that appears a hundred times in the corpus is worth memorizing even for a model
+				This is the payoff of the deduplication you did back in Part 1, and it lands twice. First: a
+				story that appears a hundred times in the corpus is worth memorizing even for a model
 				honestly minimizing loss — duplication turns memorization into the <em>correct</em>
-				strategy, at the expense of everything else. Second, and sneakier: if a duplicate straddles
-				the split — the same story in both train and val — then val loss on it is flattered by
-				memorization, and your honesty check quietly lies to you.
+				strategy, at the expense of everything else. Second, and sneakier: if a duplicate straddles the
+				split — the same story in both train and val — then val loss on it is flattered by memorization,
+				and your honesty check quietly lies to you.
 			</p>
 
 			<Callout type="warning" title="A contaminated val set fails silently">
-				Nothing crashes. The curve just looks better than reality. This exact failure, scaled up,
-				is benchmark contamination — a headline problem for frontier models that Part 5 returns to
-				when we talk evals. Web-scale corpora are full of near-duplicates, which is why serious labs
+				Nothing crashes. The curve just looks better than reality. This exact failure, scaled up, is
+				benchmark contamination — a headline problem for frontier models that Part 5 returns to when
+				we talk evals. Web-scale corpora are full of near-duplicates, which is why serious labs
 				treat dedup and decontamination as core infrastructure, not cleanup.
 			</Callout>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The classical remedies: stop when val loss stops improving, get more data, or add
 				regularization pressure like weight decay. Modern LLM pretraining mostly picks door number
-				two — the corpus is so large the model sees most data about once, and overfitting recedes
-				as a concern. But it never disappears: every fine-tune in Acts II and III runs on small
-				data, where these curves become your primary instrument again.
+				two — the corpus is so large the model sees most data about once, and overfitting recedes as
+				a concern. But it never disappears: every fine-tune in Acts II and III runs on small data,
+				where these curves become your primary instrument again.
 			</p>
 
 			<VibeBox
@@ -533,11 +534,12 @@ w = w - lr * wd * w            # decoupled decay — the W in AdamW
 			</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Take a tiny transformer — hatchling-sized — and teach it modular arithmetic:
-				problems like <Code code="a + b mod 97" />, written as token sequences. There are only
-				97&times;97 possible problems, so you can enumerate the entire universe of them. Show the
-				model a random slice — say half the table — as training data, and hold out the rest as
-				validation. Then train with AdamW and weight decay, and just... don't stop.
+				Take a tiny transformer — hatchling-sized — and teach it modular arithmetic: problems like <Code
+					code="a + b mod 97"
+				/>, written as token sequences. There are only 97&times;97 possible problems, so you can
+				enumerate the entire universe of them. Show the model a random slice — say half the table —
+				as training data, and hold out the rest as validation. Then train with AdamW and weight
+				decay, and just... don't stop.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -578,10 +580,9 @@ w = w - lr * wd * w            # decoupled decay — the W in AdamW
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Follow-up interpretability work found the algorithm itself, and it's beautiful: the model
-				arranges the 97 number embeddings <em>into a circle</em> and does modular addition as
-				rotation around it — trigonometry it was never taught, discovered as the cheapest way to be
-				right. Structure like that, found by opening up a trained model, is exactly what Part 6 does
-				to Rook.
+				arranges the 97 number embeddings <em>into a circle</em> and does modular addition as rotation
+				around it — trigonometry it was never taught, discovered as the cheapest way to be right. Structure
+				like that, found by opening up a trained model, is exactly what Part 6 does to Rook.
 			</p>
 
 			<Callout type="note" title="The recorded run">
@@ -594,10 +595,10 @@ w = w - lr * wd * w            # decoupled decay — the W in AdamW
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Why end the chapter here? Because grokking is the honest asterisk on everything above. Loss
 				curves are instruments, not oracles: a flat val curve tells you the model hasn't generalized
-				<em>yet</em> — it cannot tell you what's assembling under the surface. Inside networks,
-				understanding is sometimes a phase change, not a slope. Hold that thought through the next
-				chapter, where you'll watch abilities switch on mid-training — and through Part 6, where we
-				go looking for the circuits directly.
+				<em>yet</em> — it cannot tell you what's assembling under the surface. Inside networks, understanding
+				is sometimes a phase change, not a slope. Hold that thought through the next chapter, where you'll
+				watch abilities switch on mid-training — and through Part 6, where we go looking for the circuits
+				directly.
 			</p>
 
 			<VibeBox

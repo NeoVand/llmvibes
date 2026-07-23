@@ -1,33 +1,67 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LLMVibes M0 spike — jax-js benchmarks</title>
-    <style>
-      body { background: #0d1117; color: #c9d1d9; font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; margin: 0; padding: 1.5rem; }
-      h1 { font-size: 1rem; color: #58a6ff; }
-      button { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; border-radius: 6px; padding: 0.4rem 0.9rem; margin-right: 0.5rem; cursor: pointer; font: inherit; }
-      button:hover { border-color: #58a6ff; }
-      #log { white-space: pre-wrap; margin-top: 1rem; }
-      .ok { color: #3fb950; }
-      .bad { color: #f85149; }
-      .hdr { color: #d29922; font-weight: bold; }
-    </style>
-  </head>
-  <body>
-    <h1>LLMVibes M0 spike — jax-js go/no-go benchmarks</h1>
-    <div>
-      <button id="run-all">Run selected</button>
-      <button id="run-env">Env</button>
-      <button id="run-matmul">Matmul</button>
-      <button id="run-ops">Op coverage</button>
-      <button id="run-dotgrad">Dot-grad</button>
-      <button id="run-train">Train step</button>
-      <button id="run-lora">LoRA</button>
-      <button id="run-worker">Worker</button>
-    </div>
-    <div id="log"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>LLMVibes M0 spike — jax-js benchmarks</title>
+		<style>
+			body {
+				background: #0d1117;
+				color: #c9d1d9;
+				font:
+					13px/1.5 ui-monospace,
+					SFMono-Regular,
+					Menlo,
+					monospace;
+				margin: 0;
+				padding: 1.5rem;
+			}
+			h1 {
+				font-size: 1rem;
+				color: #58a6ff;
+			}
+			button {
+				background: #21262d;
+				color: #c9d1d9;
+				border: 1px solid #30363d;
+				border-radius: 6px;
+				padding: 0.4rem 0.9rem;
+				margin-right: 0.5rem;
+				cursor: pointer;
+				font: inherit;
+			}
+			button:hover {
+				border-color: #58a6ff;
+			}
+			#log {
+				white-space: pre-wrap;
+				margin-top: 1rem;
+			}
+			.ok {
+				color: #3fb950;
+			}
+			.bad {
+				color: #f85149;
+			}
+			.hdr {
+				color: #d29922;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>LLMVibes M0 spike — jax-js go/no-go benchmarks</h1>
+		<div>
+			<button id="run-all">Run selected</button>
+			<button id="run-env">Env</button>
+			<button id="run-matmul">Matmul</button>
+			<button id="run-ops">Op coverage</button>
+			<button id="run-dotgrad">Dot-grad</button>
+			<button id="run-train">Train step</button>
+			<button id="run-lora">LoRA</button>
+			<button id="run-worker">Worker</button>
+		</div>
+		<div id="log"></div>
+		<script type="module" src="/src/main.ts"></script>
+	</body>
 </html>

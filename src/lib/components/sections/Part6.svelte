@@ -64,8 +64,7 @@
 				<strong>The Problem:</strong> "Does the model represent the board?" sounds philosophical.
 				Make it operational: after the model reads <Code code="e2e4 e7e5 g1f3" />, its residual
 				stream (Part 3) holds a vector at every position. If the board is in there, it should be
-				<em>extractable</em> from those vectors. Extraction is an experiment, and experiments have
-				answers.
+				<em>extractable</em> from those vectors. Extraction is an experiment, and experiments have answers.
 			</Callout>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -73,11 +72,11 @@
 			</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				A <strong style="color: var(--color-text);">linear probe</strong> is a single linear layer —
-				a multiply-and-add, the least powerful classifier worth naming — trained to predict some
-				fact from a frozen activation vector. For chess: freeze the trained model, run games
-				through it, collect the residual-stream vector after each move token, and train one tiny
-				probe per square of the board to answer "what's on this square right now?"
+				A <strong style="color: var(--color-text);">linear probe</strong> is a single linear layer — a
+				multiply-and-add, the least powerful classifier worth naming — trained to predict some fact from
+				a frozen activation vector. For chess: freeze the trained model, run games through it, collect
+				the residual-stream vector after each move token, and train one tiny probe per square of the board
+				to answer "what's on this square right now?"
 			</p>
 
 			<CodeBlock
@@ -93,10 +92,11 @@
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				The probe's weakness is the whole point. A deep probe could compute the board <em>itself</em>
-				from almost any input, telling you nothing. A linear probe can only succeed if the
-				information is already sitting in the activations in essentially explicit, linearly
-				readable form. A probe is a stethoscope, not a surgeon.
+				The probe's weakness is the whole point. A deep probe could compute the board <em>itself</em
+				>
+				from almost any input, telling you nothing. A linear probe can only succeed if the information
+				is already sitting in the activations in essentially explicit, linearly readable form. A probe
+				is a stethoscope, not a surgeon.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -111,14 +111,13 @@
 				it computes, move by move, because tracking the board is the effective way to predict legal
 				continuations. Adam Karvonen (2024) then showed the same for real chess: a GPT trained on
 				raw game text, probes decoding the position of every piece with high accuracy — and, as a
-				bonus, probes could read off an estimate of the <em>players' skill level</em> from the
-				activations. The model wasn't just tracking the board; it was tracking who was at it.
+				bonus, probes could read off an estimate of the <em>players' skill level</em> from the activations.
+				The model wasn't just tracking the board; it was tracking who was at it.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				The control experiment matters: run the same probes on a randomly initialized,
-				never-trained copy of the model and they fail. Whatever the probes are reading, training
-				put it there.
+				The control experiment matters: run the same probes on a randomly initialized, never-trained
+				copy of the model and they fail. Whatever the probes are reading, training put it there.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -126,16 +125,16 @@
 			</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Early Othello-GPT probes only worked well if they were <em>nonlinear</em> — a puzzle,
-				since it suggested the board wasn't stored plainly. Neel Nanda's follow-up dissolved the
-				puzzle with a reframe: probe not for "black piece / white piece" but for
-				<strong style="color: var(--color-text);">mine / theirs</strong> — relative to whoever
-				moves next — and suddenly plain linear probes work excellently. The model doesn't store an
-				observer's board; it stores a <em>player's</em> board, re-encoded every ply from the
-				current mover's perspective. Which makes sense: "my pieces can move, theirs block me" is
-				the frame next-move prediction actually needs. Lesson for every interpretability attempt
-				you'll ever make: when a probe fails, the concept may be there in a coordinate system you
-				didn't think to try. The model owes you nothing about <em>your</em> ontology.
+				Early Othello-GPT probes only worked well if they were <em>nonlinear</em> — a puzzle, since
+				it suggested the board wasn't stored plainly. Neel Nanda's follow-up dissolved the puzzle
+				with a reframe: probe not for "black piece / white piece" but for
+				<strong style="color: var(--color-text);">mine / theirs</strong> — relative to whoever moves
+				next — and suddenly plain linear probes work excellently. The model doesn't store an
+				observer's board; it stores a <em>player's</em> board, re-encoded every ply from the current
+				mover's perspective. Which makes sense: "my pieces can move, theirs block me" is the frame
+				next-move prediction actually needs. Lesson for every interpretability attempt you'll ever
+				make: when a probe fails, the concept may be there in a coordinate system you didn't think
+				to try. The model owes you nothing about <em>your</em> ontology.
 			</p>
 
 			<Callout type="note" title="Rook's turn comes later">
@@ -161,10 +160,9 @@
 
 			<Callout type="warning">
 				<strong>The Problem:</strong> A probe result is a correlation. Maybe the model
-				<em>uses</em> its internal board to choose moves — or maybe the board is a passive
-				by-product, computed and ignored, while moves come from somewhere else entirely. A car's
-				windshield reflects the road without steering the car. To tell representation from
-				decoration, you need an intervention.
+				<em>uses</em> its internal board to choose moves — or maybe the board is a passive by-product,
+				computed and ignored, while moves come from somewhere else entirely. A car's windshield reflects
+				the road without steering the car. To tell representation from decoration, you need an intervention.
 			</Callout>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -173,11 +171,11 @@
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The probe gives you more than a readout — it gives you a <em>direction</em>: the axis in
-				activation space along which "this square holds my knight" varies. Activation patching
-				uses that direction as a scalpel. Mid-forward-pass, capture the residual-stream vector,
-				push it along the probe direction until the probe reports the belief you chose — knight
-				gone, or moved elsewhere — then let the rest of the forward pass continue, computing on the
-				edited belief.
+				activation space along which "this square holds my knight" varies. Activation patching uses
+				that direction as a scalpel. Mid-forward-pass, capture the residual-stream vector, push it
+				along the probe direction until the probe reports the belief you chose — knight gone, or
+				moved elsewhere — then let the rest of the forward pass continue, computing on the edited
+				belief.
 			</p>
 
 			<MermaidDiagram
@@ -195,8 +193,8 @@
 				<em>edited belief</em>? It did. In Othello-GPT, patching the board representation made the
 				model's legal-move predictions rearrange to fit the fictional board — including for board
 				states that never occur in real games. Karvonen's chess models behave the same way: erase
-				the model's belief in a piece, and its move distribution updates the way a player's would
-				if the piece genuinely weren't there.
+				the model's belief in a piece, and its move distribution updates the way a player's would if
+				the piece genuinely weren't there.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -235,19 +233,18 @@
 				the square behind it is empty," and on and on. Each is shallow. But superimpose enough of
 				them and a probe could reconstruct the full board from their combined traces —
 				<em>without the model containing anything you'd honestly call a board object</em>.
-				Reconstructability is a fact about what's recoverable from the activations; "world model"
-				is a claim about how the computation is organized. The probe can't tell them apart.
+				Reconstructability is a fact about what's recoverable from the activations; "world model" is
+				a claim about how the computation is organized. The probe can't tell them apart.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				This isn't hypothetical pedantry. A 2024 circuits-level reanalysis of Othello-GPT argued
-				for exactly this reading — publishing under the phrase
+				This isn't hypothetical pedantry. A 2024 circuits-level reanalysis of Othello-GPT argued for
+				exactly this reading — publishing under the phrase
 				<strong style="color: var(--color-text);">"bag of heuristics"</strong>: the board-relevant
-				computation decomposes into many small, redundant, special-case rules rather than one
-				clean unified algorithm. Patching survives this critique, note — editing the activations
-				would still shift behavior, because the heuristics' outputs live in those same
-				activations. The debate is about organization, not about whether the probes and patches
-				work.
+				computation decomposes into many small, redundant, special-case rules rather than one clean
+				unified algorithm. Patching survives this critique, note — editing the activations would
+				still shift behavior, because the heuristics' outputs live in those same activations. The
+				debate is about organization, not about whether the probes and patches work.
 			</p>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -270,22 +267,21 @@
 			</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				A fair scoreboard. Established: board state is linearly decodable from move-trained
-				models, in the mine/theirs frame; edits to it causally steer behavior; none of it exists in
-				untrained models. Contested: whether that constitutes a unified world model or an
-				aggregate of heuristics dense enough to imitate one — and whether, at some density, that
-				distinction still marks a real difference. This is a live scientific debate; both camps
-				accept the same experimental facts, and this course won't pretend a verdict that doesn't
-				exist.
+				A fair scoreboard. Established: board state is linearly decodable from move-trained models,
+				in the mine/theirs frame; edits to it causally steer behavior; none of it exists in
+				untrained models. Contested: whether that constitutes a unified world model or an aggregate
+				of heuristics dense enough to imitate one — and whether, at some density, that distinction
+				still marks a real difference. This is a live scientific debate; both camps accept the same
+				experimental facts, and this course won't pretend a verdict that doesn't exist.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				And that's precisely why this chapter sits in a course about frontier models. "Does it
-				truly model the world or just interpolate an enormous bag of heuristics?" is <em>the</em>
-				argument people are having about the model you talked to this morning — usually with
-				vibes for evidence. Rook is small enough to settle pieces of it with experiments you can
-				run: probe, patch, and test the edge cases where the two stories come apart. When the
-				flagship lab lands, you'll do all three — and you'll have earned an opinion.
+				And that's precisely why this chapter sits in a course about frontier models. "Does it truly
+				model the world or just interpolate an enormous bag of heuristics?" is <em>the</em>
+				argument people are having about the model you talked to this morning — usually with vibes for
+				evidence. Rook is small enough to settle pieces of it with experiments you can run: probe, patch,
+				and test the edge cases where the two stories come apart. When the flagship lab lands, you'll
+				do all three — and you'll have earned an opinion.
 			</p>
 
 			<VibeBox

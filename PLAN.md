@@ -4,8 +4,8 @@
 course where the learner raises a modern LLM from raw data through pretraining, SFT,
 RLHF/DPO, and RLVR — every stage running locally, most of it on WebGPU.
 
-*v3 — brainstorm → decisions → adversarial review incorporated. This is the commit
-version.*
+_v3 — brainstorm → decisions → adversarial review incorporated. This is the commit
+version._
 
 ## Locked decisions (2026-07-22)
 
@@ -15,11 +15,11 @@ version.*
      learner-as-annotator RLHF, synthetic data, agents, the story endpoint.
    - **Rook** — a chess-move model. Leads: verifiable rewards, world-model
      interpretability, RLAIF (Stockfish as annotator).
-   - Same architecture, two corpora. Thesis: *it's all next-token prediction over
-     token streams.* Motif: a rook is a corvid, a quill is a feather — the learner
+   - Same architecture, two corpora. Thesis: _it's all next-token prediction over
+     token streams._ Motif: a rook is a corvid, a quill is a feather — the learner
      raises two birds. Per-lesson throwaway minis are **hatchlings**.
    - **Lead-bird rule:** each chapter has one lead bird and one cameo; full twin
-     parity only where the contrast *is* the lesson (chs. 5, 9).
+     parity only where the contrast _is_ the lesson (chs. 5, 9).
 3. **Chess tokenization: UCI move tokens** — one token per move (`e2e4`, `e7e8q`),
    vocab ≈ 2k (1968 geometric moves incl. promotions) + special tokens (BOS, result,
    **Elo-bucket conditioning tokens** — committed, they enable the ch. 7
@@ -61,12 +61,12 @@ version.*
 
 ## Models & tiers
 
-| Tier | Size | Trained | Role |
-|---|---|---|---|
-| Hatchlings | ~0.5–2M | live, full params | per-lesson minis (grokking, Countdown, micro-demos) |
-| Live pair | ~2–5M | live, full params | the Quill & Rook the learner trains at every stage |
-| Flagships | ~15–25M each | offline (PyTorch/JAX ref) | the impressive pair; scrubbable history; **in-browser post-training via LoRA only** |
-| Cameo | SmolLM-135M-class | pre-trained (transformers.js) | tutor + ch. 8 generator + ch. 13 comparison (one shared download) |
+| Tier       | Size              | Trained                       | Role                                                                                |
+| ---------- | ----------------- | ----------------------------- | ----------------------------------------------------------------------------------- |
+| Hatchlings | ~0.5–2M           | live, full params             | per-lesson minis (grokking, Countdown, micro-demos)                                 |
+| Live pair  | ~2–5M             | live, full params             | the Quill & Rook the learner trains at every stage                                  |
+| Flagships  | ~15–25M each      | offline (PyTorch/JAX ref)     | the impressive pair; scrubbable history; **in-browser post-training via LoRA only** |
+| Cameo      | SmolLM-135M-class | pre-trained (transformers.js) | tutor + ch. 8 generator + ch. 13 comparison (one shared download)                   |
 
 **LoRA notes (syllabus item + feasibility mechanism, ch. 7):** shrinks optimizer
 state and trainable params — **not** forward/backward FLOPs or activation memory.
@@ -83,7 +83,7 @@ KL-to-reference and every before/after toggle need no second weight copy.
   Hub** (long-cache, standard for checkpoints) — GH Pages' bandwidth/size caps can't
   carry ~0.5–1GB of assets.
 - **Cold start < 15MB** (site + live-pair inits + starter data slice). Ch. 1 opens
-  with the *live pair*; the flagships are a labeled one-click download.
+  with the _live pair_; the flagships are a labeled one-click download.
 - **Time machine:** dense scrubbing on the live pair — ~12 log-spaced checkpoints
   per bird, int4/int8, target ≤ 40MB per bird, lazy + OPFS-cached (honest worst
   case both birds ≈ 80MB, never up front). Flagship history = a few int4 pretrain
@@ -106,7 +106,7 @@ KL-to-reference and every before/after toggle need no second weight copy.
 **Parity requirement:** one architecture spec shared by the offline trainer and the
 browser; safetensors → typed-array converter; logit-parity test (tolerance-based —
 WebGPU float reduction order varies by GPU) built in M0, run in CI forever.
-Determinism honestly scoped: seeded init/data/sampling ⇒ same run *shape*; prose
+Determinism honestly scoped: seeded init/data/sampling ⇒ same run _shape_; prose
 references curve shapes and ranges, never exact loss values.
 
 ## Architecture taught
@@ -124,26 +124,28 @@ explicit does-it-help-at-25M verdicts.
 ## Course arc (4 acts, 14 parts)
 
 **Act I — The Machine**
-- **1. Hatch.** *Lead: both.* Cold open: prompt live-Quill, play live-Rook
+
+- **1. Hatch.** _Lead: both._ Cold open: prompt live-Quill, play live-Rook
   (flagships one click away), scrub both back to random init — "you'll raise both."
   Then: what they eat — corpus explorer (TinyStories + Lichess slices), cleaning,
   dedup as a first-class idea.
-- **2. Tokens.** *Lead: Quill.* Train byte-BPE live, watch merges; Rook's designed
+- **2. Tokens.** _Lead: Quill._ Train byte-BPE live, watch merges; Rook's designed
   UCI vocab as the contrast (learned vs designed vocabularies); why-not-chars/FEN
   panel; the **universal token-stream inspector** debuts — including its
   **per-token loss/entropy heatmap** mode (it will teach perplexity in ch. 4,
   surprise-falling-during-pretraining in ch. 5, loss masking in ch. 7).
-- **3. The Transformer.** *Lead: Rook.* Embeddings, residual stream, attention
+- **3. The Transformer.** _Lead: Rook._ Embeddings, residual stream, attention
   (text-span maps for Quill, move-arrow maps for Rook), RoPE + **context windows**,
   SwiGLU, RMSNorm — one sub-layer at a time.
-- **4. Learning.** *Lead: hatchlings.* Softmax, **cross-entropy, perplexity**;
+- **4. Learning.** _Lead: hatchlings._ Softmax, **cross-entropy, perplexity**;
   backprop (GradientDescent lineage); AdamW, schedules, clipping; **train/val
   curves, overfitting, a memorized-story demo** (why ch. 1's dedup mattered); then
   the **grokking interlude** — shipped recorded run with scrubber (canonical runs
   need 10k+ steps; live long-run offered as optional background task).
 
 **Act II — Raising a Mind**
-- **5. Pretraining.** *Twin parity chapter.* Twin dashboards: loss + sampled
+
+- **5. Pretraining.** _Twin parity chapter._ Twin dashboards: loss + sampled
   stories (gibberish → words → grammar) beside loss + legal-move gauge.
   **Temperature/basic sampling taught here** (first sampled output on screen).
   Live coffee-break run on the live pair (numeric targets from M0); time machine on
@@ -153,55 +155,57 @@ explicit does-it-help-at-25M verdicts.
   evals as a topic**: val loss vs benchmarks, Rook's clean Elo + **OOD position
   set** (memorized openings vs modeled board), Quill's judge-based scoring
   (TinyStories' own GPT-judge paradigm), benchmark saturation & contamination.
-- **6. World Models.** *Lead: Rook.* Linear probes on the residual stream
+- **6. World Models.** _Lead: Rook._ Linear probes on the residual stream
   (per-token board state, mine/theirs frame); **activation patching** — flip the
   model's belief about one square, watch its move change. "Bag of heuristics"
   critique presented honestly.
 
 **Act III — Alignment**
-- **7. SFT + LoRA.** *Lead: Quill.* TinyStories-Instruct; **chat template, special
+
+- **7. SFT + LoRA.** _Lead: Quill._ TinyStories-Instruct; **chat template, special
   tokens, prompt-loss masking (visualized in the inspector), EOS/stopping**. Full
   fine-tune on live pair; **LoRA taught + applied to flagships**. Rook cameo:
   elite-game SFT **vs Elo-token conditioning** — conditioning vs fine-tuning made
   visceral. Before/after story & play tests; distribution shift shown.
-- **8. Synthetic Data.** *Lead: Quill.* The reveal: TinyStories itself is synthetic.
+- **8. Synthetic Data.** _Lead: Quill._ The reveal: TinyStories itself is synthetic.
   Template + seed-diversity pipelines, self-instruct, verifier filtering,
   dedup/decontamination. Live demo scoped honestly: the tutor model generates ~10
   samples live; the learner **filters a shipped pre-generated pool** with the
   verifier stack and fine-tunes Quill on the result (tiny live-only sets don't move
   models, and we say so).
-- **9. Preferences.** *Twin parity chapter.* Learner rates story pairs → reward
+- **9. Preferences.** _Twin parity chapter._ Learner rates story pairs → reward
   model trained on **their ~100 clicks blended with a shipped preference set**
   (on-screen: "your 100 votes + 5,000 others"; cold-entry learners get the default
   set, labeled). DPO on both birds; **RLHF vs RLAIF** named via the Quill/Rook
   contrast; blind A/B taste test vs the SFT model; **a toy refusal trained via the
   same DPO machinery** (Quill declines scary stories) — the honest hook for
   harmlessness, and why preference training exists historically.
-- **10. Reward Hacking.** *Lead: both (double climax).* **Best-of-N against the
+- **10. Reward Hacking.** _Lead: both (double climax)._ **Best-of-N against the
   learner's own RM** (no RL needed yet — pure Goodhart): "dragon dragon dragon."
   Naive material reward makes Rook hang its king for a queen. Diagnose; **introduce
   the KL-to-reference fix here**; re-run.
-- **11. RLVR & GRPO.** *Lead: Rook.* Opens with the supervised→policy-gradient
+- **11. RLVR & GRPO.** _Lead: Rook._ Opens with the supervised→policy-gradient
   bridge ("upweight every token of high-reward samples" — cf. ch. 4). Three arenas:
   **Rook (legality/mate/win — the safe anchor)**, Quill constraints (include-word /
   sentence-count — Tülu-3 pattern; rhyme demoted to a stretch constraint: TinyStories
   has no verse, all-zero reward groups give zero gradient), and a **Countdown
   hatchling, honestly scoped**: SFT-warm-started on synthetic solution traces, payoff
-  promised as "reward rises, outputs lengthen" — *not* a guaranteed R1 aha
+  promised as "reward rises, outputs lengthen" — _not_ a guaranteed R1 aha
   (TinyZero's emerged at 1.5B+). Group advantages, KL, reward curves;
   **user-editable reward-function editor**. Closes with the full R1-style recipe
   (cold-start SFT → RL → rejection sampling → RL) and where DAPO/GSPO fix GRPO at
   scale (conceptual).
 
 **Act IV — The Frontier**
-- **12. Agents** *(stretch, M5-gated). Lead: Quill.* Tool calls as special tokens
+
+- **12. Agents** _(stretch, M5-gated). Lead: Quill._ Tool calls as special tokens
   (ties to chs. 2, 7). Two tools: **scratchpad memory** (notes across a story longer
-  than the context window — the context limit *is* the lesson) and a **story-world
+  than the context window — the context limit _is_ the lesson) and a **story-world
   database** (query character facts — RAG-lite). Trained on ch. 8-style synthetic
   traces, then RLVR with **consistency verifiers** (story vs database
   contradictions). Demotion path: guided demo driven by the tutor model, labeled as
   such.
-- **13. Frontier & Inference.** *Lead: both.* Honesty section: MoE toggle +
+- **13. Frontier & Inference.** _Lead: both._ Honesty section: MoE toggle +
   expert-routing viz, MTP, Muon vs AdamW race, induce-and-fix an attention-logit
   explosion (QK-clip), µP/FP8 conceptually — with does-it-help-at-25M verdicts.
   Inference section: KV cache, top-k/top-p (temperature was ch. 5), quantization
@@ -247,21 +251,21 @@ explicit does-it-help-at-25M verdicts.
   (b) tokens/sec on M-series + one mid discrete GPU; **KV-cache sampling tok/s**;
   (c) **one flagship-scale (≥15M) LoRA step: ms/step + peak memory**;
   (d) op coverage: RoPE, gather/embedding, softmax, AdamW state, LoRA compose,
-      **rematerialization/chunked attention**, **hooked forward (capture +
-      intervene) for interp**, and **embedding-table backward** (a scatter-add —
-      the one transformer op WebGPU's missing f32 atomics genuinely complicates;
-      check how jax-js handles it, and pick the custom-path strategy:
-      per-vocab-row reduction or sort-by-token);
+  **rematerialization/chunked attention**, **hooked forward (capture +
+  intervene) for interp**, and **embedding-table backward** (a scatter-add —
+  the one transformer op WebGPU's missing f32 atomics genuinely complicates;
+  check how jax-js handles it, and pick the custom-path strategy:
+  per-vocab-row reduction or sort-by-token);
   (e) memory behavior under refcounting in a Worker;
   (f) WebGPU-in-Worker across Chrome/Safari/Firefox (and the
-      WebGPU-on-main-thread-only case);
+  WebGPU-on-main-thread-only case);
   (g) gradient/logit-parity harness vs a reference, built the algocell way: **the
-      CPU reference is finite-difference-checked first; the GPU is validated
-      against it, never the other way round** (tolerance-based — algocell achieved
-      3e-5 max-relative agreement; expect looser at transformer scale);
+  CPU reference is finite-difference-checked first; the GPU is validated
+  against it, never the other way round** (tolerance-based — algocell achieved
+  3e-5 max-relative agreement; expect looser at transformer scale);
   (h) **tiled-matmul microbenchmark in hand-written WGSL** (~1 day): establishes
-      the custom path's throughput ceiling on real hardware, since matmul — not
-      the stencil-shaped work algocell does — is the whole game for a transformer;
+  the custom path's throughput ceiling on real hardware, since matmul — not
+  the stencil-shaped work algocell does — is the whole game for a transformer;
   (i) licenses.
   **Numeric gate (calibrate tokens-to-grammar offline first):** live tier sustains
   ≳30k tok/s on the 5M model and reaches the words→grammar arc within ~3 min
@@ -273,7 +277,7 @@ explicit does-it-help-at-25M verdicts.
 - **M1 — skeleton (2–3 wks).** Clone GitVibes, strip git engine, LLM-engine seam,
   twin playground shells, token-stream inspector (with loss-heatmap mode),
   Stockfish threading decision.
-  *Status 2026-07-23: **M1 COMPLETE.** WorkerEngine live (jax-js in a Worker,
+  _Status 2026-07-23: **M1 COMPLETE.** WorkerEngine live (jax-js in a Worker,
   train/sample/inspect/export), twin TrainingLabs in Part 5 running on real data
   (Quill: 3,000 TinyStories → 1.12M tokens, 13.4k tok/s, loss 6.24→3.98 in 200
   steps with words emerging; Rook: 6,000 random-legal games → 364k tokens, 68%
@@ -282,7 +286,7 @@ explicit does-it-help-at-25M verdicts.
   single-threaded WASM (decided; needed at M4). Bonus beyond M1 scope: ALL 14
   chapters carry full course prose (~32k words) with exact math and honesty
   callouts; tutor index rebuilt over it. All green; pushed to
-  github.com/NeoVand/llmvibes.*
+  github.com/NeoVand/llmvibes._
 - **M2 — checkpoint pipeline (3–4 wks).** Offline flagship training (Quill + Rook),
   waypoint export (int4/int8 + fp16 resume points), converter + parity CI, HF Hub
   hosting, time-machine prototype.

@@ -26,12 +26,20 @@
 	});
 </script>
 
-<div class="my-6 rounded-xl border p-5" style="border-color: var(--color-border); background: var(--color-surface);">
-	<div class="mb-2 text-sm font-bold tracking-wide uppercase" style="color: var(--color-important); font-family: var(--font-heading); letter-spacing: 0.08em;">
+<div
+	class="my-6 rounded-xl border p-5"
+	style="border-color: var(--color-border); background: var(--color-surface);"
+>
+	<div
+		class="mb-2 text-sm font-bold tracking-wide uppercase"
+		style="color: var(--color-important); font-family: var(--font-heading); letter-spacing: 0.08em;"
+	>
 		Tokenize it yourself
 	</div>
 	{#if error}
-		<p class="text-sm" style="color: var(--color-challenge);">Couldn't load the vocabulary: {error}</p>
+		<p class="text-sm" style="color: var(--color-challenge);">
+			Couldn't load the vocabulary: {error}
+		</p>
 	{:else if !tok}
 		<div class="flex items-center gap-2 text-sm" style="color: var(--color-text-secondary);">
 			<Loader2 size={16} class="animate-spin" /> Loading Quill's vocabulary…
@@ -45,9 +53,10 @@
 		></textarea>
 		<TokenStream {tokens} mode="plain" />
 		<p class="mt-2 text-xs" style="color: var(--color-text-muted);">
-			{text.length} characters → {tokens.length} tokens ({(text.length / Math.max(tokens.length, 1)).toFixed(2)} chars/token).
-			This is the real vocabulary Quill trains with — {tok.vocabSize} tokens, learned from the
-			same stories you'll pretrain on in Part 5.
+			{text.length} characters → {tokens.length} tokens ({(
+				text.length / Math.max(tokens.length, 1)
+			).toFixed(2)} chars/token). This is the real vocabulary Quill trains with — {tok.vocabSize} tokens,
+			learned from the same stories you'll pretrain on in Part 5.
 		</p>
 	{/if}
 </div>

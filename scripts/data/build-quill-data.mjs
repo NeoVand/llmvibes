@@ -18,7 +18,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const N_STORIES = Number(process.argv[2] ?? 3000);
 const VOCAB = Number(process.argv[3] ?? 512);
 
-const API = 'https://datasets-server.huggingface.co/rows?dataset=roneneldan%2FTinyStories&config=default&split=train';
+const API =
+	'https://datasets-server.huggingface.co/rows?dataset=roneneldan%2FTinyStories&config=default&split=train';
 
 async function fetchStories(n) {
 	const stories = [];

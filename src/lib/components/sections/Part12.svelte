@@ -15,11 +15,10 @@
 		<p class="mb-8 text-[15px] leading-relaxed" style="color: var(--color-text-secondary);">
 			An agent is not a new kind of model — it's the same next-token predictor emitting tokens that
 			make things happen. Quill gets two tools and a job long enough to need them: a story that
-			outgrows its own context window. One honest flag before we start: this is the course's
-			stretch chapter. The machinery is real and the lesson stands either way, but the live lab
-			ships only if a prototype gate passes — can a model this small learn the tool grammar at all?
-			If it can't, the demos here run driven by the tutor model instead, and they'll say so on
-			screen.
+			outgrows its own context window. One honest flag before we start: this is the course's stretch
+			chapter. The machinery is real and the lesson stands either way, but the live lab ships only
+			if a prototype gate passes — can a model this small learn the tool grammar at all? If it
+			can't, the demos here run driven by the tutor model instead, and they'll say so on screen.
 		</p>
 
 		<Callout type="note" title="Hands-on">
@@ -43,9 +42,9 @@
 				Strip the word "agent" of its marketing and ask what a language model can actually do. It
 				emits tokens. That's the complete list. So how does it "look something up" or "take an
 				action"? It writes a request in a format someone taught it, and a loop of ordinary code
-				around it does the rest. You already have every ingredient: Part 2 put special tokens in
-				the vocabulary, and Part 7 taught a model to respect a template built from them. Tool use
-				is the same trick with a runtime listening.
+				around it does the rest. You already have every ingredient: Part 2 put special tokens in the
+				vocabulary, and Part 7 taught a model to respect a template built from them. Tool use is the
+				same trick with a runtime listening.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -72,8 +71,8 @@
 			>
 				<li>
 					Mid-story, the model emits <Code code="<|call|>" />, then
-					<Code code='lookup("dragon.name")' />, then <Code code="<|end_call|>" /> — each one an
-					ordinary next-token prediction, sampled exactly like the word "door" was.
+					<Code code="lookup('dragon.name')" />, then <Code code="<|end_call|>" /> — each one an ordinary
+					next-token prediction, sampled exactly like the word "door" was.
 				</li>
 				<li>
 					The runtime — a while-loop watching the stream — recognizes
@@ -84,8 +83,8 @@
 					hands; it wrote a note, and a program read it.
 				</li>
 				<li>
-					The result comes back as tokens, wrapped in <Code code="<|result|>" /> markers, appended
-					to the context.
+					The result comes back as tokens, wrapped in <Code code="<|result|>" /> markers, appended to
+					the context.
 				</li>
 				<li>
 					Sampling resumes. The fact "Ember" now sits in the context window, attended to like any
@@ -138,13 +137,13 @@
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Make the pain concrete first. Quill's context window is a few hundred tokens — Part 3
-				showed you why: attention only runs over positions inside the window. Ask for a story twice
-				that long and the opening slides out of view while the ending is still being written. The
-				model cannot attend to tokens it can no longer see. The symptoms are exactly what you'd
-				predict: the dragon quietly changes name, the lost locket is never found, a fresh
-				protagonist wanders in around sentence forty. This is not a bug in Quill. It is the
-				architecture doing precisely what the architecture does.
+				Make the pain concrete first. Quill's context window is a few hundred tokens — Part 3 showed
+				you why: attention only runs over positions inside the window. Ask for a story twice that
+				long and the opening slides out of view while the ending is still being written. The model
+				cannot attend to tokens it can no longer see. The symptoms are exactly what you'd predict:
+				the dragon quietly changes name, the lost locket is never found, a fresh protagonist wanders
+				in around sentence forty. This is not a bug in Quill. It is the architecture doing precisely
+				what the architecture does.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -228,11 +227,11 @@ objects:
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The trained behavior: before writing about a thing, query it. About to describe the door?
-				<Code code='lookup("hall_door.color")' /> first, write "blue" second. This is retrieval
-				instead of recall — and it is RAG in miniature. Retrieval-augmented generation, the
-				industry pattern where a model queries a document store before answering, has exactly this
-				shape: fetch first, generate second, hallucinate less. Yours fits in a YAML file; the
-				production version fits in a vector database; the loop is identical.
+				<Code code="lookup('hall_door.color')" /> first, write "blue" second. This is retrieval instead
+				of recall — and it is RAG in miniature. Retrieval-augmented generation, the industry pattern where
+				a model queries a document store before answering, has exactly this shape: fetch first, generate
+				second, hallucinate less. Yours fits in a YAML file; the production version fits in a vector database;
+				the loop is identical.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -244,10 +243,9 @@ objects:
 			</p>
 
 			<Callout type="note" title="Why this matters beyond storytelling">
-				Moving a property from <em>judged</em> to <em>verified</em> is the general trick of the
-				RLVR era. Every property you can move becomes trainable with Part 11's machinery — no
-				reward model, no Goodhart tax on a learned proxy. The next section does exactly that to
-				consistency.
+				Moving a property from <em>judged</em> to <em>verified</em> is the general trick of the RLVR era.
+				Every property you can move becomes trainable with Part 11's machinery — no reward model, no Goodhart
+				tax on a learned proxy. The next section does exactly that to consistency.
 			</Callout>
 		</div>
 
@@ -269,8 +267,8 @@ objects:
 				description, so we manufacture the demonstrations — Part 8's pipeline, pointed at a new
 				target. The tutor model writes stories with tool calls woven in at plausible moments, the
 				verifier stack filters out malformed calls and pointless ones, and Quill fine-tunes on the
-				survivors. After SFT, <Code code="<|call|>" /> is a token pattern with learned habits
-				around it, the same way chat formatting was after Part 7.
+				survivors. After SFT, <Code code="<|call|>" /> is a token pattern with learned habits around it,
+				the same way chat formatting was after Part 7.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -291,22 +289,21 @@ objects:
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Honesty about the load-bearing line: <Code code="extractClaims" /> is easy here and unsolved
-				in general. Ours works because the schema is closed — colors, names, owners, places, a fixed
-				cast — so claims can be pattern-matched against typed facts. Extracting arbitrary claims
-				from arbitrary prose is an open research problem; if it were solved, half of Part 5's eval
-				headaches wouldn't exist. Small worlds are what make verification honest.
+				Honesty about the load-bearing line: <Code code="extractClaims" /> is easy here and unsolved in
+				general. Ours works because the schema is closed — colors, names, owners, places, a fixed cast
+				— so claims can be pattern-matched against typed facts. Extracting arbitrary claims from arbitrary
+				prose is an open research problem; if it were solved, half of Part 5's eval headaches wouldn't
+				exist. Small worlds are what make verification honest.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				And that's precisely why this little chapter points at the actual frontier. Agentic
-				training on verifiable rewards is where the field is right now: Kimi K2's post-training,
-				for instance, built a synthetic tool-use factory — thousands of real and simulated tools,
+				And that's precisely why this little chapter points at the actual frontier. Agentic training
+				on verifiable rewards is where the field is right now: Kimi K2's post-training, for
+				instance, built a synthetic tool-use factory — thousands of real and simulated tools,
 				generated tasks and multi-turn traces rolled out in simulated environments, filtered for
 				quality, then reinforced with verifiable signals where checks exist. Same shape as your
 				pipeline: synthetic traces to teach the grammar, verifiers to sharpen the behavior. The
-				difference between your story-world and their tool universe is — say it with me —
-				exponents.
+				difference between your story-world and their tool universe is — say it with me — exponents.
 			</p>
 
 			<Callout type="warning" title="Prototype-gated, and proud of it">
@@ -321,8 +318,8 @@ objects:
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Count the acts one more time: tokens and special vocabularies from Act I, a trained mind
 				from Act II, SFT and synthetic data and verifiable rewards from Act III — assembled here
-				into a system that writes, remembers, looks things up, and is graded by a program on
-				whether its world holds together. That's an agent. It was never anything else.
+				into a system that writes, remembers, looks things up, and is graded by a program on whether
+				its world holds together. That's an agent. It was never anything else.
 			</p>
 
 			<VibeBox

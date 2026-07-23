@@ -71,27 +71,27 @@ REINFORCE   loss = -r * log p(token)      every token of the model's OWN sample`
 
 			<Callout type="note" title="That's really all of it">
 				Every modern RL-for-LLMs pipeline is this weighted loss plus two patches: something to
-				reduce the variance of <Code code="r" /> (so the updates aren't wild), and something to stop
-				the model drifting too far from where it started (Part 10's KL leash). GRPO, in section
-				11.3, is exactly those two patches and nothing more.
+				reduce the variance of <Code code="r" /> (so the updates aren't wild), and something to stop the
+				model drifting too far from where it started (Part 10's KL leash). GRPO, in section 11.3, is exactly
+				those two patches and nothing more.
 			</Callout>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				The remaining question is where <Code code="r" /> comes from. Part 9's answer was a reward
-				model trained on your clicks — a learned proxy — and Part 10 showed you exactly what
-				optimization pressure does to learned proxies. This chapter's answer is different:
-				compute the reward with a program. <Code code="chess.js" /> declares a move legal or it
-				doesn't. A string search finds the required word or it doesn't. Stockfish confirms the
-				checkmate or it doesn't. Rewards you <em>verify</em> rather than <em>predict</em>: that's
-				the VR in RLVR.
+				The remaining question is where <Code code="r" /> comes from. Part 9's answer was a reward model
+				trained on your clicks — a learned proxy — and Part 10 showed you exactly what optimization pressure
+				does to learned proxies. This chapter's answer is different: compute the reward with a program.
+				<Code code="chess.js" /> declares a move legal or it doesn't. A string search finds the required
+				word or it doesn't. Stockfish confirms the checkmate or it doesn't. Rewards you
+				<em>verify</em>
+				rather than <em>predict</em>: that's the VR in RLVR.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				One honest caveat before the arenas. Verifiable does not mean your <em>intent</em> is safe.
-				A verifier rewards exactly what it checks and nothing else — "include the word lantern" is
-				perfectly satisfied by a graceless, bolted-on lantern. What disappears is the reward
-				model's exploitable noise; what remains is the gap between what you meant and what you
-				wrote down. Section 11.4 hands you the pen so you can feel that gap yourself.
+				One honest caveat before the arenas. Verifiable does not mean your <em>intent</em> is safe. A
+				verifier rewards exactly what it checks and nothing else — "include the word lantern" is perfectly
+				satisfied by a graceless, bolted-on lantern. What disappears is the reward model's exploitable
+				noise; what remains is the gap between what you meant and what you wrote down. Section 11.4 hands
+				you the pen so you can feel that gap yourself.
 			</p>
 		</div>
 
@@ -112,9 +112,15 @@ REINFORCE   loss = -r * log p(token)      every token of the model's OWN sample`
 				<table class="w-full text-[13px]">
 					<thead>
 						<tr style="background: var(--color-bg-tertiary);">
-							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);">Arena</th>
-							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);">Model</th>
-							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);">Verifier</th>
+							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);"
+								>Arena</th
+							>
+							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);"
+								>Model</th
+							>
+							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);"
+								>Verifier</th
+							>
 							<th class="px-4 py-2 text-left font-semibold" style="color: var(--color-text);"
 								>Honest expectation</th
 							>
@@ -150,8 +156,8 @@ REINFORCE   loss = -r * log p(token)      every token of the model's OWN sample`
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Rook's rewards come in two stages. Legality first: the fraction of sampled moves that
 				<Code code="chess.js" /> accepts. After pretraining that gauge already sits high (you watched
-				it climb in Part 5), so the real training signal is outcomes: play full games against a
-				deliberately weak opponent — Stockfish throttled to shallow search — and score
+				it climb in Part 5), so the real training signal is outcomes: play full games against a deliberately
+				weak opponent — Stockfish throttled to shallow search — and score
 				<Code code="win = 1, draw = 0.5, loss = 0" />. Checkmate is checkmate. No judge, no partial
 				credit, no argument about whether the reward is right.
 			</p>
@@ -168,22 +174,20 @@ REINFORCE   loss = -r * log p(token)      every token of the model's OWN sample`
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Quill's prompts carry conditions: "write a story that includes the word <em>lantern</em>
-				and is exactly five sentences long." The verifier is unglamorous — a string search and a
-				sentence splitter from Part 8's verifier stack — and that's the point. This isn't a toy
-				pattern, either: AI2's Tülu 3 used RLVR on exactly this class of instruction-following
-				constraints (the IFEval style — length limits, required keywords, forbidden words) in a
-				real open-weights release, right alongside math problems. You are running a production
-				recipe on a pocket-sized model.
+				and is exactly five sentences long." The verifier is unglamorous — a string search and a sentence
+				splitter from Part 8's verifier stack — and that's the point. This isn't a toy pattern, either:
+				AI2's Tülu 3 used RLVR on exactly this class of instruction-following constraints (the IFEval
+				style — length limits, required keywords, forbidden words) in a real open-weights release, right
+				alongside math problems. You are running a production recipe on a pocket-sized model.
 			</p>
 
 			<Callout type="warning" title="The all-zero group">
 				A preview of a failure mode you'll meet formally in 11.3: GRPO learns from differences
-				<em>within</em> a group of attempts. If every attempt at a prompt fails — reward zero across
-				the board — there is no difference, no advantage, no gradient. Nothing happens, forever.
-				This is why rhyming constraints got demoted from this chapter: TinyStories contains no
-				verse, so base Quill essentially never rhymes, so every group scores all-zero. The quiet
-				lesson generalizes: RL sharpens abilities the base model already shows occasionally. It
-				does not conjure them from nothing.
+				<em>within</em> a group of attempts. If every attempt at a prompt fails — reward zero across the
+				board — there is no difference, no advantage, no gradient. Nothing happens, forever. This is why
+				rhyming constraints got demoted from this chapter: TinyStories contains no verse, so base Quill
+				essentially never rhymes, so every group scores all-zero. The quiet lesson generalizes: RL sharpens
+				abilities the base model already shows occasionally. It does not conjure them from nothing.
 			</Callout>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -192,21 +196,21 @@ REINFORCE   loss = -r * log p(token)      every token of the model's OWN sample`
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Countdown is the numbers game: given, say, <Code code="3, 7, 25, 50" />, reach
-				<Code code="94" /> using each number at most once with the four arithmetic operations. It's
-				beloved by RL researchers because it is perfectly verifiable — parse the expression, check
-				the arithmetic, check the numbers used — and because solving it rewards search:
-				try a path, notice it fails, back up.
+				<Code code="94" /> using each number at most once with the four arithmetic operations. It's beloved
+				by RL researchers because it is perfectly verifiable — parse the expression, check the arithmetic,
+				check the numbers used — and because solving it rewards search: try a path, notice it fails, back
+				up.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Its fame comes from TinyZero, the Berkeley reproduction of DeepSeek-R1's "aha moment" —
-				spontaneous re-checking and backtracking emerging from pure RL — on Countdown, using 1.5B
-				to 3B-parameter base models and about thirty dollars of compute. Our hatchling is roughly
-				a thousand times smaller than that, so here is the honest contract: we warm-start it with
-				SFT on synthetic solution traces (Part 8's pipeline), then run GRPO, and the promised
-				payoff is <em>reward rises and outputs lengthen</em>. Not promised: epiphanies. If you ever
-				catch your hatchling writing "wait, that's wrong, let me try again" unprompted — screenshot
-				it. That would be above spec.
+				spontaneous re-checking and backtracking emerging from pure RL — on Countdown, using 1.5B to
+				3B-parameter base models and about thirty dollars of compute. Our hatchling is roughly a
+				thousand times smaller than that, so here is the honest contract: we warm-start it with SFT
+				on synthetic solution traces (Part 8's pipeline), then run GRPO, and the promised payoff is <em
+					>reward rises and outputs lengthen</em
+				>. Not promised: epiphanies. If you ever catch your hatchling writing "wait, that's wrong,
+				let me try again" unprompted — screenshot it. That would be above spec.
 			</p>
 		</div>
 
@@ -270,17 +274,17 @@ total loss = mean over all tokens  +  beta * KL(policy, reference)`}
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				GRPO's insight is that you already paid for a baseline estimate: the other
-				<Code code="G - 1" /> samples in the group. Their mean <em>is</em> the expected reward at
-				this prompt, measured rather than predicted. So delete the critic. That deletion is the
-				headline memory win over PPO — half the networks, half the optimizer state — and it is,
-				concretely, the reason this chapter fits inside a browser tab.
+				<Code code="G - 1" /> samples in the group. Their mean <em>is</em> the expected reward at this
+				prompt, measured rather than predicted. So delete the critic. That deletion is the headline memory
+				win over PPO — half the networks, half the optimizer state — and it is, concretely, the reason
+				this chapter fits inside a browser tab.
 			</p>
 
 			<Callout type="tip" title="One model, two roles">
 				The KL term needs a frozen reference copy of the policy — normally a second full set of
 				weights in memory. The flagships dodge this: their post-training is LoRA, so switching the
-				adapter <em>off</em> reproduces the frozen reference exactly. Same weights, two policies,
-				zero extra memory.
+				adapter <em>off</em> reproduces the frozen reference exactly. Same weights, two policies, zero
+				extra memory.
 			</Callout>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -288,12 +292,12 @@ total loss = mean over all tokens  +  beta * KL(policy, reference)`}
 			</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Two stabilizers ride along. The <em>clipped surrogate</em> (inherited from PPO): by the
-				time you apply the update, the policy has shifted since the samples were drawn, so the loss
-				uses the ratio of new to old token probability — and clips it to
-				<Code code="1 ± eps" /> so no single batch can yank a token's probability by more than a few
-				percent. And the <em>KL to reference</em>: Part 10's anchor, still attached, charging the
-				model for drifting too far from the SFT policy no matter how much reward the drift earns.
+				Two stabilizers ride along. The <em>clipped surrogate</em> (inherited from PPO): by the time
+				you apply the update, the policy has shifted since the samples were drawn, so the loss uses
+				the ratio of new to old token probability — and clips it to
+				<Code code="1 ± eps" /> so no single batch can yank a token's probability by more than a few percent.
+				And the <em>KL to reference</em>: Part 10's anchor, still attached, charging the model for
+				drifting too far from the SFT policy no matter how much reward the drift earns.
 			</p>
 
 			<MermaidDiagram
@@ -312,14 +316,13 @@ total loss = mean over all tokens  +  beta * KL(policy, reference)`}
 			</h4>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Push GRPO to frontier scale and cracks show, and the fixes have names you'll meet in
-				papers. DAPO raises the upper clip bound so rare tokens can still be encouraged, drops
-				all-zero-variance groups and resamples fresh prompts instead (the same trap you met in
-				11.2, patched at industrial scale), and averages the loss per token rather than per sample
-				so long reasoning chains aren't diluted. GSPO computes the importance ratio per
-				<em>sequence</em> instead of per token, which stabilizes RL on mixture-of-experts models.
-				Both are refinements of the exact skeleton above — worth recognizing, not worth
-				re-deriving here.
+				Push GRPO to frontier scale and cracks show, and the fixes have names you'll meet in papers.
+				DAPO raises the upper clip bound so rare tokens can still be encouraged, drops
+				all-zero-variance groups and resamples fresh prompts instead (the same trap you met in 11.2,
+				patched at industrial scale), and averages the loss per token rather than per sample so long
+				reasoning chains aren't diluted. GSPO computes the importance ratio per
+				<em>sequence</em> instead of per token, which stabilizes RL on mixture-of-experts models. Both
+				are refinements of the exact skeleton above — worth recognizing, not worth re-deriving here.
 			</p>
 		</div>
 
@@ -355,20 +358,20 @@ total loss = mean over all tokens  +  beta * KL(policy, reference)`}
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Three edits to try, each with a prediction to make first. Pay per <em>occurrence</em> of
-				the word instead of a one-time bonus, and you've re-invented Part 10's "dragon dragon
-				dragon" — except now there's a gradient behind it, so it arrives faster and harder. Reward
-				story length and you get padding: repeated clauses, weather reports, anything that emits
-				tokens. Drop the word term entirely and watch the constraint be serenely ignored — the
-				model optimizes what's scored, not what's written in the prompt.
+				Three edits to try, each with a prediction to make first. Pay per <em>occurrence</em> of the word
+				instead of a one-time bonus, and you've re-invented Part 10's "dragon dragon dragon" — except
+				now there's a gradient behind it, so it arrives faster and harder. Reward story length and you
+				get padding: repeated clauses, weather reports, anything that emits tokens. Drop the word term
+				entirely and watch the constraint be serenely ignored — the model optimizes what's scored, not
+				what's written in the prompt.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The subtler craft is <em>shaping</em>. A binary reward is honest but sparse: hard prompts
 				produce all-zero groups (11.2's trap) and contribute nothing. Partial credit — say
-				<Code code="+0.2" /> for a sentence count within one of the target — manufactures variance
-				inside groups, and variance is what gradients are made of. At this scale, reward design is
-				mostly variance engineering.
+				<Code code="+0.2" /> for a sentence count within one of the target — manufactures variance inside
+				groups, and variance is what gradients are made of. At this scale, reward design is mostly variance
+				engineering.
 			</p>
 
 			<Callout type="tip" title="Predict, then run">
@@ -420,8 +423,8 @@ total loss = mean over all tokens  +  beta * KL(policy, reference)`}
 				checkmate-class signals. Then the clever step: <em>rejection sampling</em>. Sample the RL
 				checkpoint many times per prompt, keep only completions the verifier certifies, blend in
 				general instruction data, and you've manufactured a bigger, better SFT set than the one you
-				started with — written by the model, vouched for by the verifier. Retrain on it, then run
-				RL once more with preference rewards folded in for general polish.
+				started with — written by the model, vouched for by the verifier. Retrain on it, then run RL
+				once more with preference rewards folded in for general polish.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -433,9 +436,9 @@ total loss = mean over all tokens  +  beta * KL(policy, reference)`}
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				And the emergence story is quantitative, not mystical: as reward rises during RL, completions
-				get longer. The model is buying accuracy with tokens — more steps, more checking — because
-				thinking longer wins reward. At frontier scale that pressure produces mid-chain
+				And the emergence story is quantitative, not mystical: as reward rises during RL,
+				completions get longer. The model is buying accuracy with tokens — more steps, more checking
+				— because thinking longer wins reward. At frontier scale that pressure produces mid-chain
 				self-correction, the paper's "aha moment." At hatchling scale you'll see the honest
 				miniature from 11.2: the reward curve climbs and the outputs stretch.
 			</p>

@@ -78,7 +78,10 @@ export interface LlmEngine {
 	stop(): Promise<void>;
 
 	/** Sample a completion from the current weights. */
-	sample(promptTokens: number[], opts?: { temperature?: number; topK?: number; maxTokens?: number }): Promise<SampleResult>;
+	sample(
+		promptTokens: number[],
+		opts?: { temperature?: number; topK?: number; maxTokens?: number }
+	): Promise<SampleResult>;
 
 	/** Per-token loss/entropy for given text — feeds the inspector heatmap. */
 	inspect(tokens: number[]): Promise<PerTokenInfo[]>;
