@@ -6,6 +6,7 @@
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MoeRouting from '../diagrams/MoeRouting.svelte';
+	import MoeRoutingLab from '../lab/MoeRoutingLab.svelte';
 	import SpeculativeHandshake from '../diagrams/SpeculativeHandshake.svelte';
 	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
@@ -76,6 +77,13 @@ output $w_i \, \mathrm{expert}_i(x) + w_j \, \mathrm{expert}_j(x) + \mathrm{shar
 			</p>
 
 			<MoeRouting />
+
+			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
+				Now drive the router yourself — pick a token, drag its expert logits, and watch the top-2
+				paths (and the parameter bill) follow:
+			</p>
+
+			<MoeRoutingLab />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Two DeepSeek-flavored refinements are now standard. <em>Fine-grained experts:</em> instead
