@@ -273,12 +273,16 @@ explicit does-it-help-at-25M verdicts.
 - **M1 — skeleton (2–3 wks).** Clone GitVibes, strip git engine, LLM-engine seam,
   twin playground shells, token-stream inspector (with loss-heatmap mode),
   Stockfish threading decision.
-  *Status 2026-07-22: conversion complete — 14-part arc live (76 anchors, stub
-  prose, Hero, nav/map/SEO), git engine stripped behind same-path stubs, tutor
-  persona rebranded, `LlmEngine` contract at src/lib/llm/engine.ts, jax-js in
-  deps. Build ✓, svelte-check 0/0 ✓, 139/139 unit tests ✓. Remaining in M1:
-  WorkerEngine implementation, token-stream inspector component, twin playground
-  shells, Stockfish decision.*
+  *Status 2026-07-23: **M1 COMPLETE.** WorkerEngine live (jax-js in a Worker,
+  train/sample/inspect/export), twin TrainingLabs in Part 5 running on real data
+  (Quill: 3,000 TinyStories → 1.12M tokens, 13.4k tok/s, loss 6.24→3.98 in 200
+  steps with words emerging; Rook: 6,000 random-legal games → 364k tokens, 68%
+  legal-move rate after 200 steps), TokenStream inspector with loss heat,
+  TokenizerDemo in Part 2, temperature slider, legal-move gauge. Stockfish:
+  single-threaded WASM (decided; needed at M4). Bonus beyond M1 scope: ALL 14
+  chapters carry full course prose (~32k words) with exact math and honesty
+  callouts; tutor index rebuilt over it. All green; pushed to
+  github.com/NeoVand/llmvibes.*
 - **M2 — checkpoint pipeline (3–4 wks).** Offline flagship training (Quill + Rook),
   waypoint export (int4/int8 + fp16 resume points), converter + parity CI, HF Hub
   hosting, time-machine prototype.
