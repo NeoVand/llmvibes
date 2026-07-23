@@ -19,6 +19,7 @@ import {
 	initParams,
 	lossFn,
 	forwardLogprobs,
+	forwardWithAttention,
 	paramCount,
 	flattenParams,
 	loadParams,
@@ -44,6 +45,11 @@ let solver: ReturnType<typeof adam> | null = null;
 let tokenData: Uint16Array | null = null;
 let jitStep: any = null;
 let jitForward: any = null;
+let jitLoss: any = null;
+let jitGradNorms: any = null;
+let jitAttn: any = null;
+let causalMask: any = null;
+let valStart = 0; // train windows come from [0, valStart); val from [valStart, end)
 let stepCounter = 0;
 let stopRequested = false;
 let device = 'none';
@@ -61,14 +67,21 @@ let rng = mulberry32(1234);
 
 const BATCH = 8;
 
-function makeBatchOH(c: ModelConfig, data: Uint16Array) {
+/** Sample BATCH windows whose start index lies in [lo, hi). */
+function makeBatchOH(
+	c: ModelConfig,
+	data: Uint16Array,
+	rand: () => number,
+	lo: number,
+	hi: number
+) {
 	const S = c.blockSize;
 	const nTok = BATCH * S;
 	const inputBuf = new Int32Array(nTok);
 	const targetBuf = new Int32Array(nTok);
-	const maxStart = data.length - S - 1;
+	const span = Math.max(1, Math.min(hi, data.length - S - 1) - lo);
 	for (let b = 0; b < BATCH; b++) {
-		const start = Math.floor(rng() * maxStart);
+		const start = lo + Math.floor(rand() * span);
 		for (let i = 0; i < S; i++) {
 			inputBuf[b * S + i] = data[start + i];
 			targetBuf[b * S + i] = data[start + i + 1];
@@ -88,7 +101,7 @@ function makeBatchOH(c: ModelConfig, data: Uint16Array) {
  * FASTER than pipelining in jax-js, see upstream issue #151). */
 function trainStep(): number {
 	const c = cfg!;
-	const { tokenOH, posOH, targetOH } = makeBatchOH(c, tokenData!);
+	const { tokenOH, posOH, targetOH } = makeBatchOH(c, tokenData!, rng, 0, valStart);
 	const [lossVal, grads] = jitStep(tree.ref(params), tokenOH.ref, posOH.ref, targetOH.ref);
 	const [updates, newOptState] = solver!.update(grads, optState, tree.ref(params));
 	params = applyUpdates(params, updates);
@@ -163,6 +176,25 @@ async function handleInit(req: RpcRequest) {
 		valueAndGrad((pp: any) => lossFn(pp, c, a, b, t))(p)
 	);
 	jitForward = jit((p: any, a: any, b: any) => forwardLogprobs(p, c, c.blockSize, a, b));
+	jitLoss = jit((p: any, a: any, b: any, t: any) => lossFn(p, c, a, b, t));
+	jitGradNorms = jit((p: any, a: any, b: any, t: any) => {
+		const [lossVal, grads] = valueAndGrad((pp: any) => lossFn(pp, c, a, b, t))(p);
+		return [lossVal, tree.map((g: any) => np.sum(np.square(g)), grads)];
+	});
+	// causal mask for the attention-capture forward (0 on/below diag, -1e9 above)
+	if (causalMask) causalMask.dispose();
+	const mbuf = new Float32Array(c.blockSize * c.blockSize);
+	for (let i = 0; i < c.blockSize; i++) {
+		for (let j = i + 1; j < c.blockSize; j++) mbuf[i * c.blockSize + j] = -1e9;
+	}
+	causalMask = np.array(mbuf).reshape([c.blockSize, c.blockSize]);
+	jitAttn = jit((p: any, a: any, b: any, m: any) => forwardWithAttention(p, c, a, b, m));
+	// held-out tail: training samples from [0, valStart), validation from the rest
+	valStart = Math.floor(tokenData.length * 0.95);
+	const minVal = 4 * (c.blockSize + 1);
+	if (tokenData.length - valStart < minVal) {
+		valStart = Math.max(1, tokenData.length - minVal);
+	}
 	return { device, paramCount: paramCount(params), tokens: tokenData.length };
 }
 
@@ -256,6 +288,79 @@ async function handleExport() {
 	return { checkpoint: flat.buffer, __transfer: [flat.buffer] };
 }
 
+/** Mean loss over a few FIXED held-out batches (deterministic seed, so calls
+ * across training are comparable — the curve is real validation loss). */
+function handleValLoss() {
+	const c = cfg!;
+	const vr = mulberry32(9999);
+	const N = 4;
+	let total = 0;
+	for (let i = 0; i < N; i++) {
+		const { tokenOH, posOH, targetOH } = makeBatchOH(
+			c,
+			tokenData!,
+			vr,
+			valStart,
+			tokenData!.length
+		);
+		const lossVal = jitLoss(tree.ref(params), tokenOH.ref, posOH.ref, targetOH.ref);
+		tokenOH.dispose();
+		posOH.dispose();
+		targetOH.dispose();
+		total += lossVal.item();
+	}
+	return { valLoss: total / N };
+}
+
+/** Per-tensor gradient L2 norms on a FIXED diagnostic batch — same batch every
+ * call, so norms are comparable across training time. */
+function handleGradNorms() {
+	const c = cfg!;
+	const gr = mulberry32(7777);
+	const { tokenOH, posOH, targetOH } = makeBatchOH(c, tokenData!, gr, 0, valStart);
+	const [lossVal, sq] = jitGradNorms(tree.ref(params), tokenOH.ref, posOH.ref, targetOH.ref);
+	tokenOH.dispose();
+	posOH.dispose();
+	targetOH.dispose();
+	const norms: Array<{ name: string; norm: number }> = [];
+	const take = (t: any, name: string) => norms.push({ name, norm: Math.sqrt(t.item()) });
+	take(sq.wte, 'wte');
+	take(sq.wpe, 'wpe');
+	take(sq.lmHead, 'lmHead');
+	(sq.layers as any[]).forEach((l, i) => {
+		for (const k of ['wq', 'wk', 'wv', 'wo', 'mlpFc1', 'mlpFc2'] as const) take(l[k], `L${i}.${k}`);
+	});
+	return { loss: lossVal.item(), norms };
+}
+
+/** Real attention patterns for a prompt: per layer, an [H·S, S] float block of
+ * softmax(QKᵀ/√d + M) rows (crop to seqLen client-side). Transferred. */
+function handleAttention(req: RpcRequest) {
+	const c = cfg!;
+	const S = c.blockSize;
+	const tokens = ((req.tokens as number[]) ?? []).slice(-S);
+	const buf = new Int32Array(S);
+	for (let i = 0; i < tokens.length; i++) buf[i] = tokens[i];
+	const inputIds = np.array(buf, { dtype: np.int32 }).reshape([1, S]);
+	const posIds = np.arange(S).astype(np.int32).reshape([1, S]);
+	const tokenOH = nn.oneHot(inputIds, c.vocab);
+	const posOH = nn.oneHot(posIds, c.blockSize);
+	const [logprobs, attn] = jitAttn(tree.ref(params), tokenOH, posOH, causalMask.ref);
+	logprobs.dispose();
+	const layers: ArrayBuffer[] = [];
+	for (const a of attn as any[]) {
+		const d = a.dataSync() as Float32Array;
+		layers.push(d.buffer);
+	}
+	return {
+		layers,
+		nHead: c.nHead,
+		blockSize: S,
+		seqLen: tokens.length,
+		__transfer: layers
+	};
+}
+
 // ── dispatch ─────────────────────────────────────────────────────────────────
 const handlers: Record<string, (req: RpcRequest) => unknown | Promise<unknown>> = {
 	init: handleInit,
@@ -268,6 +373,9 @@ const handlers: Record<string, (req: RpcRequest) => unknown | Promise<unknown>> 
 	nextdist: handleNextDist,
 	inspect: handleInspect,
 	export: handleExport,
+	valloss: handleValLoss,
+	gradnorms: handleGradNorms,
+	attention: handleAttention,
 	dispose: () => {
 		if (params) disposeTree(params);
 		if (optState) disposeTree(optState);

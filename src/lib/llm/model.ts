@@ -94,6 +94,65 @@ export function forwardLogprobs(
 	return nn.logSoftmax(logits, -1); // [B·seqLen, vocab]
 }
 
+/**
+ * Single-sequence forward that ALSO returns every attention pattern:
+ * per layer, the H softmax(QKᵀ/√d + mask) matrices, concatenated to
+ * [H·S, S]. Attention is computed by hand (per-head 2-D matmuls) instead of
+ * nn.dotProductAttention, because the fused op never materializes the rows.
+ * Numerics must mirror forwardLogprobs — keep the two in lockstep.
+ * Inference-only (jit without grad); B=1; S is always cfg.blockSize.
+ * causalMask is [S,S] with 0 on/below the diagonal and -1e9 above. The passed
+ * reference is CONSUMED (pass mask.ref to keep a master copy alive).
+ */
+export function forwardWithAttention(
+	params: any,
+	cfg: ModelConfig,
+	tokenOH: any,
+	posOH: any,
+	causalMask: any
+): [any, any[]] {
+	const H = cfg.nHead;
+	const headDim = cfg.nEmbd / H;
+	const scale = 1 / Math.sqrt(headDim);
+	let x = np.dot(tokenOH.reshape([-1, cfg.vocab]), params.wte);
+	const posEmb = np.dot(posOH.reshape([-1, cfg.blockSize]), params.wpe);
+	x = rmsnorm(x.add(posEmb));
+	const attnPerLayer: any[] = [];
+	for (let li = 0; li < cfg.nLayer; li++) {
+		const layer = params.layers[li];
+		const xRes = x.ref;
+		x = rmsnorm(x);
+		const q = np.dot(x.ref, layer.wq); // [S, d]
+		const k = np.dot(x.ref, layer.wk);
+		const v = np.dot(x, layer.wv);
+		const weights: any[] = [];
+		const outs: any[] = [];
+		for (let h = 0; h < H; h++) {
+			const cols: [number, number] = [h * headDim, (h + 1) * headDim];
+			const qh = (h < H - 1 ? q.ref : q).slice([], cols);
+			const kh = (h < H - 1 ? k.ref : k).slice([], cols);
+			const vh = (h < H - 1 ? v.ref : v).slice([], cols);
+			const lastUse = li === cfg.nLayer - 1 && h === H - 1;
+			const scores = np
+				.dot(qh, kh.transpose())
+				.mul(scale)
+				.add(lastUse ? causalMask : causalMask.ref); // [S, S]
+			const w = nn.softmax(scores, -1);
+			weights.push(w.ref);
+			outs.push(np.dot(w, vh)); // [S, headDim]
+		}
+		attnPerLayer.push(np.concatenate(weights, 0)); // [H·S, S]
+		const attnOut = np.concatenate(outs, 1); // [S, d]
+		x = np.dot(attnOut, layer.wo).add(xRes);
+		const mlpRes = x.ref;
+		x = rmsnorm(x);
+		x = nn.relu(np.dot(x, layer.mlpFc1));
+		x = np.dot(x, layer.mlpFc2).add(mlpRes);
+	}
+	const logits = np.dot(x, params.lmHead);
+	return [nn.logSoftmax(logits, -1), attnPerLayer];
+}
+
 /** Training loss: mean NLL over the batch. Consumes all three oneHot args. */
 export function lossFn(params: any, cfg: ModelConfig, tokenOH: any, posOH: any, targetOH: any) {
 	const logprobs = forwardLogprobs(params, cfg, cfg.blockSize, tokenOH, posOH);

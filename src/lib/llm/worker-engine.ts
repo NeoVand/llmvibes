@@ -122,6 +122,39 @@ export class WorkerEngine implements LlmEngine {
 		return r.perToken.map((t) => ({ ...t, text: this.opts.decodeOne(t.id) }));
 	}
 
+	/** Mean loss over fixed held-out batches (deterministic across calls). */
+	async valLoss(): Promise<number> {
+		const r = await this.call<{ valLoss: number }>('valloss');
+		return r.valLoss;
+	}
+
+	/** Per-tensor gradient L2 norms on a fixed diagnostic batch. */
+	async gradNorms(): Promise<{ loss: number; norms: Array<{ name: string; norm: number }> }> {
+		return this.call('gradnorms');
+	}
+
+	/** Real attention patterns for a prompt. layers[li] is the [H·S, S] block
+	 * for layer li; row h·S+i holds head h's attention from position i. */
+	async attention(tokens: number[]): Promise<{
+		seqLen: number;
+		nHead: number;
+		blockSize: number;
+		layers: Float32Array[];
+	}> {
+		const r = await this.call<{
+			layers: ArrayBuffer[];
+			nHead: number;
+			blockSize: number;
+			seqLen: number;
+		}>('attention', { tokens: [...tokens] });
+		return {
+			seqLen: r.seqLen,
+			nHead: r.nHead,
+			blockSize: r.blockSize,
+			layers: r.layers.map((b) => new Float32Array(b))
+		};
+	}
+
 	async exportCheckpoint(): Promise<ArrayBuffer> {
 		const r = await this.call<{ checkpoint: ArrayBuffer }>('export');
 		return r.checkpoint;
