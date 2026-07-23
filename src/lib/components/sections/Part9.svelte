@@ -11,11 +11,12 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import RlhfVsDpo from '../diagrams/RlhfVsDpo.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import Math from '../ui/Math.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 	import PreferenceLab from '../lab/PreferenceLab.svelte';
+	import RlLoopLab from '../lab/RlLoopLab.svelte';
 </script>
 
 <section id="part-9" class="py-10">
@@ -187,22 +188,17 @@ A 2-point gap ⇒ the model thinks you'd pick A ~88% of the time.`}
 				it. Sample stories from Quill, score them with the RM, nudge the policy toward
 				higher-scoring behavior, repeat — historically with an algorithm called PPO, plus a KL leash
 				you'll meet properly in Part 10. It works; it aligned the models that made chatbots a
-				household word. It is also a running system with several interacting parts:
+				household word. Watch the loop run — and try switching where the reward comes from:
 			</p>
 
-			<MermaidDiagram
-				definition={`graph TD
-  A(["SFT model — the starting policy"]) --> B(["Sample response pairs per prompt"])
-  B --> C(["Annotator clicks: which is better?"])
-  C --> D(["Reward model<br/>Bradley-Terry on comparisons"])
-  D --> E(["RL loop: sample, score with RM,<br/>update policy — KL leash to reference"])
-  A -.->|frozen copy| R(["Reference model πref"])
-  R -.-> E
-  E --> F(["Aligned model"])
-  C -->|DPO: skip the RM and the RL loop| G(["One supervised loss<br/>directly on the pairs"])
-  G --> F`}
-				id="rlhf-vs-dpo-pipeline"
-			/>
+			<RlLoopLab />
+
+			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
+				That loop is a running system with several interacting parts — policy, reward model,
+				reference model, RL algorithm — each of which can fail in its own way:
+			</p>
+
+			<RlhfVsDpo />
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
 				In 2023,

@@ -38,11 +38,7 @@ const lutCache: Partial<Record<ColormapId, Uint8ClampedArray>> = {};
 /** Parse the interpolator's output — hex `#rrggbb` or `rgb(r, g, b)`. */
 function parseColor(s: string): [number, number, number] {
 	if (s.startsWith('#')) {
-		return [
-			parseInt(s.slice(1, 3), 16),
-			parseInt(s.slice(3, 5), 16),
-			parseInt(s.slice(5, 7), 16)
-		];
+		return [parseInt(s.slice(1, 3), 16), parseInt(s.slice(3, 5), 16), parseInt(s.slice(5, 7), 16)];
 	}
 	const m = s.match(/[\d.]+/g);
 	return m ? [Math.round(+m[0]), Math.round(+m[1]), Math.round(+m[2])] : [128, 128, 128];
@@ -70,7 +66,11 @@ export function getLUT(cmap: ColormapId): Uint8ClampedArray {
  * "dark basins on light" heatmap, so the bar reads in the same direction
  * the heatmap does.
  */
-export function colormapStops(cmap: ColormapId, steps = 8, theme: 'light' | 'dark' = 'dark'): string {
+export function colormapStops(
+	cmap: ColormapId,
+	steps = 8,
+	theme: 'light' | 'dark' = 'dark'
+): string {
 	const interp = INTERPOLATORS[cmap] ?? interpolateCubehelixDefault;
 	const light = theme === 'light';
 	const parts: string[] = [];

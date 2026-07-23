@@ -51,7 +51,13 @@
 	<!-- embedding table -->
 	<rect class="mat" x={mX} y={mY} width={mW} height={mH} rx="3" />
 	{#each Array.from({ length: 20 }, (_, i) => i + 1) as r (r)}
-		<line class="grid" x1={mX + 1} y1={mY + (r * mH) / 21} x2={mX + mW - 1} y2={mY + (r * mH) / 21} />
+		<line
+			class="grid"
+			x1={mX + 1}
+			y1={mY + (r * mH) / 21}
+			x2={mX + mW - 1}
+			y2={mY + (r * mH) / 21}
+		/>
 	{/each}
 	{#each Array.from({ length: 3 }, (_, i) => i + 1) as c (c)}
 		<line class="grid" x1={mX + (c * mW) / 4} y1={mY + 1} x2={mX + (c * mW) / 4} y2={mY + mH - 1} />
@@ -59,13 +65,15 @@
 	<rect x={mX} y={rowY - 3} width={mW} height="6" rx="2" fill={CH.gold} fill-opacity="0.9" />
 	<text class="lbl" x={mX + mW / 2} y={mY - 9} text-anchor="middle">E_tok</text>
 	<text class="shape" x={mX + mW / 2} y={mY + mH + 16} text-anchor="middle">[{vocab}×{nEmbd}]</text>
-	<text class="row-pick" x={mX + mW + 7} y={rowY + 4} text-anchor="start">row {TOKEN_IDS[FOCUS]}</text>
+	<text class="row-pick" x={mX + mW + 7} y={rowY + 4} text-anchor="start"
+		>row {TOKEN_IDS[FOCUS]}</text
+	>
 
-	<text class="op" x="288" y={MID + 5} text-anchor="middle">→</text>
+	<text class="op" x="298" y={MID + 5} text-anchor="middle">→</text>
 
 	<!-- picked row as a vector -->
 	<VectorBar
-		x={310}
+		x={312}
 		y={MID}
 		values={EMB[FOCUS]}
 		width={118}

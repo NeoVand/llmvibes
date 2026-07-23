@@ -381,10 +381,10 @@
 	let themeMql: MediaQueryList | null = null;
 	let resizeObs: ResizeObserver | null = null;
 	let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+	const onTheme = () => (isDark = readTheme());
 
 	onMount(() => {
 		isDark = readTheme();
-		const onTheme = () => (isDark = readTheme());
 		themeObs = new MutationObserver(onTheme);
 		themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 		themeMql = window.matchMedia('(prefers-color-scheme: dark)');
@@ -410,7 +410,7 @@
 
 	onDestroy(() => {
 		themeObs?.disconnect();
-		themeMql?.removeEventListener('change', () => {});
+		themeMql?.removeEventListener('change', onTheme);
 		resizeObs?.disconnect();
 		if (resizeTimer) clearTimeout(resizeTimer);
 	});
@@ -788,6 +788,7 @@
 		</div>
 
 		<!-- race legend: hover to spotlight -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="legend" onpointerdown={swallow}>
 			{#each RUNNERS as spec (spec.id)}
 				{@const r = runners.find((x) => x.id === spec.id)}
@@ -813,10 +814,22 @@
 		</div>
 
 		<!-- vector key, bottom-left -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="vec-key" onpointerdown={swallow}>
-			<span class="vec-item" title="Steepest-descent direction at the marker: −∇ℒ, straight downhill">
+			<span
+				class="vec-item"
+				title="Steepest-descent direction at the marker: −∇ℒ, straight downhill"
+			>
 				<svg width="20" height="10" viewBox="0 0 20 10" aria-hidden="true">
-					<line x1="1" y1="5" x2="12" y2="5" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" />
+					<line
+						x1="1"
+						y1="5"
+						x2="12"
+						y2="5"
+						stroke="#3b82f6"
+						stroke-width="2"
+						stroke-linecap="round"
+					/>
 					<path d="M12,1.5 L19,5 L12,8.5 Z" fill="#3b82f6" />
 				</svg>
 				<span>−∇ℒ</span>
@@ -826,7 +839,15 @@
 				title="The optimizer's actual last step: Δθ (momentum and adaptive methods bend away from −∇ℒ)"
 			>
 				<svg width="20" height="10" viewBox="0 0 20 10" aria-hidden="true">
-					<line x1="1" y1="5" x2="12" y2="5" stroke="#ef4444" stroke-width="2" stroke-linecap="round" />
+					<line
+						x1="1"
+						y1="5"
+						x2="12"
+						y2="5"
+						stroke="#ef4444"
+						stroke-width="2"
+						stroke-linecap="round"
+					/>
 					<path d="M12,1.5 L19,5 L12,8.5 Z" fill="#ef4444" />
 				</svg>
 				<span>Δθ</span>

@@ -3,7 +3,7 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import ToolCallLoop from '../diagrams/ToolCallLoop.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 	import ToolCallTrace from '../lab/ToolCallTrace.svelte';
@@ -101,18 +101,7 @@
 				</li>
 			</ul>
 
-			<MermaidDiagram
-				definition={`sequenceDiagram
-    participant Q as Quill
-    participant R as Runtime loop
-    participant T as Tool
-    Q->>R: emits call tokens, ends with the stop token
-    R->>T: executes lookup("dragon.name")
-    T->>R: returns "Ember"
-    R->>Q: splices result tokens into the context
-    Q->>Q: sampling resumes with the fact in view`}
-				id="tool-call-loop"
-			/>
+			<ToolCallLoop />
 
 			<Callout type="note" title="Every agent product is this loop">
 				Function-calling APIs, MCP servers, coding agents running in your terminal — under each one

@@ -5,7 +5,8 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import MoeRouting from '../diagrams/MoeRouting.svelte';
+	import SpeculativeHandshake from '../diagrams/SpeculativeHandshake.svelte';
 	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
@@ -74,17 +75,7 @@ output $w_i \, \mathrm{expert}_i(x) + w_j \, \mathrm{expert}_j(x) + \mathrm{shar
 				expert lanes flicker token by token.
 			</p>
 
-			<MermaidDiagram
-				definition={`graph TD
-  T(["token embedding x"]) --> R{"router: pick top-2 of 8"}
-  R --> E3(["expert 3 (small MLP)"])
-  R --> E7(["expert 7 (small MLP)"])
-  T --> S(["shared expert — always on"])
-  E3 --> O(["weighted sum → next layer"])
-  E7 --> O
-  S --> O`}
-				id="moe-routing"
-			/>
+			<MoeRouting />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Two DeepSeek-flavored refinements are now standard. <em>Fine-grained experts:</em> instead
@@ -404,16 +395,7 @@ int4   25M x 0.5 bytes  =  ~13 MB   (+ a few percent for the scales)`}
 				position from a corrected distribution, and hand the new tail back to the draft.
 			</p>
 
-			<MermaidDiagram
-				definition={`sequenceDiagram
-    participant D as Live-Quill (draft)
-    participant T as Flagship-Quill (target)
-    D->>T: proposes 5 tokens: "the dragon spread its copper"
-    T->>T: ONE batched pass scores all 5 positions
-    T->>D: accepts 4, rejects "copper", resamples "great"
-    D->>T: drafts the next burst from "...spread its great"`}
-				id="speculative-handshake"
-			/>
+			<SpeculativeHandshake />
 
 			<SpeculativeLab />
 

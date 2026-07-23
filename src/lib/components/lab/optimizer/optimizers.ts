@@ -25,7 +25,12 @@ export interface RunnerSpec {
 }
 
 export const RUNNERS: RunnerSpec[] = [
-	{ id: 'gd', label: 'SGD', color: RACE_COLORS.gd, blurb: 'θ ← θ − γ∇ℒ — the raw slope, nothing else' },
+	{
+		id: 'gd',
+		label: 'SGD',
+		color: RACE_COLORS.gd,
+		blurb: 'θ ← θ − γ∇ℒ — the raw slope, nothing else'
+	},
 	{
 		id: 'momentum',
 		label: 'Momentum',
@@ -111,8 +116,8 @@ export function stepOptimizer(
 			st.sy = BETA2 * st.sy + (1 - BETA2) * gy * gy;
 			const decay = id === 'adamw' ? wd : 0;
 			return {
-				x: x - lr * ((st.vx / mc1) / (Math.sqrt(st.sx / mc2) + EPS) + decay * x),
-				y: y - lr * ((st.vy / mc1) / (Math.sqrt(st.sy / mc2) + EPS) + decay * y)
+				x: x - lr * (st.vx / mc1 / (Math.sqrt(st.sx / mc2) + EPS) + decay * x),
+				y: y - lr * (st.vy / mc1 / (Math.sqrt(st.sy / mc2) + EPS) + decay * y)
 			};
 		}
 		case 'lion': {

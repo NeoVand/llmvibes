@@ -59,14 +59,11 @@
 	<!-- focus token drops into its one-hot row -->
 	<path
 		class="drop"
-		d="M {cx(FOCUS)} {chipY + 58} C {cx(FOCUS)} {stripY - 32}, {litX} {stripY - 46}, {litX} {stripY -
-			24}"
+		d="M {cx(FOCUS)} {chipY + 58} C {cx(FOCUS)} {stripY - 32}, {litX} {stripY -
+			46}, {litX} {stripY - 24}"
 		style:stroke={CH.gold}
 	/>
-	<path
-		d="M {litX} {stripY - 22} l -4 -7 l 8 0 z"
-		fill={CH.gold}
-	/>
+	<path d="M {litX} {stripY - 22} l -4 -7 l 8 0 z" fill={CH.gold} />
 
 	<!-- the 1×V one-hot strip: hatched "many cells", one lit -->
 	<rect class="strip" x={stripX} y={stripY} width={stripW} height={stripH} rx="3" />
@@ -87,10 +84,9 @@
 	<text class="axis-label" x={stripX + stripW} y={stripY + stripH + 17} text-anchor="end"
 		>{vocab - 1}</text
 	>
-	<text class="axis-label" x={stripX - 12} y={stripY + 13} text-anchor="end">"{TOKENS[FOCUS]}"</text>
-	<text class="shape" x={stripX + stripW + 8} y={stripY + 13} text-anchor="start"
-		>[1×{vocab}]</text
+	<text class="axis-label" x={stripX - 12} y={stripY + 13} text-anchor="end">"{TOKENS[FOCUS]}"</text
 	>
+	<text class="shape" x={stripX + stripW + 8} y={stripY + 13} text-anchor="start">[1×{vocab}]</text>
 	<text class="note" x={VW / 2} y={VH - 8} text-anchor="middle"
 		>everything else in this row is 0 — an ID is just an address into the vocabulary</text
 	>

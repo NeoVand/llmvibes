@@ -6,16 +6,7 @@
 	// query row and key column. Right: the highlighted row's weights mixing
 	// the V vectors into one output vector. Head buttons swap between
 	// deterministic named patterns (previous-token, sink, recency, mixed).
-	import {
-		CH,
-		ink,
-		TOKENS,
-		FOCUS,
-		HD_SHOW,
-		qkvFor,
-		attnPattern,
-		HEAD_KIND_LABEL
-	} from './palette';
+	import { CH, ink, TOKENS, FOCUS, HD_SHOW, qkvFor, attnPattern, HEAD_KIND_LABEL } from './palette';
 	import VectorBar from './VectorBar.svelte';
 
 	let { nEmbd, nHead, hd }: { nEmbd: number; nHead: number; hd: number } = $props();
@@ -33,7 +24,7 @@
 	);
 
 	const VW = 720;
-	const VH = 330;
+	const VH = 348;
 
 	// left column: per-token Q/K/V strips
 	const L = { x: 70, y: 64, rowH: 40, stripW: 106, stripH: 9 };
@@ -43,6 +34,7 @@
 	const R = { x: 542, w: 128 };
 
 	const CHANNELS = ['q', 'k', 'v'] as const;
+	const IDX = TOKENS.map((_, i) => i);
 	const mag = (v: number) => Math.min(1, Math.abs(v));
 </script>
 
@@ -140,8 +132,8 @@
 		rx="6"
 	/>
 
-	{#each TOKENS as _, i (i)}
-		{#each TOKENS as _k, j (j)}
+	{#each IDX as i (i)}
+		{#each IDX as j (j)}
 			{@const cx = M.x + j * M.cell + M.cell / 2}
 			{@const cy = M.y + i * M.cell + M.cell / 2}
 			{#if j > i}
@@ -150,8 +142,8 @@
 			{:else}
 				{@const w = W[i][j]}
 				<circle
-					cx={cx}
-					cy={cy}
+					{cx}
+					{cy}
 					r={3 + Math.sqrt(w) * 13}
 					fill={CH.attn}
 					fill-opacity={0.22 + 0.68 * w}
@@ -163,8 +155,10 @@
 						>{w.toFixed(2)}</text
 					>
 				{/if}
+				<!-- hover hit area: a visual-only enhancement (the default row is the focus token) -->
 				<rect
 					class="hit"
+					role="presentation"
 					x={M.x + j * M.cell}
 					y={M.y + i * M.cell}
 					width={M.cell}
@@ -180,8 +174,7 @@
 	>
 
 	<!-- ── right: the weighted mix for the active query ── -->
-	<text class="col-title-muted" x={R.x + R.w / 2} y="26" text-anchor="middle"
-		>out = Σⱼ wⱼ · Vⱼ</text
+	<text class="col-title-muted" x={R.x + R.w / 2} y="26" text-anchor="middle">out = Σⱼ wⱼ · Vⱼ</text
 	>
 	<text class="mix-query" x={R.x + R.w / 2} y="48" text-anchor="middle"
 		>query "{TOKENS[activeRow]}"</text
@@ -201,7 +194,7 @@
 	<text class="tiny-lbl" x={R.x - 8} y={74} text-anchor="end" fill={ink(CH.attn)}>w</text>
 	<text class="op" x={R.x + R.w / 2} y={100} text-anchor="middle">×</text>
 	<!-- the V vectors as a 6×8 verdigris grid -->
-	{#each TOKENS as _, t (t)}
+	{#each IDX as t (t)}
 		{#each qkv[t].v as v, d (d)}
 			<rect
 				x={R.x + d * (R.w / HD_SHOW) + 1}

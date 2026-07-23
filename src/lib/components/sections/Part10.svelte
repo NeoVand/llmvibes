@@ -3,7 +3,7 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import GoodhartChain from '../diagrams/GoodhartChain.svelte';
 	import OverOptCurve from '../lab/OverOptCurve.svelte';
 	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
@@ -201,13 +201,7 @@ end function`}
 				of the thing you actually want:
 			</p>
 
-			<MermaidDiagram
-				definition={`graph LR
-  A(["What you want<br/>good stories · won games"]) -->|compressed into| B(["What you can measure<br/>clicks · piece values"])
-  B -->|fit by a model| C(["What gets optimized<br/>RM score · material sum"])
-  C -->|argmax / RL| D(["What you get<br/>dragon soup · hung kings"])`}
-				id="proxy-chain"
-			/>
+			<GoodhartChain />
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
 				Every link leaks intent, and optimization pressure pools in the leaks. The frontier versions

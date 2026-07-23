@@ -3,7 +3,8 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
-	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import GrpoLoop from '../diagrams/GrpoLoop.svelte';
+	import R1Recipe from '../diagrams/R1Recipe.svelte';
 	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import Math from '../ui/Math.svelte';
@@ -309,16 +310,7 @@ $\mathcal{L} \leftarrow \mathrm{mean}_{i,t}\bigl[L_{i,t}\bigr] + \beta \, \mathr
 				drifting too far from the SFT policy no matter how much reward the drift earns.
 			</p>
 
-			<MermaidDiagram
-				definition={`graph TD
-  A(["Batch of prompts"]) --> B(["Sample a group of G completions per prompt"])
-  B --> C(["Verifier scores every completion"])
-  C --> D(["Advantage = score minus group mean, over group std"])
-  D --> E(["Clipped update: upweight winners, downweight losers"])
-  E --> F(["KL leash keeps the policy near the reference"])
-  F --> A`}
-				id="grpo-loop"
-			/>
+			<GrpoLoop />
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
 				At real scale: DAPO and GSPO
@@ -415,16 +407,7 @@ $\mathcal{L} \leftarrow \mathrm{mean}_{i,t}\bigl[L_{i,t}\bigr] + \beta \, \mathr
 				R1 proper fixed that with a loop, and the loop is the recipe worth memorizing:
 			</p>
 
-			<MermaidDiagram
-				definition={`graph LR
-  A(["Base model"]) --> B(["Cold-start SFT on a small, readable CoT set"])
-  B --> C(["RL on verifiable rewards"])
-  C --> D(["Rejection-sample the RL model into a better SFT set"])
-  D --> E(["SFT again"])
-  E --> F(["RL again: reasoning + preferences"])
-  F --> G(["R1"])`}
-				id="r1-recipe"
-			/>
+			<R1Recipe />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Cold-start SFT: a small, curated set of long, readable reasoning traces gives the model a

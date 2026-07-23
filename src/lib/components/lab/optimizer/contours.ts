@@ -21,10 +21,7 @@ export function contourPaths(
 	const spanX = extXMax - extXMin;
 	const spanY = extYMax - extYMin;
 
-	const gen = contours()
-		.size([res, res])
-		.smooth(true)
-		.thresholds(contourThresholds(grid, levels));
+	const gen = contours().size([res, res]).smooth(true).thresholds(contourThresholds(grid, levels));
 
 	const out: string[] = [];
 	for (const multi of gen(Array.from(values))) {

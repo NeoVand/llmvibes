@@ -13,6 +13,7 @@
 	import TrainingLab from '../lab/TrainingLab.svelte';
 	import ChessLab from '../lab/ChessLab.svelte';
 	import SoftmaxLab from '../lab/SoftmaxLab.svelte';
+	import ScalingLawsLab from '../lab/ScalingLawsLab.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
@@ -372,17 +373,12 @@ to the pigs. She scared it and did lack. It was hip.`}
 				The Chinchilla Intuition
 			</h4>
 
-			<CodeBlock
-				title="The fitted form (Chinchilla, 2022) — read it, don't memorize it"
-				lang="text"
-				code={`L(N, D) ≈ E + A / N^0.34 + B / D^0.28
+			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
+				The fitted form below is the Chinchilla law itself — and rather than read it as a formula,
+				explore it. Drag the compute budget and watch where the optimum lands:
+			</p>
 
-N = parameters, D = training tokens, E = irreducible loss.
-Two shrinking penalty terms: one for too few parameters,
-one for too few tokens. Grow only one and the other's term
-takes over — so grow them TOGETHER (rule of thumb: ~20
-tokens per parameter for a compute-optimal run).`}
-			/>
+			<ScalingLawsLab />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				That balance was the Chinchilla paper's headline: the era's giant models were badly
