@@ -9,6 +9,7 @@
 	import { GitMerge, Loader2, Pause, Play, RotateCcw, StepBack, StepForward } from 'lucide-svelte';
 	import { base } from '$app/paths';
 	import { BpeTokenizer, type BpeVocab } from '$lib/llm/bpe';
+	import Slider from '$lib/components/ui/Slider.svelte';
 
 	const SENTENCE = 'Once upon a time, the little dragon looked at the moon.';
 	const PLAY_MS = 125; // ~8 merges per second
@@ -54,6 +55,8 @@
 		return {
 			n: k,
 			id: 255 + k,
+			aId: a,
+			bId: b,
 			a: fullTok.decodeOne(a),
 			b: fullTok.decodeOne(b),
 			text: fullTok.decodeOne(255 + k),
@@ -99,17 +102,33 @@
 		k = 0;
 	}
 
-	/** Chip tint: the more bytes a token has swallowed, the deeper the wash —
-	 * fusing reads as the sentence literally gaining color. */
-	function tint(id: number): string {
-		const L = byteLen[id] ?? 1;
-		if (L <= 1) return 'transparent';
-		const pct = Math.min(6 + L * 6, 44);
-		return `color-mix(in srgb, var(--color-primary) ${pct}%, transparent)`;
+	// TokenStream's chip language: the same five house pastels, cycled across
+	// tokens — sentence chips cycle by position, vocabulary chips by token id
+	// (stable color per token as the recent list shifts).
+	const WASHES = [
+		'color-mix(in srgb, #a855f7 16%, transparent)',
+		'color-mix(in srgb, #2563eb 14%, transparent)',
+		'color-mix(in srgb, #14b8a6 16%, transparent)',
+		'color-mix(in srgb, #f59e0b 18%, transparent)',
+		'color-mix(in srgb, #fb7185 16%, transparent)'
+	];
+
+	/** de-glyph: the display layer undoes decodeOne's ␣/⏎ substitutions —
+	 * bpe.ts is fixture-locked, so the swap happens strictly at render time. */
+	function pretty(text: string): { body: string; newlines: number } {
+		const raw = text.replaceAll('␣', ' ').replaceAll('⏎', '\n');
+		const body = raw.replaceAll('\n', '');
+		return { body, newlines: raw.length - body.length };
 	}
 
 	onDestroy(stopPlay);
 </script>
+
+{#snippet glyphs(text: string)}
+	{@const p = pretty(text)}
+	{#if p.body}{p.body}{/if}{#if p.newlines > 0}<span class="nl" aria-label="newline">↵</span
+		>{/if}{#if !p.body && p.newlines === 0}<span class="nl">∅</span>{/if}
+{/snippet}
 
 <div
 	class="my-6 rounded-xl border p-5"
@@ -143,49 +162,52 @@
 			<Loader2 size={16} class="animate-spin" /> Loading Quill's merge list…
 		</div>
 	{:else}
-		<div class="mb-4 flex flex-wrap items-center gap-2">
-			<button class="ctl-btn" onclick={reset} disabled={k === 0} aria-label="reset to zero merges">
-				<RotateCcw size={14} />
-			</button>
-			<button
-				class="ctl-btn"
-				onclick={() => step(-1)}
-				disabled={k === 0}
-				aria-label="back one merge"
-			>
-				<StepBack size={14} />
-			</button>
-			<button
-				class="ctl-btn play"
-				onclick={togglePlay}
-				aria-label={playing ? 'pause' : 'play merges'}
-			>
-				{#if playing}<Pause size={14} />{:else}<Play size={14} />{/if}
-			</button>
-			<button
-				class="ctl-btn"
-				onclick={() => step(1)}
-				disabled={k >= nMerges}
-				aria-label="forward one merge"
-			>
-				<StepForward size={14} />
-			</button>
-			<input
-				type="range"
-				min="0"
-				max={nMerges}
-				step="1"
-				bind:value={k}
-				oninput={stopPlay}
-				class="min-w-32 flex-1"
-				aria-label="number of merges applied"
-			/>
-			<span
-				class="text-xs font-semibold"
-				style="color: var(--color-text-secondary); font-family: var(--font-mono); min-width: 8.5ch; text-align: right;"
-			>
-				merge {k} / {nMerges}
-			</span>
+		<div class="mb-4 flex flex-wrap items-center gap-3">
+			<div class="flex items-center gap-2">
+				<button
+					class="ctl-btn"
+					onclick={reset}
+					disabled={k === 0}
+					aria-label="reset to zero merges"
+				>
+					<RotateCcw size={14} />
+				</button>
+				<button
+					class="ctl-btn"
+					onclick={() => step(-1)}
+					disabled={k === 0}
+					aria-label="back one merge"
+				>
+					<StepBack size={14} />
+				</button>
+				<button
+					class="ctl-btn play"
+					onclick={togglePlay}
+					aria-label={playing ? 'pause' : 'play merges'}
+				>
+					{#if playing}<Pause size={14} />{:else}<Play size={14} />{/if}
+				</button>
+				<button
+					class="ctl-btn"
+					onclick={() => step(1)}
+					disabled={k >= nMerges}
+					aria-label="forward one merge"
+				>
+					<StepForward size={14} />
+				</button>
+			</div>
+			<div class="min-w-40 flex-1">
+				<Slider
+					label="merges applied"
+					bind:value={k}
+					min={0}
+					max={nMerges}
+					step={1}
+					tone="teal"
+					format={(v) => `${v} / ${nMerges}`}
+					oninput={stopPlay}
+				/>
+			</div>
 		</div>
 
 		<div
@@ -196,15 +218,20 @@
 				<span class="text-[11px] tracking-wide uppercase" style="color: var(--color-text-muted);">
 					merge #{newest.n}
 				</span>
-				<span class="tok" style="background: {tint(255)};">{newest.a}</span>
+				<span class="tok" style="background: {WASHES[newest.aId % WASHES.length]};"
+					>{@render glyphs(newest.a)}</span
+				>
 				<span class="text-xs" style="color: var(--color-text-muted);">+</span>
-				<span class="tok" style="background: {tint(255)};">{newest.b}</span>
+				<span class="tok" style="background: {WASHES[newest.bId % WASHES.length]};"
+					>{@render glyphs(newest.b)}</span
+				>
 				<span class="text-xs" style="color: var(--color-text-muted);">→</span>
 				{#key k}
 					<span
 						class="tok fused"
-						style="background: {tint(newest.id)}; outline: 1.5px solid var(--color-important);"
-						>{newest.text}</span
+						style="background: {WASHES[
+							newest.id % WASHES.length
+						]}; outline: 1.5px solid var(--color-important);">{@render glyphs(newest.text)}</span
 					>
 				{/key}
 				<span class="text-[11px]" style="color: var(--color-text-muted);">
@@ -221,7 +248,7 @@
 			<div class="mb-1 text-[11px] tracking-wide uppercase" style="color: var(--color-text-muted);">
 				newest {Math.min(k, RECENT)} merges — freshest first
 			</div>
-			<div class="flex min-h-8 flex-wrap gap-1.5">
+			<div class="flex min-h-8 flex-wrap items-center gap-1.5">
 				{#if recent.length === 0}
 					<span class="text-xs italic" style="color: var(--color-text-muted);">—</span>
 				{:else}
@@ -229,13 +256,12 @@
 						<span
 							class="tok"
 							class:fused={m.n === k}
-							style="background: {tint(m.id)}; {m.n === k
+							style="background: {WASHES[m.id % WASHES.length]}; {m.n === k
 								? 'outline: 1.5px solid var(--color-important);'
 								: ''}"
 							title="merge #{m.n} → token {m.id}"
+							>{@render glyphs(m.text)}<span class="tok-n">#{m.n}</span></span
 						>
-							{m.text}<span class="tok-n">#{m.n}</span>
-						</span>
 					{/each}
 				{/if}
 			</div>
@@ -245,15 +271,20 @@
 			<div class="mb-2 text-[11px] tracking-wide uppercase" style="color: var(--color-text-muted);">
 				the same sentence, tokenized with the first {k} merges
 			</div>
-			<div class="flex flex-wrap gap-1" aria-live="off">
+			<div class="flex flex-wrap items-center gap-y-1" aria-live="off">
 				{#each sentIds as id, i (i)}
+					{@const t = kTok?.decodeOne(id) ?? ''}
+					{@const brk = pretty(t).newlines > 0}
 					<span
 						class="tok"
 						class:fused={newest !== null && id === newest.id}
-						style="background: {tint(id)}; {newest !== null && id === newest.id
+						style="background: {WASHES[i % WASHES.length]}; {newest !== null && id === newest.id
 							? 'outline: 1.5px solid var(--color-important);'
-							: ''}">{kTok?.decodeOne(id) ?? ''}</span
+							: ''}">{@render glyphs(t)}</span
 					>
+					{#if brk}
+						<span class="break" aria-hidden="true"></span>
+					{/if}
 				{/each}
 			</div>
 			<div class="mt-3 flex flex-wrap items-center gap-3">
@@ -284,21 +315,31 @@
 </div>
 
 <style>
+	/* Chip language mirrors TokenStream.svelte exactly: real whitespace inside
+	 * (white-space: pre), boundaries from the wash cycle, no borders. */
 	.tok {
-		display: inline-flex;
-		align-items: baseline;
-		gap: 0.25rem;
-		border-radius: 0.375rem;
-		padding: 0.125rem 0.375rem;
+		border-radius: 0.3rem;
+		padding: 0.1rem 0.18rem;
+		margin: 0 0.5px;
 		font-family: var(--font-mono);
-		font-size: 12px;
+		font-size: 12.5px;
+		line-height: 1.35;
 		color: var(--color-text);
-		border: 1px solid var(--color-border-light);
 		white-space: pre;
 	}
 	.tok-n {
 		font-size: 9px;
 		color: var(--color-text-muted);
+		margin-left: 0.25rem;
+	}
+	.nl {
+		opacity: 0.45;
+		font-size: 0.85em;
+		user-select: none;
+	}
+	.break {
+		flex-basis: 100%;
+		height: 0;
 	}
 	.fused {
 		animation: pop 260ms ease-out;

@@ -7,8 +7,12 @@
 	// flattening are visible as bars actually growing and shrinking.
 	import { Thermometer, RotateCcw } from 'lucide-svelte';
 	import Formula from '../ui/Math.svelte';
+	import Slider from '../ui/Slider.svelte';
 
-	const TOKENS = ['the', 'a', 'dragon', 'happy', 'ran', '⏎'];
+	// The last candidate is the newline token — labeled with the word, not a
+	// glyph, and styled as a muted small label wherever it renders.
+	const NEWLINE = 'newline';
+	const TOKENS = ['the', 'a', 'dragon', 'happy', 'ran', NEWLINE];
 	const DEFAULT_LOGITS = [2.6, 1.8, 1.1, 0.2, -0.6, -1.5];
 	const LOGIT_MIN = -4;
 	const LOGIT_MAX = 6;
@@ -109,7 +113,6 @@
 		topK = 6;
 	}
 
-	const heatPct = $derived(Math.round(((temperature - 0.1) / 2.9) * 100));
 	const TEX =
 		'p_i = \\operatorname{softmax}\\!\\left(\\tfrac{x}{T}\\right)_i = \\dfrac{e^{\\,x_i/T}}{\\sum_{j}\\, e^{\\,x_j/T}}';
 </script>
@@ -197,6 +200,7 @@
 					>
 					<text
 						class="tok"
+						class:tok-newline={tok === NEWLINE}
 						x={cx(i)}
 						y={VH - 22}
 						text-anchor="middle"
@@ -230,26 +234,18 @@
 				{/each}
 			</svg>
 
-			<label class="mt-3 flex items-center gap-3">
-				<span class="dial-label">T</span>
-				<span class="dial-hint">sharper · safer</span>
-				<input
-					class="tslider min-w-0 flex-1"
-					type="range"
-					min="0.1"
-					max="3"
-					step="0.05"
+			<div class="mt-3">
+				<Slider
+					label="temperature"
 					bind:value={temperature}
-					style="--fill: {heatPct}%; --tcol: color-mix(in srgb, var(--color-caution) {heatPct}%, var(--color-note));"
-					aria-label="temperature"
+					min={0.1}
+					max={3}
+					step={0.05}
+					tone="amber"
+					format={(v) => `T = ${v.toFixed(2)}`}
+					hint="← sharper · safer — flatter · wilder →"
 				/>
-				<span class="dial-hint">flatter · wilder</span>
-				<span
-					class="dial-read"
-					style="color: color-mix(in srgb, var(--color-caution) {heatPct}%, var(--color-note));"
-					>T = {temperature.toFixed(2)}</span
-				>
-			</label>
+			</div>
 
 			<div class="mt-3 flex flex-wrap items-center gap-2">
 				<span class="dial-label">top-k</span>
@@ -280,10 +276,17 @@
 						class="flex items-center gap-2"
 						style="opacity: {kept.has(i) ? 1 : 0.38}; transition: opacity 150ms ease;"
 					>
-						<span
-							class="w-14 shrink-0 text-right text-[12px]"
-							style="font-family: var(--font-mono); color: var(--color-text);">{tok}</span
-						>
+						{#if tok === NEWLINE}
+							<span
+								class="w-14 shrink-0 text-right text-[10px] italic"
+								style="color: var(--color-text-muted); letter-spacing: 0.04em;">{tok}</span
+							>
+						{:else}
+							<span
+								class="w-14 shrink-0 text-right text-[12px]"
+								style="font-family: var(--font-mono); color: var(--color-text);">{tok}</span
+							>
+						{/if}
 						<div
 							class="h-3.5 flex-1 overflow-hidden rounded-full"
 							style="background: var(--color-bg-tertiary);"
@@ -342,6 +345,13 @@
 		font-family: var(--font-mono);
 		font-size: 13px;
 	}
+	.tok-newline {
+		fill: var(--color-text-muted);
+		font-family: var(--font-sans);
+		font-size: 10px;
+		font-style: italic;
+		letter-spacing: 1px;
+	}
 	.hit {
 		cursor: ns-resize;
 		touch-action: none;
@@ -364,46 +374,6 @@
 		color: var(--color-text-muted);
 		white-space: nowrap;
 	}
-	.dial-read {
-		font-family: var(--font-mono);
-		font-size: 12px;
-		font-weight: 600;
-		min-width: 4.6em;
-		text-align: right;
-	}
-
-	.tslider {
-		appearance: none;
-		-webkit-appearance: none;
-		height: 6px;
-		border-radius: 999px;
-		background: linear-gradient(
-			to right,
-			var(--tcol) var(--fill),
-			var(--color-bg-tertiary) var(--fill)
-		);
-		cursor: pointer;
-		outline-offset: 4px;
-	}
-	.tslider::-webkit-slider-thumb {
-		appearance: none;
-		-webkit-appearance: none;
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--tcol);
-		border: 2.5px solid var(--color-surface);
-		box-shadow: 0 0 0 1.5px var(--tcol);
-	}
-	.tslider::-moz-range-thumb {
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--tcol);
-		border: 2.5px solid var(--color-surface);
-		box-shadow: 0 0 0 1.5px var(--tcol);
-	}
-
 	.kbtn {
 		width: 26px;
 		height: 24px;

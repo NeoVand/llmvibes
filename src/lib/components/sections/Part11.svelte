@@ -4,6 +4,7 @@
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import Math from '../ui/Math.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
@@ -241,21 +242,19 @@ REINFORCE   loss = -r * log p(token)      every token of the model's OWN sample`
 				deviation:
 			</p>
 
-			<CodeBlock
+			<PseudoCode
+				number={1}
 				title="GRPO, the whole algorithm"
-				lang="text"
-				code={`for each prompt:
-    y_1 .. y_G  <-  sample G completions from the current policy
-    r_1 .. r_G  <-  verifier score for each completion
-
-    # the group is the baseline: no critic network anywhere
-    A_i = (r_i - mean(r)) / std(r)
-
-    # clipped policy-gradient step, per token t of completion i
-    ratio = p_new(token_t) / p_old(token_t)
-    L_i,t = -min( ratio * A_i,  clip(ratio, 1 - eps, 1 + eps) * A_i )
-
-total loss = mean over all tokens  +  beta * KL(policy, reference)`}
+				code={String.raw`for each prompt $x$ in the batch do
+  sample a group $y_1, \dots, y_G \sim \pi_\theta(\cdot \mid x)$ // G completions, say G = 8
+  $r_i \leftarrow \mathrm{verifier}(y_i)$ for $i = 1, \dots, G$ // score every one
+  $\hat{A}_i \leftarrow \bigl(r_i - \mathrm{mean}(r)\bigr) / \mathrm{std}(r)$ // the group is the baseline: no critic network
+  for each token $t$ of each completion $y_i$ do
+    $\rho_{i,t} \leftarrow \pi_\theta(y_{i,t}) \,/\, \pi_{\theta_{\mathrm{old}}}(y_{i,t})$ // new probability over old
+    $L_{i,t} \leftarrow -\min\bigl(\rho_{i,t}\, \hat{A}_i,\ \mathrm{clip}(\rho_{i,t},\, 1 - \epsilon,\, 1 + \epsilon)\, \hat{A}_i\bigr)$ // clipped step
+  end for
+end for
+$\mathcal{L} \leftarrow \mathrm{mean}_{i,t}\bigl[L_{i,t}\bigr] + \beta \, \mathrm{KL}\bigl(\pi_\theta \,\|\, \pi_{\mathrm{ref}}\bigr)$ // mean over all tokens + the KL leash`}
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">

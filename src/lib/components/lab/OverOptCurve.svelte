@@ -9,6 +9,7 @@
 	// slides right and the fall softens — same pressure, spent inside the
 	// region where the judge is sane.
 	import { TrendingDown } from 'lucide-svelte';
+	import Slider from '../ui/Slider.svelte';
 
 	const W = 700;
 	const H = 360;
@@ -336,34 +337,28 @@
 	</svg>
 
 	<div class="mt-3 flex flex-wrap gap-x-6 gap-y-2">
-		<label class="flex min-w-[240px] flex-1 items-center gap-2">
-			<span class="dial-label">N</span>
-			<input
-				class="hslider min-w-0 flex-1"
-				type="range"
-				min="0"
-				max={VMAX}
-				step="0.05"
+		<div class="min-w-[240px] flex-1">
+			<Slider
+				label="optimization pressure N (log scale)"
 				bind:value={logN}
-				style="--fill: {(logN / VMAX) * 100}%; --fc: var(--color-primary);"
-				aria-label="optimization pressure, log scale"
+				min={0}
+				max={VMAX}
+				step={0.05}
+				tone="blue"
+				format={(v) => `N ≈ ${Math.round(2 ** v)}`}
 			/>
-			<span class="dial-read" style="color: var(--color-primary-text);">N ≈ {Math.round(n)}</span>
-		</label>
-		<label class="flex min-w-[240px] flex-1 items-center gap-2">
-			<span class="dial-label">β</span>
-			<input
-				class="hslider min-w-0 flex-1"
-				type="range"
-				min="0"
-				max="1.5"
-				step="0.05"
+		</div>
+		<div class="min-w-[240px] flex-1">
+			<Slider
+				label="KL leash strength β"
 				bind:value={beta}
-				style="--fill: {(beta / 1.5) * 100}%; --fc: var(--color-tip);"
-				aria-label="KL leash strength beta"
+				min={0}
+				max={1.5}
+				step={0.05}
+				tone="violet"
+				format={(v) => `β = ${v.toFixed(2)}`}
 			/>
-			<span class="dial-read" style="color: var(--color-tip);">β = {beta.toFixed(2)}</span>
-		</label>
+		</div>
 	</div>
 
 	<p class="mt-3 text-xs leading-relaxed" style="color: var(--color-text-muted);">
@@ -432,51 +427,5 @@
 		height: 0;
 		background: none;
 		border-top: 2px dashed;
-	}
-
-	.dial-label {
-		font-family: var(--font-mono);
-		font-size: 12px;
-		font-weight: 600;
-		color: var(--color-text);
-	}
-	.dial-read {
-		font-family: var(--font-mono);
-		font-size: 12px;
-		font-weight: 600;
-		min-width: 5.4em;
-		text-align: right;
-	}
-
-	.hslider {
-		appearance: none;
-		-webkit-appearance: none;
-		height: 6px;
-		border-radius: 999px;
-		background: linear-gradient(
-			to right,
-			var(--fc) var(--fill),
-			var(--color-bg-tertiary) var(--fill)
-		);
-		cursor: pointer;
-		outline-offset: 4px;
-	}
-	.hslider::-webkit-slider-thumb {
-		appearance: none;
-		-webkit-appearance: none;
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--fc);
-		border: 2.5px solid var(--color-surface);
-		box-shadow: 0 0 0 1.5px var(--fc);
-	}
-	.hslider::-moz-range-thumb {
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--fc);
-		border: 2.5px solid var(--color-surface);
-		box-shadow: 0 0 0 1.5px var(--fc);
 	}
 </style>

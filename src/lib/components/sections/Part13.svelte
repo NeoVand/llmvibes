@@ -6,6 +6,7 @@
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
@@ -56,12 +57,13 @@
 				run the token through only those, and blend their outputs by the router's weights:
 			</p>
 
-			<CodeBlock
+			<PseudoCode
+				number={1}
 				title="Routing, per token"
-				lang="text"
-				code={`scores = router(x)          # one score per expert, for THIS token
-top2   = best_2(scores)     # say experts 3 and 7
-out    = w3 * expert3(x) + w7 * expert7(x) + shared(x)`}
+				code={String.raw`input a token embedding $x$
+$s \leftarrow \mathrm{router}(x)$ // one score per expert, for this token
+$i, j \leftarrow \mathrm{top}_2(s)$ // say experts 3 and 7
+output $w_i \, \mathrm{expert}_i(x) + w_j \, \mathrm{expert}_j(x) + \mathrm{shared}(x)$ // blend by the router's weights`}
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">

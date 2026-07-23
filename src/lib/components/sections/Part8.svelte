@@ -5,6 +5,7 @@
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
@@ -291,16 +292,14 @@ all of them or it never reaches training.`}
 				download), the whole chapter compresses into one live pipeline you drive end to end:
 			</p>
 
-			<CodeBlock
+			<PseudoCode
+				number={1}
 				title="The 8.4 pipeline, end to end"
-				lang="text"
-				code={`1. GENERATE   watch the tutor model produce ~10 samples live,
-              from randomized instruction templates
-2. FILTER     run the shipped pool (thousands of samples) through
-              the verifier stack — with thresholds YOU set
-3. INSPECT    read what survived; evict anything that offends you
-4. FINE-TUNE  LoRA Quill on the survivors (Part 7 machinery)
-5. COMPARE    before/after on the fixed prompt set (the ritual)`}
+				code={String.raw`Generate — watch the tutor model produce $\sim 10$ samples live // randomized instruction templates
+Filter — run the shipped pool of thousands through the verifier stack, with thresholds you set
+Inspect — read what survived; evict anything that offends you
+Fine-tune — LoRA Quill on the survivors // Part 7 machinery
+Compare — before/after on the fixed prompt set // the ritual`}
 			/>
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">

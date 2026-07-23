@@ -6,6 +6,7 @@
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import PseudoCode from '../ui/PseudoCode.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 	import OptimizerLab from '../lab/OptimizerLab.svelte';
 </script>
@@ -224,13 +225,14 @@ loss = 1.00  →  perplexity ≈ 2.7   nearly a two-way choice`}
 				means "this weight is innocent this round." Once you have it, the update rule is one line:
 			</p>
 
-			<CodeBlock
+			<PseudoCode
+				number={1}
 				title="Gradient descent — the whole idea"
-				lang="text"
-				code={`w  =  w  -  learning_rate * gradient(w)
-
-Every weight steps a little way downhill on the loss surface.
-The learning rate decides how big "a little way" is.`}
+				code={String.raw`require a learning rate $\eta$ // decides how big "a little way" is
+for each weight $w$ in the model do
+  $w \leftarrow w - \eta \, \nabla_{\!w} L$ // step a little way downhill on the loss
+end for`}
+				caption="Every weight steps a little way downhill on the loss surface."
 			/>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -276,15 +278,16 @@ The learning rate decides how big "a little way" is.`}
 				id="training-loop-cycle"
 			/>
 
-			<CodeBlock
+			<PseudoCode
+				number={2}
 				title="The training loop, in full"
-				lang="text"
-				code={`for step in 1..N:
-    batch  = sample_sequences(corpus)            # tokens in
-    logits = model.forward(batch)                # predictions out
-    loss   = cross_entropy(logits, next_tokens)  # one number
-    grads  = backward(loss)                      # blame for every weight
-    optimizer.update(weights, grads)             # act on it`}
+				code={String.raw`for $t \leftarrow 1$ to $N$ do
+  $B \leftarrow$ sample a batch of sequences from the corpus // tokens in
+  $Z \leftarrow \mathrm{model}(B)$ // forward pass: predictions out
+  $L \leftarrow \mathrm{CrossEntropy}(Z, \text{next tokens})$ // one number
+  $g \leftarrow \nabla_{\theta} L$ // backward pass: blame for every weight
+  $\theta \leftarrow \mathrm{OptimizerStep}(\theta, g)$ // act on it
+end for`}
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -354,15 +357,17 @@ The learning rate decides how big "a little way" is.`}
 				</div>
 			</div>
 
-			<CodeBlock
+			<PseudoCode
+				number={3}
 				title="AdamW — one step, per weight"
-				lang="text"
-				code={`m = b1*m + (1-b1)*grad         # momentum: smoothed direction
-v = b2*v + (1-b2)*grad^2       # scale: smoothed squared magnitude
-w = w - lr * m / (sqrt(v) + eps)   # per-weight step size
-w = w - lr * wd * w            # decoupled decay — the W in AdamW
-
-(b1 ≈ 0.9, b2 ≈ 0.95-0.999; bias-correction terms omitted)`}
+				code={String.raw`require learning rate $\eta$, weight decay $\lambda$, $\beta_1 \approx 0.9$, $\beta_2 \approx 0.95\text{–}0.999$, tiny $\epsilon$
+for each weight $w$ with gradient $g$ do
+  $m \leftarrow \beta_1 m + (1 - \beta_1)\, g$ // momentum: smoothed direction
+  $v \leftarrow \beta_2 v + (1 - \beta_2)\, g^2$ // scale: smoothed squared magnitude
+  $w \leftarrow w - \eta\, m / (\sqrt{v} + \epsilon)$ // per-weight step size
+  $w \leftarrow w - \eta\, \lambda\, w$ // decoupled decay — the W in AdamW
+end for`}
+				caption="Bias-correction terms omitted."
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">

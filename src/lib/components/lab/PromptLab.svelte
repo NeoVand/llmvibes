@@ -7,6 +7,7 @@
 	// pretrains ~200 steps so the continuations are English rather than bytes.
 	import { onDestroy } from 'svelte';
 	import { Feather, Loader2, MessageCircle, Play, RefreshCw, Send } from 'lucide-svelte';
+	import Slider from '../ui/Slider.svelte';
 	import { detectCapability, type ModelConfig } from '$lib/llm/engine';
 	import { WorkerEngine } from '$lib/llm/worker-engine';
 	import { BpeTokenizer, type BpeVocab } from '$lib/llm/bpe';
@@ -334,20 +335,17 @@
 				>
 					<RefreshCw size={14} /> Continue again
 				</button>
-				<label class="flex items-center gap-2 text-xs" style="color: var(--color-text-muted);">
-					temp
-					<input
-						type="range"
-						min="0.1"
-						max="1.5"
-						step="0.1"
+				<div class="w-32">
+					<Slider
+						label="temp"
 						bind:value={temperature}
-						class="w-24"
+						min={0.1}
+						max={1.5}
+						step={0.1}
+						decimals={1}
+						tone="amber"
 					/>
-					<span style="color: var(--color-text-secondary); font-weight: 600; min-width: 2ch;"
-						>{temperature.toFixed(1)}</span
-					>
-				</label>
+				</div>
 			</span>
 		</div>
 		{#if error}

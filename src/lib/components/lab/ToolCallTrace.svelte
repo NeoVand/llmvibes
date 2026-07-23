@@ -8,6 +8,7 @@
 	// transcript.
 	import { onDestroy } from 'svelte';
 	import { Play, Pause, RotateCcw, StepForward, Footprints } from 'lucide-svelte';
+	import Slider from '../ui/Slider.svelte';
 
 	type Kind = 'story' | 'marker' | 'payload' | 'echo';
 	interface Tok {
@@ -233,22 +234,17 @@
 		<button class="ctl" class:toggled={stepMode} aria-pressed={stepMode} onclick={toggleStepMode}>
 			<Footprints size={13} /> step mode
 		</button>
-		<label class="flex min-w-[140px] flex-1 items-center gap-2" style="max-width: 260px;">
-			<span class="mono text-[11px]" style="color: var(--color-text-secondary);">speed</span>
-			<input
-				class="sslider min-w-0 flex-1"
-				type="range"
-				min="0.5"
-				max="3"
-				step="0.25"
+		<div class="min-w-[140px] flex-1" style="max-width: 260px;">
+			<Slider
+				label="speed"
 				bind:value={speed}
-				style="--fill: {((speed - 0.5) / 2.5) * 100}%;"
-				aria-label="playback speed"
+				min={0.5}
+				max={3}
+				step={0.25}
+				tone="teal"
+				format={(v) => v.toFixed(2).replace(/\.?0+$/, '') + '×'}
 			/>
-			<span class="mono w-8 text-right text-[11px]" style="color: var(--color-text);"
-				>{speed.toFixed(2).replace(/\.?0+$/, '')}×</span
-			>
-		</label>
+		</div>
 	</div>
 
 	<p
@@ -419,38 +415,6 @@
 		border-color: var(--color-vibe);
 		background: color-mix(in srgb, var(--color-vibe) 10%, transparent);
 		color: var(--color-vibe-text);
-	}
-
-	.sslider {
-		appearance: none;
-		-webkit-appearance: none;
-		height: 6px;
-		border-radius: 999px;
-		background: linear-gradient(
-			to right,
-			var(--color-primary) var(--fill),
-			var(--color-bg-tertiary) var(--fill)
-		);
-		cursor: pointer;
-		outline-offset: 4px;
-	}
-	.sslider::-webkit-slider-thumb {
-		appearance: none;
-		-webkit-appearance: none;
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--color-primary);
-		border: 2.5px solid var(--color-surface);
-		box-shadow: 0 0 0 1.5px var(--color-primary);
-	}
-	.sslider::-moz-range-thumb {
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--color-primary);
-		border: 2.5px solid var(--color-surface);
-		box-shadow: 0 0 0 1.5px var(--color-primary);
 	}
 
 	@media (prefers-reduced-motion: reduce) {

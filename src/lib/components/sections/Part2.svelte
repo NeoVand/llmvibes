@@ -4,6 +4,7 @@
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 	import BpeMergeLab from '../lab/BpeMergeLab.svelte';
@@ -129,15 +130,17 @@
 				counting:
 			</p>
 
-			<CodeBlock
-				title="Byte-pair encoding, the whole algorithm"
-				lang="text"
-				code={`vocab = the 256 possible bytes            # tokens 0..255
-while vocab is smaller than the target:
-    count every adjacent pair of tokens in the corpus
-    (a, b) = the most frequent pair
-    add a new token meaning "a followed by b"
-    replace every occurrence of a,b in the corpus with it`}
+			<PseudoCode
+				number={1}
+				title="Byte-pair encoding"
+				code={String.raw`$\mathcal{V} \leftarrow$ all $256$ single bytes // tokens 0 through 255
+while $|\mathcal{V}| < V_{\text{target}}$ do
+  count every adjacent token pair in the corpus
+  $(a, b) \leftarrow$ the most frequent pair
+  $\mathcal{V} \leftarrow \mathcal{V} \cup \{ab\}$ // a new token meaning "a followed by b"
+  replace every occurrence of $a, b$ in the corpus with $ab$
+end while`}
+				caption="Pure counting — no machine learning anywhere. For Quill, the target is 512: the 256 bytes plus 256 learned merges."
 			/>
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">

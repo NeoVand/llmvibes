@@ -7,6 +7,7 @@
 	// bottom end at 78 units against 12 — the exponent, not a constant factor.
 	import { onDestroy } from 'svelte';
 	import { Archive, Pause, Play, RotateCcw, StepForward } from 'lucide-svelte';
+	import Slider from '../ui/Slider.svelte';
 
 	const TOKENS = [
 		'Once',
@@ -74,8 +75,6 @@
 	}
 
 	onDestroy(stopPlay);
-
-	const speedPct = $derived(((speed - 0.25) / 2.75) * 100);
 </script>
 
 <div
@@ -110,25 +109,17 @@
 		<button class="ctl-btn" onclick={stepOnce} aria-label="step one token">
 			<StepForward size={14} />
 		</button>
-		<span
-			class="ml-2 text-[11px]"
-			style="font-family: var(--font-mono); color: var(--color-text-muted);">speed</span
-		>
-		<input
-			class="tslider max-w-48 min-w-24 flex-1"
-			type="range"
-			min="0.25"
-			max="3"
-			step="0.25"
-			bind:value={speed}
-			style="--fill: {speedPct}%;"
-			aria-label="animation speed"
-		/>
-		<span
-			class="text-[11px] font-semibold"
-			style="font-family: var(--font-mono); color: var(--color-text-secondary); min-width: 4ch;"
-			>{speed.toFixed(2).replace(/\.?0+$/, '')}×</span
-		>
+		<div class="ml-2 max-w-56 min-w-32 flex-1">
+			<Slider
+				label="speed"
+				bind:value={speed}
+				min={0.25}
+				max={3}
+				step={0.25}
+				tone="teal"
+				format={(v) => v.toFixed(2).replace(/\.?0+$/, '') + '×'}
+			/>
+		</div>
 	</div>
 
 	<!-- ── lane: without cache ── -->
@@ -350,37 +341,5 @@
 	.ctl-btn.play {
 		color: var(--color-important);
 		border-color: color-mix(in srgb, var(--color-important) 45%, var(--color-border));
-	}
-
-	.tslider {
-		appearance: none;
-		-webkit-appearance: none;
-		height: 6px;
-		border-radius: 999px;
-		background: linear-gradient(
-			to right,
-			var(--color-important) var(--fill),
-			var(--color-bg-tertiary) var(--fill)
-		);
-		cursor: pointer;
-		outline-offset: 4px;
-	}
-	.tslider::-webkit-slider-thumb {
-		appearance: none;
-		-webkit-appearance: none;
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--color-important);
-		border: 2.5px solid var(--color-surface);
-		box-shadow: 0 0 0 1.5px var(--color-important);
-	}
-	.tslider::-moz-range-thumb {
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--color-important);
-		border: 2.5px solid var(--color-surface);
-		box-shadow: 0 0 0 1.5px var(--color-important);
 	}
 </style>

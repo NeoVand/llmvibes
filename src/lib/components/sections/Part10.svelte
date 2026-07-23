@@ -5,6 +5,7 @@
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
 	import OverOptCurve from '../lab/OverOptCurve.svelte';
+	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
@@ -48,16 +49,14 @@
 				No gradients, no RL, no update to any weight — pure search against the reward.
 			</p>
 
-			<CodeBlock
+			<PseudoCode
+				number={1}
 				title="Best-of-N — the whole algorithm"
-				lang="text"
-				code={`for one prompt:
-  1. sample N stories from Quill        (N = 1, 4, 16, 64, 256...)
-  2. score each story with the RM
-  3. output the argmax — the RM's favorite
-
-N is an optimization-pressure dial. N = 1 is no pressure at all;
-every doubling searches the RM's landscape a little harder.`}
+				code={String.raw`require one prompt $x$, your reward model $R$, a budget $N$ // N = 1, 4, 16, 64, 256, ...
+sample $N$ stories $y_1, \dots, y_N$ from Quill
+$s_i \leftarrow R(y_i)$ for each story // score all N with the RM
+output $y_k$ where $k = \arg\max_i \, s_i$ // the RM's favorite — discard the rest`}
+				caption="N is an optimization-pressure dial. N = 1 is no pressure at all; every doubling searches the RM's landscape a little harder."
 			/>
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
@@ -164,16 +163,17 @@ N = 256   The dragon saw a dragon. "Dragon!" said the dragon.
 				the piece values every beginner memorizes:
 			</p>
 
-			<CodeBlock
+			<PseudoCode
+				number={2}
 				title="A naive material reward — what could go wrong?"
-				lang="text"
-				code={`reward per move:
-  + value of any piece you capture     pawn 1, knight 3, bishop 3,
-  − value of any piece you lose        rook 5, queen 9
-
-Sensible, right? Material is how beginners are taught to count
-advantage. It correlates beautifully with winning... in games
-played by people who are trying to win.`}
+				code={String.raw`require piece values: pawn $1$, knight $3$, bishop $3$, rook $5$, queen $9$
+function MaterialReward(move)
+  $r \leftarrow 0$
+  if the move captures a piece then $r \leftarrow r + \mathrm{value}(\text{captured})$ // gaining material: good
+  if the move loses a piece then $r \leftarrow r - \mathrm{value}(\text{lost})$ // losing material: bad
+  return $r$
+end function`}
+				caption="Sensible, right? Material is how beginners are taught to count advantage. It correlates beautifully with winning... in games played by people who are trying to win."
 			/>
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">

@@ -11,6 +11,7 @@
 	import { BpeTokenizer, type BpeVocab } from '$lib/llm/bpe';
 	import { base } from '$app/paths';
 	import TokenStream from './TokenStream.svelte';
+	import Slider from '../ui/Slider.svelte';
 
 	interface RookVocab {
 		moves: string[];
@@ -240,7 +241,7 @@
 		<p class="text-sm" style="color: var(--color-challenge);">Lab error: {error}</p>
 		<button class="lab-btn mt-2" onclick={setup}>Retry</button>
 	{:else}
-		<div class="mb-3 flex flex-wrap gap-2">
+		<div class="mb-3 flex flex-wrap items-center gap-2">
 			{#if phase === 'training'}
 				<button class="lab-btn" onclick={stopTraining}><Square size={14} /> Stop</button>
 			{:else}
@@ -250,13 +251,17 @@
 				{#if sampling}<Loader2 size={14} class="animate-spin" />{:else}<Sparkles size={14} />{/if}
 				Sample
 			</button>
-			<label class="flex items-center gap-2 text-xs" style="color: var(--color-text-muted);">
-				temp
-				<input type="range" min="0.1" max="1.5" step="0.1" bind:value={temperature} class="w-24" />
-				<span style="color: var(--color-text-secondary); font-weight: 600; min-width: 2ch;"
-					>{temperature.toFixed(1)}</span
-				>
-			</label>
+			<div class="w-36">
+				<Slider
+					label="temp"
+					bind:value={temperature}
+					min={0.1}
+					max={1.5}
+					step={0.1}
+					decimals={1}
+					tone="amber"
+				/>
+			</div>
 		</div>
 
 		<div class="rounded-lg border p-3" style="border-color: var(--color-border-light);">

@@ -9,6 +9,7 @@
 	// decoding provably reproduces the big model's exact output distribution.
 	import { onDestroy } from 'svelte';
 	import { FastForward, Pause, Play, Rabbit, RotateCcw, StepForward, Turtle } from 'lucide-svelte';
+	import Slider from '../ui/Slider.svelte';
 
 	const TARGET = [
 		'Once',
@@ -182,8 +183,6 @@
 
 	const tokensPerCall = $derived(bigCalls > 0 ? locked.length / bigCalls : 0);
 	const acceptRate = $derived(drafted > 0 ? accepted / drafted : 0);
-	const accPct = $derived(Math.round(accuracy * 100));
-	const sliderPct = $derived(((accuracy - 0.5) / 0.45) * 100);
 	const started = $derived(bigCalls > 0 || busy);
 </script>
 
@@ -224,25 +223,17 @@
 		<button class="ctl-btn" onclick={stepRound} disabled={busy} aria-label="run one round">
 			<StepForward size={14} />
 		</button>
-		<span
-			class="ml-2 text-[11px]"
-			style="font-family: var(--font-mono); color: var(--color-text-muted);">draft accuracy</span
-		>
-		<input
-			class="tslider max-w-48 min-w-24 flex-1"
-			type="range"
-			min="0.5"
-			max="0.95"
-			step="0.05"
-			bind:value={accuracy}
-			style="--fill: {sliderPct}%;"
-			aria-label="draft accuracy"
-		/>
-		<span
-			class="text-[11px] font-semibold"
-			style="font-family: var(--font-mono); color: var(--color-vibe); min-width: 3.5ch;"
-			>{accPct}%</span
-		>
+		<div class="ml-2 max-w-56 min-w-36 flex-1">
+			<Slider
+				label="draft accuracy"
+				bind:value={accuracy}
+				min={0.5}
+				max={0.95}
+				step={0.05}
+				tone="violet"
+				format={(v) => `${Math.round(v * 100)}%`}
+			/>
+		</div>
 	</div>
 
 	<!-- ── the two models ── -->
@@ -542,37 +533,5 @@
 	.ctl-btn.play {
 		color: var(--color-important);
 		border-color: color-mix(in srgb, var(--color-important) 45%, var(--color-border));
-	}
-
-	.tslider {
-		appearance: none;
-		-webkit-appearance: none;
-		height: 6px;
-		border-radius: 999px;
-		background: linear-gradient(
-			to right,
-			var(--color-vibe) var(--fill),
-			var(--color-bg-tertiary) var(--fill)
-		);
-		cursor: pointer;
-		outline-offset: 4px;
-	}
-	.tslider::-webkit-slider-thumb {
-		appearance: none;
-		-webkit-appearance: none;
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--color-vibe);
-		border: 2.5px solid var(--color-surface);
-		box-shadow: 0 0 0 1.5px var(--color-vibe);
-	}
-	.tslider::-moz-range-thumb {
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--color-vibe);
-		border: 2.5px solid var(--color-surface);
-		box-shadow: 0 0 0 1.5px var(--color-vibe);
 	}
 </style>
