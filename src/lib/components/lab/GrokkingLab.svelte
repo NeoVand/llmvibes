@@ -110,8 +110,11 @@
 	<p class="mb-3 text-xs" style="color: var(--color-text-muted);">
 		A real training run of {String(run?.meta?.model ?? 'a tiny MLP')} on {String(
 			run?.meta?.task ?? 'modular addition'
-		)}, half the table held out, {String(run?.meta?.optimizer ?? 'AdamW + weight decay')}. Nothing
-		smoothed, nothing staged.
+		)} — the model sees {run?.meta?.trainFrac
+			? `${Math.round(Number(run.meta.trainFrac) * 100)}%`
+			: 'a slice'} of the table, the rest is held out — {String(
+			run?.meta?.optimizer ?? 'AdamW + weight decay'
+		)}. Nothing smoothed, nothing staged.
 	</p>
 
 	{#if error}
