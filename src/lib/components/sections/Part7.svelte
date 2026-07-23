@@ -13,6 +13,7 @@
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
+	import PromptLab from '../lab/PromptLab.svelte';
 </script>
 
 <section id="part-7" class="py-10">
@@ -31,7 +32,9 @@
 		</p>
 
 		<Callout type="note" title="Hands-on">
-			This chapter's interactive playground arrives with a later milestone.
+			This chapter is already partly live: the prompt lab in 7.1 puts you in front of base Quill —
+			type at it and watch it continue instead of answer. The SFT playground itself arrives with a
+			later milestone.
 		</Callout>
 
 		<div id="section-7-1" class="mb-14">
@@ -71,6 +74,14 @@ base Quill:  and a sad ending too. Lily liked to make up stories.
 				the ending is whatever falls out, and it never stops. This isn't a small model being dumb; a raw
 				pretrained frontier model does exactly the same thing, just more eloquently.
 			</p>
+
+			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
+				Don't take the transcript's word for it. The lab below is base Quill, live — pretrained for
+				a couple hundred steps on your GPU, zero instruction tuning. Ask it a question. Give it an
+				order. Watch what it does with your words instead:
+			</p>
+
+			<PromptLab />
 
 			<Callout type="note" title="The Problem">
 				Pretraining optimizes "what comes next in the corpus", not "what does this human want".

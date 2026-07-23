@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { Zap, Split, Wand2, Archive, Shrink, FastForward, Star } from 'lucide-svelte';
+	import KvCacheLab from '../lab/KvCacheLab.svelte';
+	import SpeculativeLab from '../lab/SpeculativeLab.svelte';
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
@@ -242,6 +244,8 @@ with cache      token n costs a forward pass over 1 position
 				order-of-magnitude jump in tokens per second.
 			</p>
 
+			<KvCacheLab />
+
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The cache isn't free — you're trading memory for compute:
 			</p>
@@ -408,6 +412,8 @@ int4   25M x 0.5 bytes  =  ~13 MB   (+ a few percent for the scales)`}
     D->>T: drafts the next burst from "...spread its great"`}
 				id="speculative-handshake"
 			/>
+
+			<SpeculativeLab />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				The startling part is the guarantee. The acceptance rule — take a drafted token with

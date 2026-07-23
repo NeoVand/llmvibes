@@ -6,6 +6,7 @@
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
+	import BpeMergeLab from '../lab/BpeMergeLab.svelte';
 	import TokenizerDemo from '../lab/TokenizerDemo.svelte';
 </script>
 
@@ -140,6 +141,14 @@ while vocab is smaller than the target:
 			/>
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
+				And here is that loop's actual output, replayable. The box below holds Quill's real 256
+				merges in the order the corpus voted for them — scrub through the training run and watch a
+				sentence coalesce from byte gravel into words as the vocabulary grows:
+			</p>
+
+			<BpeMergeLab />
+
+			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Each merge invents one new token, so the vocabulary is a perfect fossil record of the
 				corpus's statistics. Quill's vocabulary is 512 tokens: the 256 bytes plus 256 merges learned
 				from the story slice. And the actual merge list is full of personality. The very first merge

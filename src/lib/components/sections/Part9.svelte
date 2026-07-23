@@ -15,6 +15,7 @@
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import Math from '../ui/Math.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
+	import PreferenceLab from '../lab/PreferenceLab.svelte';
 </script>
 
 <section id="part-9" class="py-10">
@@ -69,12 +70,14 @@
 			</p>
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
-				When this chapter's lab lands, the annotation screen is exactly this: one prompt, two
-				sampled stories side by side, and a click. Which would you rather read? No rubric, no
-				scoring guide — your honest preference is the ground truth being collected. This is, without
-				simplification, the job thousands of contractors do to align frontier models. The interface
-				they use looks like the one you'll use.
+				The annotation screen is exactly this — and a first working version is live below: one
+				prompt, two sampled stories side by side, and a click. Which would you rather read? No
+				rubric, no scoring guide — your honest preference is the ground truth being collected. This
+				is, without simplification, the job thousands of contractors do to align frontier models.
+				The interface they use looks like the one you'll use.
 			</p>
+
+			<PreferenceLab />
 
 			<Callout type="tip" title="Why comparisons, not scores?">
 				You could imagine rating each story 1–10 instead. Labs tried; it works badly. People drift —

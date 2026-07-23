@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { FlaskConical, Lightbulb, Workflow, Filter, PenLine } from 'lucide-svelte';
+	import SyntheticPipelineLab from '../lab/SyntheticPipelineLab.svelte';
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
@@ -120,6 +121,8 @@ Remember: only simple words!`}
 				generates samples live so you can watch a pipeline produce — and occasionally embarrass —
 				itself.
 			</p>
+
+			<SyntheticPipelineLab />
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
 				TinyStories used fixed word lists because stories are one task. To synthesize data for

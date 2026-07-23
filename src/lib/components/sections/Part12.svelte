@@ -6,6 +6,7 @@
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
+	import ToolCallTrace from '../lab/ToolCallTrace.svelte';
 </script>
 
 <section id="part-12" class="py-10">
@@ -60,6 +61,14 @@
 <|result|> Ember <|end_result|>    <-- the runtime splices this in
 "Ember?" Mira whispered. The dragon lifted its head...`}
 			/>
+
+			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
+				A static trace hides the most important part: the <em>timing</em>. Play the same stream
+				below at token speed and watch who is in charge at each instant — the model sampling, or the
+				runtime executing.
+			</p>
+
+			<ToolCallTrace />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Walk the mechanics in order, because each step kills a different piece of mystique:

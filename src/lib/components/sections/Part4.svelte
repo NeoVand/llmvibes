@@ -7,6 +7,7 @@
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
+	import OptimizerLab from '../lab/OptimizerLab.svelte';
 </script>
 
 <section id="part-4" class="py-10">
@@ -303,8 +304,11 @@ The learning rate decides how big "a little way" is.`}
 			<p class="mb-4 text-[14.5px] leading-relaxed" style="color: var(--color-text-secondary);">
 				Raw gradients are too jumpy to follow directly. AdamW smooths them with running averages,
 				warmup and cosine schedules shape the learning rate over a run, and gradient clipping
-				catches the occasional spike before it wrecks the weights.
+				catches the occasional spike before it wrecks the weights. Before the theory, race the
+				contenders yourself — same landscape, same learning rate, three very different journeys.
 			</p>
+
+			<OptimizerLab />
 
 			<Callout type="note">
 				<strong>The Problem:</strong> Each gradient is computed from one small batch — a tiny, noisy sample

@@ -6,6 +6,7 @@
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
+	import CorpusLab from '../lab/CorpusLab.svelte';
 </script>
 
 <section id="part-1" class="py-10">
@@ -302,6 +303,14 @@ a button on her shirt.`}
 					</p>
 				</div>
 			</div>
+
+			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
+				Don't take the summaries on faith — go through the pile yourself. The lab below downloads
+				the two corpus files and opens them up: shuffle through the stories, decode the games, and
+				see what the diets look like in aggregate.
+			</p>
+
+			<CorpusLab />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				For perspective: frontier models pretrain on <em>trillions</em> of tokens scraped from the

@@ -7,6 +7,7 @@
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import Math from '../ui/Math.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
+	import GroupRewardLab from '../lab/GroupRewardLab.svelte';
 </script>
 
 <section id="part-11" class="py-10">
@@ -260,8 +261,12 @@ total loss = mean over all tokens  +  beta * KL(policy, reference)`}
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Then run 11.1's update with <Code code="A_i" /> as the weight on every token of sample
 				<Code code="i" />: tokens of above-average samples get pushed up, tokens of below-average
-				samples get pushed down. That's the entire algorithm.
+				samples get pushed down. That's the entire algorithm — and its scoring half runs live below:
+				prepare Quill, pick a constraint, and watch a real group of eight get its rewards and
+				advantages.
 			</p>
+
+			<GroupRewardLab />
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
 				The group is the baseline

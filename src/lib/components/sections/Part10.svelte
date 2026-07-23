@@ -4,6 +4,7 @@
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
+	import OverOptCurve from '../lab/OverOptCurve.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
@@ -98,24 +99,10 @@ N = 256   The dragon saw a dragon. "Dragon!" said the dragon.
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
 				Plot both judges against the dial and you get the signature picture of
 				<strong style="color: var(--color-text);">over-optimization</strong> — the chart this chapter
-				exists to burn into your memory:
+				exists to burn into your memory. Drag the pressure marker yourself:
 			</p>
 
-			<CodeBlock
-				title="The over-optimization curve"
-				lang="text"
-				code={`score
-  ▲
-  │                        ●  ← RM score: climbs forever,
-  │                 ●         by construction (it's the argmax)
-  │           ●
-  │       ● ○ ─ ○
-  │     ●○        ○           ← true quality (your actual taste):
-  │    ○●            ○           rises with the RM... then the knee...
-  │   ○                 ○        then it falls while the RM cheers
-  │  ○
-  └──────────────────────────▶  optimization pressure (log N)`}
-			/>
+			<OverOptCurve />
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
 				The two curves rise together at first — that's the RM earning its keep. Past a knee they
@@ -125,7 +112,8 @@ N = 256   The dragon saw a dragon. "Dragon!" said the dragon.
 				> Researchers at OpenAI measured exactly this shape systematically — proxy score up, gold-standard
 				score up, knee, gold score down — and the shape recurs at every scale, from your browser-tab RM
 				to frontier pipelines. Optimization pressure doesn't degrade gracefully; it works, works, works,
-				then quietly starts working against you.
+				then quietly starts working against you. (And that β slider you just found is the subject of section
+				10.3 — leave it at zero for now. Or don't.)
 			</p>
 
 			<Callout type="warning" title="No RL was harmed in this demonstration">

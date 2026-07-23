@@ -12,6 +12,7 @@
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import TrainingLab from '../lab/TrainingLab.svelte';
 	import ChessLab from '../lab/ChessLab.svelte';
+	import SoftmaxLab from '../lab/SoftmaxLab.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
@@ -127,54 +128,23 @@
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Between the logits and the softmax sits one dial. Divide every logit by a
-				<strong style="color: var(--color-text);">temperature</strong> T before exponentiating:
+				<strong style="color: var(--color-text);">temperature</strong> T before exponentiating — that's
+				the entire mechanism. Don't take the formula's word for it. Below are six of Quill's candidate
+				tokens at one moment mid-story: drag any logit up or down and watch every probability renormalize;
+				slide T and watch the same logits sharpen into near-greedy or flatten toward uniform.
 			</p>
 
-			<CodeBlock
-				title="Temperature — one division, applied before softmax"
-				lang="text"
-				code={`p = softmax(logits / T)
-
-T < 1  →  gaps between logits widen  →  sharper, safer, more repetitive
-T = 1  →  the distribution exactly as the model learned it
-T > 1  →  gaps shrink toward zero    →  flatter, wilder, less coherent`}
-			/>
+			<SoftmaxLab />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				Concretely, three tokens with logits 2, 1, 0:
+				Three regimes are worth naming as you slide.
+				<strong style="color: var(--color-note);">T → 0</strong> collapses to greedy: the tallest
+				bar takes everything — deterministic, cautious, prone to loops; sample twice, get the
+				identical output twice. <strong style="color: var(--color-tip);">T ≈ 0.7–1.0</strong> is the
+				useful zone: enough randomness for variety, enough sharpness for coherence — most chat
+				models you've used live here. <strong style="color: var(--color-caution);">T high</strong> approaches
+				uniform sampling over the vocab — which for an untrained model it literally is. Chaos, by construction.
 			</p>
-
-			<CodeBlock
-				title="The same three logits at three temperatures"
-				lang="text"
-				code={`T = 0.5   →   0.87  0.12  0.02    nearly greedy — the favorite dominates
-T = 1.0   →   0.67  0.24  0.09    the model's honest opinion
-T = 2.0   →   0.51  0.31  0.19    flattened — underdogs get real chances`}
-			/>
-
-			<div class="mb-6 grid gap-3 sm:grid-cols-3">
-				<div class="rounded-lg p-4" style="background: var(--color-bg-secondary);">
-					<p class="mb-1 text-[13px] font-semibold" style="color: var(--color-note);">T → 0</p>
-					<p class="text-xs" style="color: var(--color-text-secondary);">
-						Collapses to greedy. Deterministic, cautious, prone to loops. Sample twice, get the
-						identical output twice.
-					</p>
-				</div>
-				<div class="rounded-lg p-4" style="background: var(--color-bg-secondary);">
-					<p class="mb-1 text-[13px] font-semibold" style="color: var(--color-tip);">T ≈ 0.7–1.0</p>
-					<p class="text-xs" style="color: var(--color-text-secondary);">
-						The useful zone: enough randomness for variety, enough sharpness for coherence. Most
-						chat models you've used live here.
-					</p>
-				</div>
-				<div class="rounded-lg p-4" style="background: var(--color-bg-secondary);">
-					<p class="mb-1 text-[13px] font-semibold" style="color: var(--color-caution);">T high</p>
-					<p class="text-xs" style="color: var(--color-text-secondary);">
-						Approaches uniform sampling over the vocab — which for an untrained model it literally
-						is. Chaos, by construction.
-					</p>
-				</div>
-			</div>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
 				Top-k: Cutting the Tail
@@ -186,8 +156,9 @@ T = 2.0   →   0.51  0.31  0.19    flattened — underdogs get real chances`}
 				real probability mass, so pure sampling occasionally lands on genuine junk mid-sentence.
 				<strong style="color: var(--color-text);">Top-k sampling</strong> keeps only the k most probable
 				tokens (say, 40), renormalizes, and samples from those. The tail's collective weight gets redistributed
-				to plausible candidates. Its cousin top-p, plus tricks like repetition penalties, wait for Part
-				13 — temperature and top-k are all you need to drive the labs.
+				to plausible candidates — you can watch the redistribution happen in the lab above by stepping
+				k down from 6. Its cousin top-p, plus tricks like repetition penalties, wait for Part 13 — temperature
+				and top-k are all you need to drive the labs.
 			</p>
 
 			<Callout type="tip" title="Why teach this before the first sample?">
