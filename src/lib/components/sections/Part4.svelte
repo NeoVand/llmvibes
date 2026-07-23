@@ -2,6 +2,7 @@
 	import { TrendingDown, Sigma, Undo2, Settings, Scale, Sparkles } from 'lucide-svelte';
 	import Callout from '../ui/Callout.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
+	import Math from '../ui/Math.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
@@ -49,6 +50,10 @@
 				was by the truth, and perplexity turns that surprise into a number you can read at a glance.
 				This is the quantity the entire rest of the course is trying to push down.
 			</p>
+			<Math
+				tex={String.raw`\mathcal{L} = -\frac{1}{N}\sum_{i=1}^{N} \log p_\theta\big(t_{i+1} \mid t_{\le i}\big) \qquad \text{perplexity} = e^{\mathcal{L}}`}
+				display
+			/>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
 				Where the Numbers Come From

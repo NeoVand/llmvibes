@@ -11,6 +11,7 @@
 	import Callout from '../ui/Callout.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import TrainingLab from '../lab/TrainingLab.svelte';
+	import ChessLab from '../lab/ChessLab.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
@@ -261,6 +262,19 @@ to the pigs. She scared it and did lack. It was hip.`}
 				≈ 6.2, Rook's near ln(1931) ≈ 7.6, and both fall the same way: the transformer doesn't know
 				which world it's learning. That's the thesis of this course, live on your screen.
 			</Callout>
+
+			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
+				Sit Across the Board From It
+			</h4>
+			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
+				Reading Rook's samples is one thing; being its opponent is another. The board below trains a
+				fresh Rook and lets you play it — and the side panel shows something no chess app shows: the
+				model's <em>raw</em> next-move distribution, illegal wishes included. We sample only from the
+				legal slice (masking), but the gauge tells you how much probability Rook has learned to put on
+				legal moves by itself. Pretrain-grade chess is chaotic-but-increasingly-legal; strategy comes
+				later, from Parts 7 and 11.
+			</p>
+			<ChessLab trainSteps={300} />
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
 				Now Actually Play With It

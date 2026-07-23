@@ -190,6 +190,18 @@ async function handleTrain(req: RpcRequest) {
 	return { completed: done, step: stepCounter };
 }
 
+/** Full log-prob distribution over the next token given a context — powers
+ * widgets that need to see (and mask) the whole distribution, like the chess
+ * board's legal-move masking. ~vocab×4 bytes, transferred. */
+function handleNextDist(req: RpcRequest) {
+	const c = cfg!;
+	const tokens = ((req.tokens as number[]) ?? []).slice(-c.blockSize);
+	const lp = forwardSeq(tokens);
+	const pos = Math.min(tokens.length, c.blockSize) - 1;
+	const row = lp.slice(pos * c.vocab, (pos + 1) * c.vocab);
+	return { row: row.buffer, __transfer: [row.buffer] };
+}
+
 function handleSample(req: RpcRequest) {
 	const c = cfg!;
 	const prompt = (req.promptTokens as number[]) ?? [];
@@ -253,6 +265,7 @@ const handlers: Record<string, (req: RpcRequest) => unknown | Promise<unknown>> 
 		return {};
 	},
 	sample: handleSample,
+	nextdist: handleNextDist,
 	inspect: handleInspect,
 	export: handleExport,
 	dispose: () => {

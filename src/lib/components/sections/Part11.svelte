@@ -5,6 +5,7 @@
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
+	import Math from '../ui/Math.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
 
@@ -226,6 +227,10 @@ REINFORCE   loss = -r * log p(token)      every token of the model's OWN sample`
 				value network, just relative advantage within the group, plus the KL leash from Part 10.
 				Watch group scores, advantages, and reward curves move as training runs.
 			</p>
+			<Math
+				tex={String.raw`\hat{A}_i = \frac{r_i - \operatorname{mean}(r_1,\dots,r_G)}{\operatorname{std}(r_1,\dots,r_G)} \qquad \mathcal{L} = -\hat{A}_i \log \pi_\theta(y_i \mid x) + \beta\, \mathrm{KL}\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)`}
+				display
+			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Group Relative Policy Optimization, exactly. For each prompt in a batch: sample a

@@ -5,6 +5,7 @@
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
+	import ArchExplorer from '../lab/ArchExplorer.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
 
@@ -37,8 +38,11 @@
 			<p class="mb-4 text-[14.5px] leading-relaxed" style="color: var(--color-text-secondary);">
 				Every token becomes a vector, and every vector flows down one shared highway — the residual
 				stream — that each layer reads from and writes back to. Getting this picture right first
-				makes everything else in the transformer feel inevitable rather than arbitrary.
+				makes everything else in the transformer feel inevitable rather than arbitrary. The explorer
+				below is the whole chapter in one interactive diagram — keep it open as you read; each
+				section walks one of its stages.
 			</p>
+			<ArchExplorer />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Part 2 ended with the world reduced to integers. But an integer ID is a name, not a

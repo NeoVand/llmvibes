@@ -13,6 +13,7 @@
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import MermaidDiagram from '../ui/MermaidDiagram.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
+	import Math from '../ui/Math.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
 
@@ -173,6 +174,10 @@ A 2-point gap ⇒ the model thinks you'd pick A ~88% of the time.`}
 				preference pairs nudges the chosen response up and the rejected one down. Both birds get the
 				treatment, and the math turns out to be one clean equation.
 			</p>
+			<Math
+				tex={String.raw`\mathcal{L}_{\text{DPO}} = -\log \sigma\!\left(\beta \left[\log\tfrac{\pi_\theta(y_w\mid x)}{\pi_{\text{ref}}(y_w\mid x)} - \log\tfrac{\pi_\theta(y_l\mid x)}{\pi_{\text{ref}}(y_l\mid x)}\right]\right)`}
+				display
+			/>
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
 				The classic RLHF pipeline uses the RM the obvious way: run reinforcement learning against

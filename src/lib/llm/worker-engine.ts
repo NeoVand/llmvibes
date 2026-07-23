@@ -102,7 +102,7 @@ export class WorkerEngine implements LlmEngine {
 		opts?: { temperature?: number; topK?: number; maxTokens?: number }
 	): Promise<SampleResult> {
 		const r = await this.call<{ tokens: number[] }>('sample', {
-			promptTokens,
+			promptTokens: [...promptTokens],
 			temperature: opts?.temperature,
 			topK: opts?.topK,
 			maxTokens: opts?.maxTokens,
@@ -111,8 +111,14 @@ export class WorkerEngine implements LlmEngine {
 		return { tokens: r.tokens, text: this.opts.decode(r.tokens) };
 	}
 
+	/** Full next-token log-prob row for a context (legal-move masking, etc.). */
+	async nextDistribution(tokens: number[]): Promise<Float32Array> {
+		const r = await this.call<{ row: ArrayBuffer }>('nextdist', { tokens: [...tokens] });
+		return new Float32Array(r.row);
+	}
+
 	async inspect(tokens: number[]): Promise<PerTokenInfo[]> {
-		const r = await this.call<{ perToken: PerTokenInfo[] }>('inspect', { tokens });
+		const r = await this.call<{ perToken: PerTokenInfo[] }>('inspect', { tokens: [...tokens] });
 		return r.perToken.map((t) => ({ ...t, text: this.opts.decodeOne(t.id) }));
 	}
 
