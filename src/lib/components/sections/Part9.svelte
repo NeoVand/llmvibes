@@ -13,7 +13,7 @@
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import RlhfVsDpo from '../diagrams/RlhfVsDpo.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
-	import Math from '../ui/Math.svelte';
+	import EquationAnatomy from '../ui/EquationAnatomy.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 	import PreferenceLab from '../lab/PreferenceLab.svelte';
 	import RlLoopLab from '../lab/RlLoopLab.svelte';
@@ -128,16 +128,27 @@
 				the gap between scores:
 			</p>
 
-			<CodeBlock
-				title="Bradley-Terry: from comparisons to a score"
-				lang="text"
-				code={`P(A beats B) = σ( r(A) − r(B) )        σ(z) = 1 / (1 + e^(−z))
-
-training loss, per click:
-  L = −log σ( r(chosen) − r(rejected) )
-
-Push r(chosen) above r(rejected) until the sigmoid saturates.
-A 2-point gap ⇒ the model thinks you'd pick A ~88% of the time.`}
+			<EquationAnatomy
+				caption="Bradley-Terry: from comparisons to a score — each click's loss pushes r(chosen) above r(rejected) until the sigmoid saturates"
+				tex={String.raw`P(A \succ B) = \textcolor{#b06a82}{\sigma}\big(\textcolor{#ef4444}{r(A)} \,\textcolor{#2563eb}{-}\, \textcolor{#ef4444}{r(B)}\big) \qquad \mathcal{L}_{\text{per click}} = -\log \textcolor{#b06a82}{\sigma}\big(\textcolor{#ef4444}{r(\text{chosen})} \,\textcolor{#2563eb}{-}\, \textcolor{#ef4444}{r(\text{rejected})}\big)`}
+				terms={[
+					{
+						color: '#ef4444',
+						label: String.raw`r(A),\; r(B)`,
+						note: "each response's latent quality score — the single number the reward model outputs"
+					},
+					{
+						color: '#2563eb',
+						label: String.raw`r(A) - r(B)`,
+						note: "only the gap matters; a 2-point gap means the model thinks you'd pick A ~88% of the time"
+					},
+					{
+						color: '#b06a82',
+						label: String.raw`\sigma(z) = \frac{1}{1+e^{-z}}`,
+						note: 'the squash: any real gap becomes a probability between 0 and 1'
+					}
+				]}
+				read="the chance you'd prefer A is a squashed version of how far A's score sits above B's."
 			/>
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
@@ -178,9 +189,42 @@ A 2-point gap ⇒ the model thinks you'd pick A ~88% of the time.`}
 				preference pairs nudges the chosen response up and the rejected one down. Both birds get the
 				treatment, and the math turns out to be one clean equation.
 			</p>
-			<Math
-				tex={String.raw`\mathcal{L}_{\text{DPO}} = -\log \sigma\!\left(\beta \left[\log\tfrac{\pi_\theta(y_w\mid x)}{\pi_{\text{ref}}(y_w\mid x)} - \log\tfrac{\pi_\theta(y_l\mid x)}{\pi_{\text{ref}}(y_l\mid x)}\right]\right)`}
-				display
+			<EquationAnatomy
+				caption="The DPO loss — the whole algorithm"
+				tex={String.raw`\mathcal{L}_{\text{DPO}} = -\log \textcolor{#b06a82}{\sigma}\!\left(\textcolor{#f59e0b}{\beta} \left[\log\tfrac{\textcolor{#a855f7}{\pi_\theta}(\textcolor{#10b981}{y_w}\mid x)}{\textcolor{#94a3b8}{\pi_{\text{ref}}}(\textcolor{#10b981}{y_w}\mid x)} - \log\tfrac{\textcolor{#a855f7}{\pi_\theta}(\textcolor{#ef4444}{y_l}\mid x)}{\textcolor{#94a3b8}{\pi_{\text{ref}}}(\textcolor{#ef4444}{y_l}\mid x)}\right]\right)`}
+				terms={[
+					{
+						color: '#10b981',
+						label: String.raw`\log\tfrac{\pi_\theta(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)}`,
+						note: 'the winner\'s log-ratio: how much more the tuned model likes the story you clicked ("w" for win) than the frozen reference does — training pushes it up'
+					},
+					{
+						color: '#ef4444',
+						label: String.raw`\log\tfrac{\pi_\theta(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}`,
+						note: 'the loser\'s log-ratio: the same measure for the story you passed on ("l" for lose) — training pushes it down'
+					},
+					{
+						color: '#a855f7',
+						label: String.raw`\pi_\theta`,
+						note: 'the policy being trained — Quill, adapter ON'
+					},
+					{
+						color: '#94a3b8',
+						label: String.raw`\pi_{\text{ref}}`,
+						note: 'a frozen reference — the SFT model, adapter OFF'
+					},
+					{
+						color: '#f59e0b',
+						label: String.raw`\beta`,
+						note: 'leash tightness (≈ 0.1–0.5): how far from the reference the policy may stray'
+					},
+					{
+						color: '#b06a82',
+						label: String.raw`\sigma`,
+						note: 'the Bradley-Terry sigmoid from 9.2, squashing the weighted gap into a probability that the winner wins'
+					}
+				]}
+				read="push up the story you clicked and push down the one you rejected — both measured relative to the frozen reference, with β setting how tight the leash is."
 			/>
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
@@ -205,32 +249,17 @@ A 2-point gap ⇒ the model thinks you'd pick A ~88% of the time.`}
 				<strong style="color: var(--color-text);">Direct Preference Optimization (DPO)</strong>
 				showed that for this setup, the detour through an explicit RM and an RL loop can be skipped. The
 				RLHF objective has a closed-form optimal policy, and rearranging it turns the whole pipeline into
-				one supervised loss applied directly to your preference pairs:
+				one supervised loss applied directly to your preference pairs — the equation this section opened
+				with.
 			</p>
 
-			<CodeBlock
-				title="The DPO loss — the whole algorithm"
-				lang="text"
-				code={`L(θ) = −log σ( β · [ log πθ(y_w|x) − log πref(y_w|x)
-                    − log πθ(y_l|x) + log πref(y_l|x) ] )
-
-y_w   the story you clicked            ("w" for win)
-y_l   the story you passed on          ("l" for lose)
-πθ    the policy being trained — Quill, adapter ON
-πref  a frozen reference — the SFT model, adapter OFF
-β     leash tightness (≈ 0.1–0.5): how far from πref to stray`}
-			/>
-
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
-				Read it from the inside out. Each bracket term is a <em>log-ratio</em>: how much more likely
-				the policy makes this story than the reference does. The loss pushes the ratio up for the
-				story you chose and down for the one you rejected — but always
-				<em>relative to the reference</em>. If the policy drifts far from the SFT model, the ratios
-				blow up and the gradient fades: the frozen reference tethers training to the distribution
-				you started from, playing exactly the role the KL leash plays in the RL version. And notice
-				the Bradley-Terry sigmoid is still right there — the RM didn't vanish, it became implicit:
-				the log-ratio <em>is</em> the reward, β times over. The math of "learn a score, then chase it"
-				collapsed into "chase the pairs directly".
+				Look back at it with the pipeline in mind. If the policy drifts far from the SFT model, the
+				log-ratios blow up and the gradient fades: the frozen reference tethers training to the
+				distribution you started from, playing exactly the role the KL leash plays in the RL
+				version. And notice the Bradley-Terry sigmoid is still right there — the RM didn't vanish,
+				it became implicit: the log-ratio <em>is</em> the reward, β times over. The math of "learn a score,
+				then chase it" collapsed into "chase the pairs directly".
 			</p>
 
 			<Callout type="tip" title="The adapter-off trick pays out">

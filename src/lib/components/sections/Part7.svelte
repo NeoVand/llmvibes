@@ -10,6 +10,7 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
+	import EquationAnatomy from '../ui/EquationAnatomy.svelte';
 	import LoraBypass from '../diagrams/LoraBypass.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
@@ -191,17 +192,27 @@ cheered. The end.
 				to the loss.
 			</Callout>
 
-			<CodeBlock
-				title="Prompt-loss masking, token by token"
-				lang="text"
-				code={`tokens:  <|user|> Write a story ... <|assistant|> Once upon a ... <|eos|>
-mask:       0       0    0   0    0        0          1    1    1  1     1
-
-loss = −(1/N_response) · sum over tokens where mask = 1 of
-         log p(token_t | all tokens before t)
-
-mask = 0  →  model reads it, conditions on it, learns nothing from it
-mask = 1  →  this is the behavior we are paying gradient for`}
+			<EquationAnatomy
+				caption="Prompt-loss masking, token by token"
+				tex={String.raw`\mathcal{L} = \frac{1}{\textcolor{#10b981}{N_{\text{resp}}}} \textcolor{#10b981}{\sum_{i \,\in\, \text{response}}} \Big[ \textcolor{#ef4444}{-\log}\, \textcolor{#a855f7}{p}\big(t_i \mid \textcolor{#2563eb}{t_{<i}}\big) \Big]`}
+				terms={[
+					{
+						color: '#10b981',
+						label: String.raw`i \in \text{response}`,
+						note: 'the mask: only the assistant\'s tokens are billed — mask 1 over "Once upon a … <|eos|>" (the behavior we are paying gradient for), mask 0 over "<|user|> Write a story …". N_resp counts the billed tokens'
+					},
+					{
+						color: '#2563eb',
+						label: String.raw`t_{<i}`,
+						note: 'everything before token i — the prompt included: the model reads it and conditions on it, it just learns nothing from it'
+					},
+					{
+						color: '#ef4444',
+						label: String.raw`-\log p(t_i \mid t_{<i})`,
+						note: "the same per-token surprise as pretraining — cross-entropy didn't change, only which tokens it is charged on"
+					}
+				]}
+				read="average the usual surprise over only the tokens the assistant wrote."
 			/>
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">

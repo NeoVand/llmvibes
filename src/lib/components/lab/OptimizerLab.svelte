@@ -351,7 +351,11 @@
 		const offCtx = off.getContext('2d');
 		if (!offCtx) return;
 		const rgba = heatmapRGBA(grid, cmap, isDark ? 'dark' : 'light');
-		offCtx.putImageData(new ImageData(rgba, grid.res, grid.res), 0, 0);
+		offCtx.putImageData(
+			new ImageData(rgba as Uint8ClampedArray<ArrayBuffer>, grid.res, grid.res),
+			0,
+			0
+		);
 
 		// …then scaled up with smoothing, the extended 20% skirt hanging
 		// past the frame so the visible window is seam-free at the edges.

@@ -3,6 +3,7 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
+	import EquationAnatomy from '../ui/EquationAnatomy.svelte';
 	import GoodhartChain from '../diagrams/GoodhartChain.svelte';
 	import OverOptCurve from '../lab/OverOptCurve.svelte';
 	import PseudoCode from '../ui/PseudoCode.svelte';
@@ -244,16 +245,37 @@ end function`}
 				every bit of probability mass it moves away from the reference, measured by KL divergence:
 			</p>
 
-			<CodeBlock
-				title="The KL-regularized objective — alignment's load-bearing equation"
-				lang="text"
-				code={`maximize   E[ reward(x, y) ]  −  β · KL( π ‖ πref )
-
-KL( π ‖ πref ) = E over y ~ π [ log π(y|x) − log πref(y|x) ]
-
-π      the policy being optimized
-πref   frozen reference — the SFT model (adapter OFF, for our birds)
-β      the leash: price per unit of drift away from the reference`}
+			<EquationAnatomy
+				caption="The KL-regularized objective — alignment's load-bearing equation"
+				tex={String.raw`\max_{\textcolor{#a855f7}{\pi}}\;\; \textcolor{#ef4444}{\mathbb{E}\big[r(x, y)\big]} \;-\; \textcolor{#f59e0b}{\beta}\cdot \textcolor{#b06a82}{\mathrm{KL}}\big(\textcolor{#a855f7}{\pi} \,\|\, \textcolor{#94a3b8}{\pi_{\text{ref}}}\big)`}
+				terms={[
+					{
+						color: '#ef4444',
+						label: String.raw`\mathbb{E}\big[r(x,y)\big]`,
+						note: 'reward-seeking: raise the average score of sampled stories — on its own, exactly the term 10.2 hacked'
+					},
+					{
+						color: '#b06a82',
+						label: String.raw`\mathrm{KL}\big(\pi \,\|\, \pi_{\text{ref}}\big)`,
+						note: "the leash: the average of log π(y|x) − log π_ref(y|x) over the policy's own samples — how much probability mass has moved away from the reference"
+					},
+					{
+						color: '#a855f7',
+						label: String.raw`\pi`,
+						note: 'the policy being optimized'
+					},
+					{
+						color: '#94a3b8',
+						label: String.raw`\pi_{\text{ref}}`,
+						note: 'the frozen anchor: the SFT model (adapter OFF, for our birds), never updated'
+					},
+					{
+						color: '#f59e0b',
+						label: String.raw`\beta`,
+						note: 'the leash: price per unit of drift away from the reference'
+					}
+				]}
+				read="chase reward, but pay β for every bit of probability mass moved away from the anchor."
 			/>
 
 			<p class="mb-4 text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">

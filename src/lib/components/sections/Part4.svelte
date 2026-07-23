@@ -2,7 +2,7 @@
 	import { TrendingDown, Sigma, Undo2, Settings, Scale, Sparkles } from 'lucide-svelte';
 	import Callout from '../ui/Callout.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
-	import Math from '../ui/Math.svelte';
+	import EquationAnatomy from '../ui/EquationAnatomy.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import SoftmaxLossPipeline from '../diagrams/SoftmaxLossPipeline.svelte';
@@ -55,9 +55,36 @@
 				was by the truth, and perplexity turns that surprise into a number you can read at a glance.
 				This is the quantity the entire rest of the course is trying to push down.
 			</p>
-			<Math
-				tex={String.raw`\mathcal{L} = -\frac{1}{N}\sum_{i=1}^{N} \log p_\theta\big(t_{i+1} \mid t_{\le i}\big) \qquad \text{perplexity} = e^{\mathcal{L}}`}
-				display
+			<EquationAnatomy
+				tex={String.raw`\mathcal{L} = \textcolor{#f59e0b}{\frac{1}{N}}\textcolor{#2563eb}{\sum_{i=1}^{N}} \Big[ \textcolor{#ef4444}{-\log}\, \textcolor{#a855f7}{p_\theta\big(t_{i+1} \mid t_{\le i}\big)} \Big] \qquad \text{perplexity} = \textcolor{#10b981}{e^{\mathcal{L}}}`}
+				terms={[
+					{
+						color: '#a855f7',
+						label: String.raw`p_\theta\big(t_{i+1} \mid t_{\le i}\big)`,
+						note: 'the probability the weights θ put on the true next token, given everything before it'
+					},
+					{
+						color: '#ef4444',
+						label: String.raw`-\log`,
+						note: "turns that probability into surprise — near 0 when sure and right, huge when confident and wrong; the bracket is exactly Part 2's per-token surprise"
+					},
+					{
+						color: '#2563eb',
+						label: String.raw`\sum_{i=1}^{N}`,
+						note: 'one graded prediction per position — every token of every sequence is a training example'
+					},
+					{
+						color: '#f59e0b',
+						label: String.raw`\tfrac{1}{N}`,
+						note: 'average over the N positions, so the number is comparable across lengths and batches'
+					},
+					{
+						color: '#10b981',
+						label: String.raw`e^{\mathcal{L}}`,
+						note: "perplexity: the loss un-logged — 'choosing among this many tokens'; unpacked at the end of this section"
+					}
+				]}
+				read="average, over every position, of how surprised the model was by the true next token."
 			/>
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
@@ -73,18 +100,30 @@
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				<strong style="color: var(--color-text);">Softmax</strong> fixes that in one move: exponentiate
-				every logit (now everything is positive), then divide by the total (now everything sums to 1).
+				<strong style="color: var(--color-text);">Softmax</strong> fixes that in one move:
 			</p>
 
-			<CodeBlock
-				title="Softmax — logits in, probabilities out"
-				lang="text"
-				code={`p_i = exp(z_i) / ( exp(z_1) + exp(z_2) + ... + exp(z_V) )
-
-z = logits (one per vocab token), V = vocab size
-Properties: every p_i > 0, they sum to 1, and order is preserved —
-the biggest logit becomes the biggest probability.`}
+			<EquationAnatomy
+				caption="Softmax — logits in, probabilities out"
+				tex={String.raw`\textcolor{#10b981}{p_i} = \frac{\textcolor{#f59e0b}{e^{z_i}}}{\textcolor{#2563eb}{\sum_{j=1}^{V} e^{z_j}}}`}
+				terms={[
+					{
+						color: '#f59e0b',
+						label: String.raw`e^{z_i}`,
+						note: 'exponentiate the logit — the raw score for one vocab entry — so every value comes out positive'
+					},
+					{
+						color: '#2563eb',
+						label: String.raw`\sum_{j=1}^{V} e^{z_j}`,
+						note: 'divide by the total over all V vocab entries — now the values sum to 1'
+					},
+					{
+						color: '#10b981',
+						label: String.raw`p_i`,
+						note: 'a real probability: positive, sums to 1 with its siblings, order preserved — the biggest logit becomes the biggest probability'
+					}
+				]}
+				read="exponentiate every logit, then divide each one by the total."
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">

@@ -5,6 +5,7 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
+	import EquationAnatomy from '../ui/EquationAnatomy.svelte';
 	import MoeRouting from '../diagrams/MoeRouting.svelte';
 	import MoeRoutingLab from '../lab/MoeRoutingLab.svelte';
 	import SpeculativeHandshake from '../diagrams/SpeculativeHandshake.svelte';
@@ -227,14 +228,22 @@ output $w_i \, \mathrm{expert}_i(x) + w_j \, \mathrm{expert}_j(x) + \mathrm{shar
 				generation. So compute them once and keep them.
 			</p>
 
-			<CodeBlock
-				title="The cache changes the exponent"
-				lang="text"
-				code={`without cache   token n costs a forward pass over n positions
-                1,000 tokens  ->  ~500,000 position-computations
-
-with cache      token n costs a forward pass over 1 position
-                1,000 tokens  ->  1,000 position-computations`}
+			<EquationAnatomy
+				caption="The cache changes the exponent"
+				tex={String.raw`\begin{aligned} \text{without cache:}&\quad \operatorname{cost}(n) \propto \textcolor{#ef4444}{n} &\quad \text{whole generation} &\approx \textcolor{#ef4444}{\tfrac{S^2}{2}} \\[2pt] \text{with cache:}&\quad \operatorname{cost}(n) \propto \textcolor{#10b981}{1} &\quad \text{whole generation} &= \textcolor{#10b981}{S} \end{aligned}`}
+				terms={[
+					{
+						color: '#ef4444',
+						label: String.raw`\operatorname{cost}(n) \propto n`,
+						note: 'no cache: sampling token n re-runs a forward pass over all n earlier positions; summed over a generation of length S that is 1 + 2 + ⋯ + S ≈ S²/2 — about 500,000 position-computations for 1,000 tokens'
+					},
+					{
+						color: '#10b981',
+						label: String.raw`\operatorname{cost}(n) \propto 1`,
+						note: 'with every earlier K and V stored, each new token computes just its own position: S total — 1,000 position-computations for 1,000 tokens'
+					}
+				]}
+				read="the cache drops the exponent: a generation costs its length, not its length squared."
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">

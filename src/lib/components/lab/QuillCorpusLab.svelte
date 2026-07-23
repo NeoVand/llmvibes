@@ -8,7 +8,7 @@
 	import { base } from '$app/paths';
 
 	type LoadState = 'idle' | 'loading' | 'ready' | 'error';
-	let state = $state<LoadState>('idle');
+	let loadState = $state<LoadState>('idle');
 	let error = $state('');
 	let bytes = $state(0);
 	let stories = $state<string[]>([]);
@@ -27,7 +27,7 @@
 		/^(Once upon a time|Once there (?:was|lived)|Once,? there|One (?:day|morning|afternoon|evening|night|sunny|bright|time),? )/;
 
 	async function load() {
-		state = 'loading';
+		loadState = 'loading';
 		error = '';
 		try {
 			const res = await fetch(`${base}/data/quill-corpus.txt`);
@@ -63,10 +63,10 @@
 				.slice(0, 12)
 				.map(([label, n]) => ({ label, n }));
 			storyI = Math.floor(Math.random() * stories.length);
-			state = 'ready';
+			loadState = 'ready';
 		} catch (e) {
 			error = e instanceof Error ? e.message : String(e);
-			state = 'error';
+			loadState = 'error';
 		}
 	}
 
@@ -103,11 +103,11 @@
 		training data.
 	</p>
 
-	{#if state === 'loading' || state === 'idle'}
+	{#if loadState === 'loading' || loadState === 'idle'}
 		<div class="load-row">
 			<Loader2 size={14} class="animate-spin" /> fetching quill-corpus.txt…
 		</div>
-	{:else if state === 'error'}
+	{:else if loadState === 'error'}
 		<div class="load-row" style="color: var(--color-caution);">
 			couldn't fetch the corpus ({error}) — <button class="retry" onclick={load}>retry</button>
 		</div>

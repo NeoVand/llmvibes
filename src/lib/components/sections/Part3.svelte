@@ -2,7 +2,7 @@
 	import { Network, Layers, Eye, RotateCw, Box } from 'lucide-svelte';
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
-	import CodeBlock from '../ui/CodeBlock.svelte';
+	import EquationAnatomy from '../ui/EquationAnatomy.svelte';
 	import AttentionDataflow from '../diagrams/AttentionDataflow.svelte';
 	import ResidualStream from '../diagrams/ResidualStream.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
@@ -263,15 +263,32 @@ log('output = weights · V =', np.dot(weights, V));`}
 				standard — injects it with a trick of geometry:
 			</p>
 
-			<CodeBlock
-				title="RoPE in one idea"
-				lang="text"
-				code={`Pair up the dimensions of each query and key vector: (q1,q2), (q3,q4), …
-Treat each pair as a point in a 2-D plane.
-At position p, rotate each pair by angle  p × θ  (a different θ per pair).
-
-Rotating both q and k means their dot product depends only on the
-DIFFERENCE of their positions — how far apart, not where.`}
+			<EquationAnatomy
+				caption="RoPE in one idea"
+				tex={String.raw`\textcolor{#a855f7}{\begin{pmatrix} q_{2k} \\ q_{2k+1} \end{pmatrix}} \;\longmapsto\; \textcolor{#10b981}{R}\big(\textcolor{#2563eb}{p}\,\textcolor{#f59e0b}{\theta_k}\big)\, \textcolor{#a855f7}{\begin{pmatrix} q_{2k} \\ q_{2k+1} \end{pmatrix}}`}
+				terms={[
+					{
+						color: '#a855f7',
+						label: String.raw`(q_{2k},\, q_{2k+1})`,
+						note: 'adjacent dimensions of each query — and, identically, each key — paired up: (q₁,q₂), (q₃,q₄), …, each pair treated as a point in a 2-D plane'
+					},
+					{
+						color: '#2563eb',
+						label: String.raw`p`,
+						note: "the token's position in the sequence: the same vector spins further the later it sits"
+					},
+					{
+						color: '#f59e0b',
+						label: String.raw`\theta_k`,
+						note: "each pair's own angle step — a different θ per pair, so the total rotation is p × θ"
+					},
+					{
+						color: '#10b981',
+						label: String.raw`R(\cdot)`,
+						note: 'a pure 2-D rotation by that angle: direction now encodes position; length is untouched'
+					}
+				]}
+				read="at position p, rotate each two-dimensional slice of the query (and key) by p times that slice's own angle."
 			/>
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -347,14 +364,27 @@ DIFFERENCE of their positions — how far apart, not where.`}
 				before each sub-layer:
 			</p>
 
-			<CodeBlock
-				title="RMSNorm"
-				lang="text"
-				code={`rmsnorm(x) = x / sqrt(mean(x²) + eps)      # then × a learned per-dim gain
-
-Divide the vector by its own root-mean-square: direction preserved,
-magnitude pinned. Unlike the older LayerNorm, there's no mean-centering
-step — dropping it turns out to cost nothing and saves work.`}
+			<EquationAnatomy
+				caption="RMSNorm — LayerNorm minus the mean-centering step: dropping it costs nothing and saves work"
+				tex={String.raw`\operatorname{rmsnorm}(\textcolor{#2563eb}{x}) = \frac{\textcolor{#2563eb}{x}}{\textcolor{#f59e0b}{\sqrt{\operatorname{mean}(x^2) + \epsilon}}} \cdot \textcolor{#a855f7}{\gamma}`}
+				terms={[
+					{
+						color: '#2563eb',
+						label: String.raw`x`,
+						note: 'the residual-stream vector a sub-layer is about to read, at whatever magnitude it has drifted to'
+					},
+					{
+						color: '#f59e0b',
+						label: String.raw`\sqrt{\operatorname{mean}(x^2) + \epsilon}`,
+						note: "the vector's own root-mean-square (the tiny ε only guards the divide-by-zero): dividing by it pins the magnitude, direction preserved"
+					},
+					{
+						color: '#a855f7',
+						label: String.raw`\gamma`,
+						note: "a learned per-dimension gain, multiplied back in so the network chooses each channel's working scale"
+					}
+				]}
+				read="divide the vector by its own typical size, then let a learned gain re-scale each dimension."
 			/>
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -378,16 +408,32 @@ step — dropping it turns out to cost nothing and saves work.`}
 				called <strong style="color: var(--color-text);">SwiGLU</strong>:
 			</p>
 
-			<CodeBlock
-				title="Two MLP recipes"
-				lang="text"
-				code={`classic:  out = relu(x·W1) · W2
-SwiGLU:   out = ( silu(x·W1) ⊙ x·W3 ) · W2      # ⊙ = elementwise product
-
-Two parallel expansions: one (through silu, a smooth relu) acts as a
-GATE that scales the other, dimension by dimension. The network learns
-not just features but when to let each feature through. Costs a third
-weight matrix; wins consistently in practice.`}
+			<EquationAnatomy
+				caption="Two MLP recipes — SwiGLU costs a third weight matrix and wins consistently in practice"
+				tex={String.raw`\begin{aligned} \text{classic:} \quad \operatorname{out} &= \textcolor{#f59e0b}{\operatorname{relu}}(x\,\textcolor{#2563eb}{W_1})\;\textcolor{#10b981}{W_2} \\[2pt] \text{SwiGLU:} \quad \operatorname{out} &= \big(\textcolor{#f59e0b}{\operatorname{silu}}(x\,\textcolor{#2563eb}{W_1}) \;\textcolor{#a855f7}{\odot}\; x\,\textcolor{#2563eb}{W_3}\big)\;\textcolor{#10b981}{W_2} \end{aligned}`}
+				terms={[
+					{
+						color: '#2563eb',
+						label: String.raw`W_1,\; W_3`,
+						note: 'expand: lift the vector to 4× width — SwiGLU runs two expansions in parallel'
+					},
+					{
+						color: '#f59e0b',
+						label: String.raw`\operatorname{relu},\; \operatorname{silu}`,
+						note: 'the nonlinearity — silu is a smooth relu'
+					},
+					{
+						color: '#a855f7',
+						label: String.raw`\odot`,
+						note: 'the gate: an elementwise product — the silu branch scales the other branch dimension by dimension, so the network learns not just features but when to let each one through'
+					},
+					{
+						color: '#10b981',
+						label: String.raw`W_2`,
+						note: 'contract: project back down to stream width before adding to the residual'
+					}
+				]}
+				read="expand into a wide space, let one expansion gate the other, contract back down."
 			/>
 
 			<Callout type="warning" title="What the pocket pair actually uses">

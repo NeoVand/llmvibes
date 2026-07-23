@@ -361,7 +361,7 @@ function handleAttention(req: RpcRequest) {
 	const layers: ArrayBuffer[] = [];
 	for (const a of attn as any[]) {
 		const d = a.dataSync() as Float32Array;
-		layers.push(d.buffer);
+		layers.push(d.buffer as ArrayBuffer);
 	}
 	return {
 		layers,

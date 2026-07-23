@@ -21,7 +21,7 @@
 	import ChessBoard from '$lib/components/chess/ChessBoard.svelte';
 
 	type LoadState = 'idle' | 'loading' | 'ready' | 'error';
-	let state = $state<LoadState>('idle');
+	let loadState = $state<LoadState>('idle');
 	let error = $state('');
 	let bytes = $state(0);
 	let games = $state<number[][]>([]);
@@ -31,7 +31,7 @@
 	let topOpenings = $state<Array<{ label: string; n: number }>>([]);
 
 	async function load() {
-		state = 'loading';
+		loadState = 'loading';
 		error = '';
 		try {
 			const [binRes, vocabRes] = await Promise.all([
@@ -69,10 +69,10 @@
 				.slice(0, 12)
 				.map(([label, n]) => ({ label, n }));
 			gameI = Math.floor(Math.random() * parsed.length);
-			state = 'ready';
+			loadState = 'ready';
 		} catch (e) {
 			error = e instanceof Error ? e.message : String(e);
-			state = 'error';
+			loadState = 'error';
 		}
 	}
 
@@ -176,9 +176,9 @@
 		was chosen uniformly at random among the legal moves.
 	</p>
 
-	{#if state === 'loading' || state === 'idle'}
+	{#if loadState === 'loading' || loadState === 'idle'}
 		<div class="load-row"><Loader2 size={14} class="animate-spin" /> fetching rook-tokens.bin…</div>
-	{:else if state === 'error'}
+	{:else if loadState === 'error'}
 		<div class="load-row" style="color: var(--color-caution);">
 			couldn't fetch the corpus ({error}) — <button class="retry" onclick={load}>retry</button>
 		</div>

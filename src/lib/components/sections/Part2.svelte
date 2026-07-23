@@ -3,6 +3,7 @@
 	import Callout from '../ui/Callout.svelte';
 	import Code from '../ui/Code.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
+	import EquationAnatomy from '../ui/EquationAnatomy.svelte';
 	import BpeMergeTree from '../diagrams/BpeMergeTree.svelte';
 	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
@@ -328,13 +329,27 @@ board state is handed over on a plate:
 				a number worth internalizing now:
 			</p>
 
-			<CodeBlock
-				title="Per-token surprise"
-				lang="text"
-				code={`surprise(token) = -log p(token | everything before it)
-
-model was sure and right   →  p near 1  →  surprise near 0
-model was unsure           →  p small   →  surprise large`}
+			<EquationAnatomy
+				caption="Per-token surprise"
+				tex={String.raw`\textcolor{#ef4444}{\text{surprise}_i} = \textcolor{#ef4444}{-\log}\; \textcolor{#a855f7}{p}\big(\textcolor{#2563eb}{t_i \mid t_{<i}}\big)`}
+				terms={[
+					{
+						color: '#2563eb',
+						label: String.raw`t_i \mid t_{<i}`,
+						note: "this token, given every token before it — the model must call each one before it's revealed"
+					},
+					{
+						color: '#a855f7',
+						label: String.raw`p`,
+						note: 'the probability the model assigned to what actually came next — its confidence'
+					},
+					{
+						color: '#ef4444',
+						label: String.raw`-\log`,
+						note: 'flips confidence into surprise: sure and right → p near 1 → surprise near 0; unsure → p small → surprise large'
+					}
+				]}
+				read="how surprised the model was by token i, given everything it had already read."
 			/>
 
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">

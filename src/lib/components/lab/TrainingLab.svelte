@@ -49,10 +49,12 @@
 	let totalSteps = $state(0);
 	let stopFlag = false;
 
-	// training knobs (lrLog is log10 of the real learning rate)
+	// training knobs (lrLog is log10 of the real learning rate).
+	// The steps prop intentionally only seeds the slider's initial value:
+	// svelte-ignore state_referenced_locally
 	let stepsToRun = $state(steps);
 	let lrLog = $state(Math.log10(3e-4));
-	let lrApplied = 3e-4;
+	let lrApplied = $state(3e-4);
 	const lrWanted = $derived(10 ** lrLog);
 
 	let samples = $state<Array<{ text: string; temp: number }>>([]);

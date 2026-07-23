@@ -7,7 +7,7 @@
 	import R1Recipe from '../diagrams/R1Recipe.svelte';
 	import PseudoCode from '../ui/PseudoCode.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
-	import Math from '../ui/Math.svelte';
+	import EquationAnatomy from '../ui/EquationAnatomy.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 	import GroupRewardLab from '../lab/GroupRewardLab.svelte';
 </script>
@@ -58,11 +58,27 @@
 				data. The whole conceptual move fits in two lines:
 			</p>
 
-			<CodeBlock
-				title="The entire bridge, two losses"
-				lang="text"
-				code={`SFT         loss = -log p(token)          every token of someone else's good sample
-REINFORCE   loss = -r * log p(token)      every token of the model's OWN sample`}
+			<EquationAnatomy
+				caption="The entire bridge, two losses"
+				tex={String.raw`\begin{aligned} \text{SFT:}&\quad \mathcal{L} = -\log\, \textcolor{#a855f7}{p}(\textcolor{#2563eb}{t}) \\[2pt] \text{REINFORCE:}&\quad \mathcal{L} = -\textcolor{#ef4444}{r}\cdot \log\, \textcolor{#a855f7}{p}(\textcolor{#2563eb}{t}) \end{aligned}`}
+				terms={[
+					{
+						color: '#2563eb',
+						label: String.raw`t`,
+						note: "the tokens being upweighted — SFT: every token of someone else's good sample; REINFORCE: every token of the model's OWN sample"
+					},
+					{
+						color: '#a855f7',
+						label: String.raw`p(t)`,
+						note: "the model's probability for that token — the same quantity, the same gradient machinery, in both lines"
+					},
+					{
+						color: '#ef4444',
+						label: String.raw`r`,
+						note: 'the reward: the only new symbol, scaling how hard each token of the sample gets pushed'
+					}
+				]}
+				read="the familiar loss, weighted by how well the sample scored — applied to the model's own words."
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -230,9 +246,41 @@ REINFORCE   loss = -r * log p(token)      every token of the model's OWN sample`
 				value network, just relative advantage within the group, plus the KL leash from Part 10.
 				Watch group scores, advantages, and reward curves move as training runs.
 			</p>
-			<Math
-				tex={String.raw`\hat{A}_i = \frac{r_i - \operatorname{mean}(r_1,\dots,r_G)}{\operatorname{std}(r_1,\dots,r_G)} \qquad \mathcal{L} = -\hat{A}_i \log \pi_\theta(y_i \mid x) + \beta\, \mathrm{KL}\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)`}
-				display
+			<EquationAnatomy
+				tex={String.raw`\textcolor{#10b981}{\hat{A}_i} = \frac{\textcolor{#ef4444}{r_i} - \operatorname{mean}(\textcolor{#ef4444}{r_1,\dots,r_G})}{\operatorname{std}(\textcolor{#ef4444}{r_1,\dots,r_G})} \qquad \mathcal{L} = -\textcolor{#10b981}{\hat{A}_i} \log \textcolor{#a855f7}{\pi_\theta}(y_i \mid x) + \textcolor{#f59e0b}{\beta}\, \textcolor{#b06a82}{\mathrm{KL}}\big(\textcolor{#a855f7}{\pi_\theta} \,\|\, \textcolor{#94a3b8}{\pi_{\text{ref}}}\big)`}
+				terms={[
+					{
+						color: '#ef4444',
+						label: String.raw`r_i`,
+						note: "the verifier's raw reward for sample i — mean and std are taken over the group of G attempts at the same prompt"
+					},
+					{
+						color: '#10b981',
+						label: String.raw`\hat{A}_i`,
+						note: "the advantage: this sample's score relative to its own group, in units of the group's spread"
+					},
+					{
+						color: '#a855f7',
+						label: String.raw`\log \pi_\theta(y_i \mid x)`,
+						note: "the current policy's log-probability of its own sample — 11.1's REINFORCE term, now weighted by the advantage"
+					},
+					{
+						color: '#f59e0b',
+						label: String.raw`\beta`,
+						note: 'the price on drift — the same knob as Part 10'
+					},
+					{
+						color: '#b06a82',
+						label: String.raw`\mathrm{KL}\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)`,
+						note: 'the leash: charged for probability mass moved away from the frozen reference (adapter off)'
+					},
+					{
+						color: 'var(--color-text-muted)',
+						label: String.raw`\operatorname{clip}(\rho,\, 1-\epsilon,\, 1+\epsilon)`,
+						note: 'not shown above: the per-token step actually applied uses the new-to-old probability ratio ρ, clipped to 1 ± ε — the pseudocode below walks it through'
+					}
+				]}
+				read="weight every token of each sample by how much better that sample scored than its group, minus β times the drift from the reference."
 			/>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
