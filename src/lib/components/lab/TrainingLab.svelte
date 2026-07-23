@@ -39,6 +39,8 @@
 	let sampling = $state(false);
 	let temperature = $state(0.8);
 	let inspected = $state<PerTokenInfo[] | null>(null);
+	/** Rook only: fraction of sampled moves that were legal in context. */
+	let legalRate = $state<number | null>(null);
 
 	let quillTok: BpeTokenizer | null = null;
 	let rookMoves: string[] = [];
@@ -122,6 +124,7 @@
 			const prompt = bird === 'quill' ? quillTok!.encode('Once upon a time') : [0];
 			const r = await engine.sample(prompt, { temperature, topK: 40, maxTokens: 100 });
 			samples = [{ text: r.text, temp: temperature }, ...samples].slice(0, 3);
+			if (bird === 'rook') legalRate = await measureLegalRate(r.tokens);
 			const promptAndSample = [...prompt, ...r.tokens].slice(0, config.blockSize);
 			inspected = await engine.inspect(promptAndSample);
 		} catch (e) {
@@ -129,6 +132,35 @@
 		} finally {
 			sampling = false;
 		}
+	}
+
+	/** Replay a sampled token stream through real chess rules: what fraction of
+	 * the model's moves are legal in the position where it played them? THE
+	 * pretraining metric for Rook — next-token prediction with an external
+	 * ground truth. (chess.js loads lazily; ~70KB, first call only.) */
+	async function measureLegalRate(tokens: number[]): Promise<number | null> {
+		const { Chess } = await import('chess.js');
+		let attempted = 0;
+		let legal = 0;
+		let game: InstanceType<typeof Chess> | null = null;
+		for (const id of tokens) {
+			if (id === 0) {
+				game = new Chess();
+				continue;
+			}
+			game ??= new Chess();
+			const uci = rookMoves[id - 1];
+			if (!uci) continue;
+			attempted++;
+			try {
+				game.move({ from: uci.slice(0, 2), to: uci.slice(2, 4), promotion: uci[4] });
+				legal++;
+			} catch {
+				// illegal here — keep scoring the rest against a fresh board
+				game = new Chess();
+			}
+		}
+		return attempted > 0 ? legal / attempted : null;
 	}
 
 	// Loss sparkline geometry
@@ -232,6 +264,16 @@
 				{/if}
 			</svg>
 		</div>
+
+		{#if bird === 'rook' && legalRate !== null}
+			<div class="mt-3 flex items-center gap-3 rounded-lg border p-3" style="border-color: var(--color-border-light);">
+				<span class="text-xs" style="color: var(--color-text-muted);">legal-move rate</span>
+				<div class="h-2 flex-1 overflow-hidden rounded-full" style="background: var(--color-surface-hover);">
+					<div class="h-full rounded-full" style="width: {(legalRate * 100).toFixed(0)}%; background: var(--color-important); transition: width 400ms ease;"></div>
+				</div>
+				<span class="text-xs font-semibold" style="color: var(--color-text);">{(legalRate * 100).toFixed(0)}%</span>
+			</div>
+		{/if}
 
 		{#if samples.length > 0}
 			<div class="mt-3 space-y-2">
