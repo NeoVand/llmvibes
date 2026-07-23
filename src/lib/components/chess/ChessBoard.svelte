@@ -11,6 +11,8 @@
 		from: string;
 		to: string;
 		tone?: 'accent' | 'good' | 'bad';
+		/** 0..1 — scales arrow opacity (attention overlays etc.) */
+		weight?: number;
 	}
 
 	let {
@@ -405,7 +407,7 @@
 				stroke={ARROW_TONE[tone]}
 				stroke-width="18"
 				stroke-linecap="round"
-				opacity="0.75"
+				opacity={a.weight !== undefined ? 0.25 + 0.6 * Math.min(a.weight, 1) : 0.75}
 				marker-end="url(#{uid}-arrow-{tone})"
 			/>
 		{/each}
