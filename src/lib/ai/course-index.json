@@ -1,0 +1,464 @@
+[
+	{
+		"id": "hero",
+		"part": 0,
+		"title": "Introduction",
+		"text": "LLMVibes LLMVibes Raise two tiny language models — Quill the storyteller and Rook the chess player — from raw data to aligned, reasoning models, entirely in your browser: pretraining → SFT → RLHF/DPO → RLVR. Welcome! This course walks the full modern LLM pipeline on two models small enough to train live while you watch. Every stage a frontier lab runs — data cleaning, tokenization, pretraining, instruction tuning, preference optimization, reinforcement learning on verifiable rewards — you will run yourself, on your own hardware, in this tab. The thesis the whole course keeps returning to: it's all next-token prediction over token streams. Quill is a TinyStories-class English storyteller. It leads the chapters on tokenization, synthetic data, and the you-are-the-annotator RLHF loop — by the end it writes the story you shaped it to write. Rook is a chess-move model. It leads the chapters on verifiable rewards and interpretability — including the moment you open its residual stream and find a chessboard inside. A rook is a corvid; a quill is a feather. You are raising two birds. Stuck on a passage?"
+	},
+	{
+		"id": "hero",
+		"part": 0,
+		"title": "Introduction",
+		"text": "The AI tutor in the header answers from this course and cites the section it drew on — a small language model helping you raise two smaller ones. Sister courses: TerminalVibes teaches the command line from zero and GitVibes teaches version control, in the same visual, hands-on style. Neither is required here — this course only assumes curiosity. Everything trains through WebGPU, right in this tab — no cloud, no sign-up, no GPU cluster. The live pair are ~5M-parameter models that pretrain in about a coffee break; their larger flagship siblings ship as downloadable checkpoints with a scrubbable training history. The interactive playgrounds arrive with later milestones; the chapters below sketch the road."
+	},
+	{
+		"id": "part-1",
+		"part": 1,
+		"title": "Part 1 · Hatch",
+		"text": "The course opens with the two models already alive: prompt Quill for a story, play a game against Rook — then scrub them both back to random weights and watch every trace of skill drain away. Everything that follows is about putting it back, and it starts where every model starts: with the data. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-1-1",
+		"part": 1,
+		"title": "1.1 Meet Quill & Rook",
+		"text": "Two birds, one architecture: Quill writes children's stories, Rook plays chess, and both are nothing but next-token predictors over different streams. You'll meet the live pair you'll train yourself, their larger flagship siblings, and the scrubber that rewinds either one to the moment before it knew anything."
+	},
+	{
+		"id": "section-1-2",
+		"part": 1,
+		"title": "1.2 The Corpora",
+		"text": "What do the birds eat? Millions of tiny tales from TinyStories for Quill, millions of recorded games from Lichess for Rook. An explorer over real slices of both corpora shows what \"training data\" actually looks like before any model touches it."
+	},
+	{
+		"id": "section-1-3",
+		"part": 1,
+		"title": "1.3 Cleaning & Dedup",
+		"text": "Raw corpora arrive full of junk, and duplicates quietly teach a model to recite instead of generalize. Cleaning and deduplication get treated as first-class ideas here — and the favor gets repaid in Part 4, when you watch a model memorize a story it saw too many times."
+	},
+	{
+		"id": "part-2",
+		"part": 2,
+		"title": "Part 2 · Tokens",
+		"text": "A language model never sees letters, words, or chessboards — it sees a stream of integers. This chapter is about the machinery that turns the world into that stream: one vocabulary learned from data, one designed by hand, and the inspector you'll use to look at token streams for the rest of the course. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-2-1",
+		"part": 2,
+		"title": "2.1 Why Tokens",
+		"text": "Characters make sequences too long, whole words can't cover everything a human might type — tokens are the compromise every modern model lives with. Here's why the choice matters more than it looks, and why your emoji is about to become four strange tokens."
+	},
+	{
+		"id": "section-2-2",
+		"part": 2,
+		"title": "2.2 Train a BPE Live",
+		"text": "Byte-pair encoding is simple enough to watch happen: start from raw bytes, repeatedly merge the most frequent pair, and a vocabulary grows in front of you — \"th\", then \"the\", then whole words. You'll train Quill's tokenizer yourself, live, on real story text."
+	},
+	{
+		"id": "section-2-3",
+		"part": 2,
+		"title": "2.3 Rook's Designed Vocabulary",
+		"text": "Rook's vocabulary was never learned — it was designed: one token per chess move, 1,968 geometric moves plus a handful of special tokens, including the Elo tags that will matter in Part 7. Learned versus designed vocabularies — and why not characters, why not FEN."
+	},
+	{
+		"id": "section-2-4",
+		"part": 2,
+		"title": "2.4 The Token-Stream Inspector",
+		"text": "The course's universal instrument makes its debut: paste anything, see exactly what the model sees, token by token — including a per-token surprise heatmap. It will come back to teach perplexity, pretraining progress, and loss masking in later chapters."
+	},
+	{
+		"id": "part-3",
+		"part": 3,
+		"title": "Part 3 · The Transformer",
+		"text": "The same few hundred lines of architecture power Quill, Rook, and every frontier model you've heard of. This chapter builds the modern decoder block one sub-layer at a time — with Rook in the lead, because attention drawn as arrows on a chessboard is attention you can actually see. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-3-1",
+		"part": 3,
+		"title": "3.1 Embeddings & the Residual Stream",
+		"text": "Every token becomes a vector, and every vector flows down one shared highway — the residual stream — that each layer reads from and writes back to. Getting this picture right first makes everything else in the transformer feel inevitable rather than arbitrary."
+	},
+	{
+		"id": "section-3-2",
+		"part": 3,
+		"title": "3.2 Attention, Two Ways",
+		"text": "Attention lets every token look back at every token before it and decide what matters. For Quill that's spans of text lighting up; for Rook it's arrows between moves on a board — one mechanism, two visualizations, and the contrast is the lesson."
+	},
+	{
+		"id": "section-3-3",
+		"part": 3,
+		"title": "3.3 RoPE & Context Windows",
+		"text": "Attention by itself has no idea which token came first — position has to be smuggled in, and rotary embeddings are how modern models do it. Along the way: what a context window actually is, and why every model eventually runs out of one."
+	},
+	{
+		"id": "section-3-4",
+		"part": 3,
+		"title": "3.4 SwiGLU, RMSNorm, the Block",
+		"text": "The last pieces click in: the gated feed-forward network where most of the parameters live, the normalization that keeps activations sane, and the pre-norm wiring that stacks it all into a block you can repeat a dozen times to get a real model."
+	},
+	{
+		"id": "part-4",
+		"part": 4,
+		"title": "Part 4 · Learning",
+		"text": "A transformer with random weights is an elaborate way to produce noise. This chapter is about the loop that turns noise into skill: a loss that scores every prediction, gradients that assign blame, an optimizer that acts on it — and the strange things that happen when a model learns too well, or keeps learning long after it should have stopped. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-4-1",
+		"part": 4,
+		"title": "4.1 Softmax, Cross-Entropy, Perplexity",
+		"text": "Softmax turns raw scores into probabilities, cross-entropy measures how surprised the model was by the truth, and perplexity turns that surprise into a number you can read at a glance. This is the quantity the entire rest of the course is trying to push down."
+	},
+	{
+		"id": "section-4-2",
+		"part": 4,
+		"title": "4.2 Backpropagation",
+		"text": "One number — the loss — has to become an instruction for millions of weights, and backpropagation is the bookkeeping trick that makes it cheap: blame flowing backward through the same graph the prediction flowed forward through."
+	},
+	{
+		"id": "section-4-3",
+		"part": 4,
+		"title": "4.3 AdamW & Schedules",
+		"text": "Raw gradients are too jumpy to follow directly. AdamW smooths them with running averages, warmup and cosine schedules shape the learning rate over a run, and gradient clipping catches the occasional spike before it wrecks the weights."
+	},
+	{
+		"id": "section-4-4",
+		"part": 4,
+		"title": "4.4 Train/Val, Overfitting, Memorization",
+		"text": "A falling training loss can mean the model is learning — or just memorizing. Held-out validation data tells the two apart, and a hatchling that recites a story word-for-word shows why Part 1's deduplication was never optional."
+	},
+	{
+		"id": "section-4-5",
+		"part": 4,
+		"title": "4.5 The Grokking Interlude",
+		"text": "Sometimes a model memorizes its training set, plateaus for thousands of steps — and then, long after any reasonable person would have stopped training, suddenly generalizes. You'll scrub through a recorded run of this phenomenon and watch understanding arrive late."
+	},
+	{
+		"id": "part-5",
+		"part": 5,
+		"title": "Part 5 · Pretraining",
+		"text": "Everything so far was preparation; this is the payoff. Both birds train side by side on your GPU, and over a coffee break Quill's output climbs from gibberish to words to grammar while Rook's moves go from random to legal to dangerous. This is the chapter the whole course is built around. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-5-1",
+		"part": 5,
+		"title": "5.1 Twin Dashboards",
+		"text": "Two dashboards, one lesson: loss falling beside sampled stories for Quill, loss falling beside a legal-move gauge for Rook. Watching the same curve produce two different kinds of competence is the twin-spine thesis made visible."
+	},
+	{
+		"id": "section-5-2",
+		"part": 5,
+		"title": "5.2 Temperature & Sampling",
+		"text": "The model outputs a probability distribution; something still has to pick the next token. Temperature is the dial between playing it safe and getting weird — taught here, at the moment the first sampled output appears on screen."
+	},
+	{
+		"id": "section-5-3",
+		"part": 5,
+		"title": "5.3 Your First Real Run",
+		"text": "Press start and pretrain the live pair for real — millions of tokens through a few million parameters, on WebGPU, in your tab. The arc from noise to language happens while you watch, and the checkpoints it leaves behind belong to you."
+	},
+	{
+		"id": "section-5-4",
+		"part": 5,
+		"title": "5.4 The Training Time Machine",
+		"text": "The flagship models trained for days offline, and their history ships with the course: drag a slider through their checkpoints and watch ability assemble itself — including the sudden step where in-context copying clicks into place."
+	},
+	{
+		"id": "section-5-5",
+		"part": 5,
+		"title": "5.5 A Tiny Scaling Law",
+		"text": "Train three hatchlings of three sizes on the same data and plot their losses: even at toy scale, the points fall on a line. The straight line on that log-log plot is the same one frontier labs bet billions on."
+	},
+	{
+		"id": "section-5-6",
+		"part": 5,
+		"title": "5.6 How Do We Know It's Working?",
+		"text": "Loss went down — but is the model good? Evals as a first-class topic: Rook's clean Elo and a set of never-seen positions that separate memorized openings from a modeled board; Quill scored by a judge model; and why public benchmarks saturate and leak."
+	},
+	{
+		"id": "part-6",
+		"part": 6,
+		"title": "Part 6 · World Models",
+		"text": "Rook has only ever seen move tokens — never a board. So does it secretly have one? This chapter opens the model up and looks: the course's interpretability interlude, and the reason a chess model earned a place beside a storyteller. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-6-1",
+		"part": 6,
+		"title": "6.1 Linear Probes",
+		"text": "Train a tiny classifier on Rook's residual stream and it can read off the full board state — every square, at every move — from activations that were never told the rules. A linear probe is the simplest possible microscope, and what it finds here is remarkable."
+	},
+	{
+		"id": "section-6-2",
+		"part": 6,
+		"title": "6.2 Activation Patching",
+		"text": "Reading is one thing; editing is proof. Reach into a forward pass, flip the model's belief about a single square, and watch its chosen move change to match the board it now believes in — causal evidence that the internal board is doing real work."
+	},
+	{
+		"id": "section-6-3",
+		"part": 6,
+		"title": "6.3 Board or Bag of Heuristics?",
+		"text": "Not everyone agrees the probe results mean \"world model\" — maybe it's a thousand shallow tricks that add up to one. The critique gets presented honestly, because how much models really understand is exactly the open question at the frontier."
+	},
+	{
+		"id": "part-7",
+		"part": 7,
+		"title": "Part 7 · SFT + LoRA",
+		"text": "Pretrained Quill continues stories; it doesn't follow instructions. Act III opens with the technique that turns a text-completer into an assistant — supervised fine-tuning — and the low-rank trick that makes fine-tuning big models affordable enough to run in a browser tab. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-7-1",
+		"part": 7,
+		"title": "7.1 Instruction Data",
+		"text": "The only difference between a completer and an assistant is what it was fine-tuned on: pairs of instructions and responses. TinyStories-Instruct gives Quill exactly that — write a story about a brave fox, and a story about a brave fox follows."
+	},
+	{
+		"id": "section-7-2",
+		"part": 7,
+		"title": "7.2 Chat Templates & Loss Masking",
+		"text": "Under every chat interface is a rigid token format: special tokens fencing off who said what, a loss mask so the model learns to write answers rather than questions, and an EOS token so it knows when to stop. The inspector makes all three visible."
+	},
+	{
+		"id": "section-7-3",
+		"part": 7,
+		"title": "7.3 LoRA",
+		"text": "Instead of updating millions of weights, freeze them and train two thin matrices per layer. LoRA is how the flagship birds get fine-tuned inside your browser — and toggling the adapter off instantly recovers the original model, a trick later chapters lean on hard."
+	},
+	{
+		"id": "section-7-4",
+		"part": 7,
+		"title": "7.4 Conditioning vs Fine-Tuning",
+		"text": "Two ways to make Rook play stronger: fine-tune it on elite games, or just prepend a high-Elo token and ask. Comparing them side by side makes a deep distinction visceral — changing the weights versus changing the prompt."
+	},
+	{
+		"id": "section-7-5",
+		"part": 7,
+		"title": "7.5 Before & After",
+		"text": "Every stage boundary in this course ends the same way: the same prompts, the same positions, before and after. Here it's the first one — base Quill versus instruct Quill — plus an honest look at what fine-tuning quietly made worse."
+	},
+	{
+		"id": "part-8",
+		"part": 8,
+		"title": "Part 8 · Synthetic Data",
+		"text": "Time for a confession about the data Quill was raised on — and a chapter on the technique quietly powering most modern training sets: models generating data for other models, with verifiers standing between generation and training. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-8-1",
+		"part": 8,
+		"title": "8.1 TinyStories Was Synthetic All Along",
+		"text": "The corpus Quill grew up on was never written by humans — GPT wrote every one of those tiny tales, from templates and word lists, in 2023. Your bird is already a second-generation model, and that turns out to be the norm now, not the exception."
+	},
+	{
+		"id": "section-8-2",
+		"part": 8,
+		"title": "8.2 Generation Pipelines",
+		"text": "Good synthetic data is engineered, not wished for: seed words to force diversity, templates to control format, self-instruct loops to bootstrap variety. The course's tutor model generates samples live so you can watch a pipeline produce — and occasionally embarrass — itself."
+	},
+	{
+		"id": "section-8-3",
+		"part": 8,
+		"title": "8.3 Verifier Filtering & Dedup",
+		"text": "Generation is cheap; the value is in what you throw away. Verifiers score and reject, dedup catches the near-copies a generator loves to emit, and decontamination keeps the eval set out of the training set — the unglamorous steps that decide data quality."
+	},
+	{
+		"id": "section-8-4",
+		"part": 8,
+		"title": "8.4 Fine-Tune on Your Own Data",
+		"text": "The act's capstone: filter a large pre-generated pool with the verifier stack, keep what survives your standards, and fine-tune Quill on the dataset you just curated. The bird learns what you chose to feed it — data work, made personal."
+	},
+	{
+		"id": "part-9",
+		"part": 9,
+		"title": "Part 9 · Preferences",
+		"text": "\"Better\" isn't in the training data — someone has to click it. In this chapter that someone is you: your judgments become a reward model, the reward model becomes training signal, and at the end a blind test reveals whether the alignment stack actually made a model you prefer. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-9-1",
+		"part": 9,
+		"title": "9.1 You Are the Annotator",
+		"text": "Two stories, one prompt, one click: which is better? The job data-labeling contractors do for frontier labs, you'll do for Quill — and about a hundred honest clicks is all the next section needs."
+	},
+	{
+		"id": "section-9-2",
+		"part": 9,
+		"title": "9.2 A Reward Model From Your Clicks",
+		"text": "Your votes — blended with a few thousand shipped ones — train a model that predicts which story you'd prefer. A learned, differentiable stand-in for your taste: the load-bearing idea of RLHF, and the thing Part 10 will gleefully break."
+	},
+	{
+		"id": "section-9-3",
+		"part": 9,
+		"title": "9.3 DPO",
+		"text": "Direct preference optimization skips the RL loop entirely: a loss applied straight to the preference pairs nudges the chosen response up and the rejected one down. Both birds get the treatment, and the math turns out to be one clean equation."
+	},
+	{
+		"id": "section-9-4",
+		"part": 9,
+		"title": "9.4 RLHF vs RLAIF",
+		"text": "Quill's annotator is a human — you. Rook's is Stockfish, an engine that never sleeps and never gets bored. Human feedback versus AI feedback, taught by the twin contrast rather than by acronym definitions."
+	},
+	{
+		"id": "section-9-5",
+		"part": 9,
+		"title": "9.5 The Blind Taste Test",
+		"text": "Did any of it work? Aligned Quill and SFT Quill answer the same prompts with the labels hidden, and you pick winners without knowing which is which. The score at the end is the chapter's verdict on itself."
+	},
+	{
+		"id": "section-9-6",
+		"part": 9,
+		"title": "9.6 A Toy Refusal",
+		"text": "The same DPO machinery, pointed at safety: teach Quill to gently decline requests for scary stories. A toy refusal, honestly labeled as such — and a working glimpse of why preference training was invented in the first place."
+	},
+	{
+		"id": "part-10",
+		"part": 10,
+		"title": "Part 10 · Reward Hacking",
+		"text": "You just built a reward model. Now watch both birds break it. This chapter is the course's double climax: optimization finding every crack in a proxy objective, live, on rewards you built yourself — and the fix that modern alignment leans on. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-10-1",
+		"part": 10,
+		"title": "10.1 Best-of-N Against Your RM",
+		"text": "No reinforcement learning needed to hack a reward — just sample many stories and keep the one your reward model scores highest. Crank N and watch the winners drift from charming to \"dragon dragon dragon\": your own taste, Goodharted."
+	},
+	{
+		"id": "section-10-2",
+		"part": 10,
+		"title": "10.2 Goodhart's Law, Live",
+		"text": "Give Rook a reward for winning material and it learns something you didn't ask for: it will happily hang its king to grab a queen. When a measure becomes a target, it stops being a good measure — here that's not a proverb, it's a replay you can watch."
+	},
+	{
+		"id": "section-10-3",
+		"part": 10,
+		"title": "10.3 The KL Fix",
+		"text": "The standard remedy: penalize the model for drifting too far from a frozen reference copy of itself. Add the KL term, re-run both failure cases, and watch the same optimization pressure produce sane behavior — the anchor every RLHF pipeline quietly depends on."
+	},
+	{
+		"id": "part-11",
+		"part": 11,
+		"title": "Part 11 · RLVR & GRPO",
+		"text": "What if the reward can't be hacked because it's simply true? Checkmate is checkmate; a rhyme either lands or it doesn't. Reinforcement learning on verifiable rewards is the recipe behind the current generation of reasoning models, and this chapter runs it — GRPO and all — on your own hardware. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-11-1",
+		"part": 11,
+		"title": "11.1 From Labels to Rewards",
+		"text": "The bridge from everything you've done to policy gradients is one sentence: sample from the model, then upweight every token of the samples that scored well. It's Part 4's training loop with the model writing its own data — no mystique required."
+	},
+	{
+		"id": "section-11-2",
+		"part": 11,
+		"title": "11.2 Three Arenas",
+		"text": "Three verifiable playgrounds: Rook rewarded for legality and wins (the sure thing), Quill rewarded for satisfying story constraints like must-include words, and a little Countdown arithmetic solver — the honest gamble, scoped as such."
+	},
+	{
+		"id": "section-11-3",
+		"part": 11,
+		"title": "11.3 GRPO Mechanics",
+		"text": "GRPO's trick is comparing a group of attempts at the same prompt against each other — no value network, just relative advantage within the group, plus the KL leash from Part 10. Watch group scores, advantages, and reward curves move as training runs."
+	},
+	{
+		"id": "section-11-4",
+		"part": 11,
+		"title": "11.4 Edit the Reward Function",
+		"text": "The reward function is a text box, and it's yours: reweight terms, add bonuses, invent a new objective, and rerun to see what your incentive actually teaches. The fastest way to respect reward design is to write a bad one and watch it get obeyed."
+	},
+	{
+		"id": "section-11-5",
+		"part": 11,
+		"title": "11.5 The Full R1 Recipe",
+		"text": "Zoom out and the pieces you've built snap into the published recipe for reasoning models: cold-start SFT, RL on verifiable rewards, rejection sampling, RL again. Plus a conceptual look at how DAPO and GSPO patch GRPO's cracks at real scale."
+	},
+	{
+		"id": "part-12",
+		"part": 12,
+		"title": "Part 12 · Agents",
+		"text": "An agent is not a new kind of model — it's the same next-token predictor emitting tokens that make things happen. Quill gets two tools and a job long enough to need them: a story that outgrows its own context window. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-12-1",
+		"part": 12,
+		"title": "12.1 Tools as Tokens",
+		"text": "A tool call is just a special token sequence the model learned to emit, and a tool result is just tokens spliced back into its context. Demystifying that loop — the same one under every \"agentic\" product — is the whole point of the chapter."
+	},
+	{
+		"id": "section-12-2",
+		"part": 12,
+		"title": "12.2 The Scratchpad",
+		"text": "Ask Quill for a story longer than its context window and it forgets its own characters mid-tale — the context limit from Part 3, now felt as pain. A note-taking tool is the fix, and the limitation itself is the lesson."
+	},
+	{
+		"id": "section-12-3",
+		"part": 12,
+		"title": "12.3 The Story-World Database",
+		"text": "The second tool lets Quill query facts about its story world — which character owns which dragon, what color the door was. Retrieval in miniature: the model looks things up instead of hallucinating them."
+	},
+	{
+		"id": "section-12-4",
+		"part": 12,
+		"title": "12.4 Consistency Rewards",
+		"text": "Training the agent closes the course's loop: synthetic tool-use traces from Part 8's pipeline, then Part 11's RLVR with verifiers that hunt for contradictions between the story and the database. Every act of the course, compounded into one system."
+	},
+	{
+		"id": "part-13",
+		"part": 13,
+		"title": "Part 13 · Frontier & Inference",
+		"text": "What separates your 25M-parameter birds from a frontier model, besides zeros? This chapter tries the frontier's tricks at toy scale and reports honestly which ones help — then turns to inference, where a bag of clever engineering makes generation fast enough to feel alive. This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-13-1",
+		"part": 13,
+		"title": "13.1 Mixture of Experts",
+		"text": "Replace one feed-forward network with many and route each token to a couple of them: more parameters, same compute per token. A routing visualization shows which experts wake up for which tokens — and whether any of it helps at this scale."
+	},
+	{
+		"id": "section-13-2",
+		"part": 13,
+		"title": "13.2 MTP, Muon, QK-Clip",
+		"text": "Three tricks from recent frontier papers, each tried live: predicting several tokens ahead, racing the Muon optimizer against AdamW, and deliberately inducing an attention-logit explosion so QK-clip has something to fix. Verdicts included, hype not."
+	},
+	{
+		"id": "section-13-3",
+		"part": 13,
+		"title": "13.3 KV Cache & Sampling",
+		"text": "Without a cache, generating each token recomputes attention over everything before it. Toggle the KV cache and feel tokens-per-second jump — then finish the sampling toolbox with top-k and top-p, the dials temperature left unexplained in Part 5."
+	},
+	{
+		"id": "section-13-4",
+		"part": 13,
+		"title": "13.4 Quantization",
+		"text": "Squeeze weights from 16 bits to 8 to 4 and watch memory shrink while Quill's prose slowly coarsens. Quantization is why big models fit on small machines — and reading degraded stories side by side makes its cost tangible."
+	},
+	{
+		"id": "section-13-5",
+		"part": 13,
+		"title": "13.5 Speculative Decoding",
+		"text": "Little live-Quill drafts a burst of tokens; big flagship-Quill checks the whole burst in one pass and keeps what it agrees with. Same output distribution, several times the speed — your two birds, cooperating at last."
+	},
+	{
+		"id": "section-13-6",
+		"part": 13,
+		"title": "13.6 The SmolLM Cameo",
+		"text": "A real pretrained 135M-parameter model runs beside Quill for a direct conversation between scales. Same architecture, same sampling loop, just more of everything — the point of the whole course, made talkable."
+	},
+	{
+		"id": "part-14",
+		"part": 14,
+		"title": "Part 14 · Epilogue",
+		"text": "You raised two birds from random weights to aligned, tool-using models. The epilogue asks the only question left: how much of what you did is what the frontier labs do — and how much changes on the way up? This chapter's interactive playground arrives with a later milestone."
+	},
+	{
+		"id": "section-14-1",
+		"part": 14,
+		"title": "14.1 The Scale Map",
+		"text": "A guided walk from Quill and Rook to trillion-parameter systems: the surprising list of things that are literally identical — the loss, the block, the recipes — and the honest list of things that only exist at scale, from emergent abilities to entire data centers."
+	},
+	{
+		"id": "section-14-2",
+		"part": 14,
+		"title": "14.2 What Nobody Knows",
+		"text": "Why does grokking happen? What do models really represent? Why does the scaling line stay straight? The open problems of the field, stated plainly — along with a sober note on safety, and on what toy models can and cannot teach about it."
+	},
+	{
+		"id": "section-14-3",
+		"part": 14,
+		"title": "14.3 Two Birds, Fully Grown",
+		"text": "A last look at the stat sheets: every stage badge earned, every eval score, every token seen since the moment you scrubbed both birds back to nothing. They're yours now — and so is the understanding of how they came to be."
+	}
+]

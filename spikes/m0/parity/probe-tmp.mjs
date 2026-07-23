@@ -1,0 +1,14 @@
+import { init, defaultDevice, numpy as np, nn, valueAndGrad } from '@jax-js/jax';
+const devices = await init();
+console.log('devices:', devices);
+defaultDevice(devices.includes('cpu') ? 'cpu' : devices[0]);
+const a = np.array(new Float32Array([1,2,3,4])).reshape([2,2]);
+const b = np.array(new Float32Array([1,0,0,1])).reshape([2,2]);
+const c = np.dot(a, b);
+console.log('dot ok:', await c.data());
+const ids = np.array(new Int32Array([0,1]), { dtype: np.int32 });
+const oh = nn.oneHot(ids, 4);
+console.log('oneHot ok:', await oh.data());
+const f = (w) => np.sum(np.square(w));
+const [v, g] = valueAndGrad(f)(np.array(new Float32Array([1,2,3])));
+console.log('valueAndGrad ok:', v.item(), await g.data());

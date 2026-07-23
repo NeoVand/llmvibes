@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+		<link rel="icon" type="image/png" sizes="64x64" href="%sveltekit.assets%/favicon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="%sveltekit.assets%/favicon-32.png" />
+		<link rel="apple-touch-icon" href="%sveltekit.assets%/apple-touch-icon.png" />
+		<link rel="manifest" href="%sveltekit.assets%/manifest.webmanifest" />
+		<meta name="theme-color" content="#0b0e14" />
+		<!-- Description and social cards live in each route's <svelte:head>, not
+		     here. A crawler honours the FIRST og:* tag it meets, so a shared set
+		     in this shell would shadow every per-page override and give all nine
+		     part pages the same title, blurb and image. -->
+
+		<script>
+			// Apply the theme before first paint to avoid a flash of the wrong
+			// one. Mirrors $lib/theme.ts — including its default: an unset
+			// preference is dark, so a first visit must paint dark here too or
+			// the page flashes light before the app catches up.
+			try {
+				const theme = localStorage.getItem('llmvibes-theme');
+				if (theme === 'light' || theme === 'dark') {
+					document.documentElement.classList.add(theme);
+				} else if (theme !== 'system') {
+					document.documentElement.classList.add('dark');
+				}
+			} catch {
+				/* storage unavailable — the stylesheet's own default applies */
+				document.documentElement.classList.add('dark');
+			}
+		</script>
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>

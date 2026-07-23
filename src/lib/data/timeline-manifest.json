@@ -1,0 +1,686 @@
+[
+	{
+		"id": "hero",
+		"kind": "part",
+		"title": "hero",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": false,
+		"comp": "Hero"
+	},
+	{
+		"id": "part-1",
+		"kind": "part",
+		"title": "Hatch",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part1"
+	},
+	{
+		"id": "section-1-1",
+		"kind": "section",
+		"title": "1.1 Meet Quill & Rook",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part1"
+	},
+	{
+		"id": "section-1-2",
+		"kind": "section",
+		"title": "1.2 The Corpora",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part1"
+	},
+	{
+		"id": "section-1-3",
+		"kind": "section",
+		"title": "1.3 Cleaning & Dedup",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part1"
+	},
+	{
+		"id": "part-2",
+		"kind": "part",
+		"title": "Tokens",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part2"
+	},
+	{
+		"id": "section-2-1",
+		"kind": "section",
+		"title": "2.1 Why Tokens",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part2"
+	},
+	{
+		"id": "section-2-2",
+		"kind": "section",
+		"title": "2.2 Train a BPE Live",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part2"
+	},
+	{
+		"id": "section-2-3",
+		"kind": "section",
+		"title": "2.3 Rook's Designed Vocabulary",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part2"
+	},
+	{
+		"id": "section-2-4",
+		"kind": "section",
+		"title": "2.4 The Token-Stream Inspector",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part2"
+	},
+	{
+		"id": "part-3",
+		"kind": "part",
+		"title": "The Transformer",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part3"
+	},
+	{
+		"id": "section-3-1",
+		"kind": "section",
+		"title": "3.1 Embeddings & the Residual Stream",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part3"
+	},
+	{
+		"id": "section-3-2",
+		"kind": "section",
+		"title": "3.2 Attention, Two Ways",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part3"
+	},
+	{
+		"id": "section-3-3",
+		"kind": "section",
+		"title": "3.3 RoPE & Context Windows",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part3"
+	},
+	{
+		"id": "section-3-4",
+		"kind": "section",
+		"title": "3.4 SwiGLU, RMSNorm, the Block",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part3"
+	},
+	{
+		"id": "part-4",
+		"kind": "part",
+		"title": "Learning",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part4"
+	},
+	{
+		"id": "section-4-1",
+		"kind": "section",
+		"title": "4.1 Softmax, Cross-Entropy, Perplexity",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part4"
+	},
+	{
+		"id": "section-4-2",
+		"kind": "section",
+		"title": "4.2 Backpropagation",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part4"
+	},
+	{
+		"id": "section-4-3",
+		"kind": "section",
+		"title": "4.3 AdamW & Schedules",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part4"
+	},
+	{
+		"id": "section-4-4",
+		"kind": "section",
+		"title": "4.4 Train/Val, Overfitting, Memorization",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part4"
+	},
+	{
+		"id": "section-4-5",
+		"kind": "section",
+		"title": "4.5 The Grokking Interlude",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part4"
+	},
+	{
+		"id": "part-5",
+		"kind": "part",
+		"title": "Pretraining",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part5"
+	},
+	{
+		"id": "section-5-1",
+		"kind": "section",
+		"title": "5.1 Twin Dashboards",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part5"
+	},
+	{
+		"id": "section-5-2",
+		"kind": "section",
+		"title": "5.2 Temperature & Sampling",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part5"
+	},
+	{
+		"id": "section-5-3",
+		"kind": "section",
+		"title": "5.3 Your First Real Run",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part5"
+	},
+	{
+		"id": "section-5-4",
+		"kind": "section",
+		"title": "5.4 The Training Time Machine",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part5"
+	},
+	{
+		"id": "section-5-5",
+		"kind": "section",
+		"title": "5.5 A Tiny Scaling Law",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part5"
+	},
+	{
+		"id": "section-5-6",
+		"kind": "section",
+		"title": "5.6 How Do We Know It's Working?",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part5"
+	},
+	{
+		"id": "part-6",
+		"kind": "part",
+		"title": "World Models",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part6"
+	},
+	{
+		"id": "section-6-1",
+		"kind": "section",
+		"title": "6.1 Linear Probes",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part6"
+	},
+	{
+		"id": "section-6-2",
+		"kind": "section",
+		"title": "6.2 Activation Patching",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part6"
+	},
+	{
+		"id": "section-6-3",
+		"kind": "section",
+		"title": "6.3 Board or Bag of Heuristics?",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part6"
+	},
+	{
+		"id": "part-7",
+		"kind": "part",
+		"title": "SFT + LoRA",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part7"
+	},
+	{
+		"id": "section-7-1",
+		"kind": "section",
+		"title": "7.1 Instruction Data",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part7"
+	},
+	{
+		"id": "section-7-2",
+		"kind": "section",
+		"title": "7.2 Chat Templates & Loss Masking",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part7"
+	},
+	{
+		"id": "section-7-3",
+		"kind": "section",
+		"title": "7.3 LoRA",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part7"
+	},
+	{
+		"id": "section-7-4",
+		"kind": "section",
+		"title": "7.4 Conditioning vs Fine-Tuning",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part7"
+	},
+	{
+		"id": "section-7-5",
+		"kind": "section",
+		"title": "7.5 Before & After",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part7"
+	},
+	{
+		"id": "part-8",
+		"kind": "part",
+		"title": "Synthetic Data",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part8"
+	},
+	{
+		"id": "section-8-1",
+		"kind": "section",
+		"title": "8.1 TinyStories Was Synthetic All Along",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part8"
+	},
+	{
+		"id": "section-8-2",
+		"kind": "section",
+		"title": "8.2 Generation Pipelines",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part8"
+	},
+	{
+		"id": "section-8-3",
+		"kind": "section",
+		"title": "8.3 Verifier Filtering & Dedup",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part8"
+	},
+	{
+		"id": "section-8-4",
+		"kind": "section",
+		"title": "8.4 Fine-Tune on Your Own Data",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part8"
+	},
+	{
+		"id": "part-9",
+		"kind": "part",
+		"title": "Preferences",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part9"
+	},
+	{
+		"id": "section-9-1",
+		"kind": "section",
+		"title": "9.1 You Are the Annotator",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part9"
+	},
+	{
+		"id": "section-9-2",
+		"kind": "section",
+		"title": "9.2 A Reward Model From Your Clicks",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part9"
+	},
+	{
+		"id": "section-9-3",
+		"kind": "section",
+		"title": "9.3 DPO",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part9"
+	},
+	{
+		"id": "section-9-4",
+		"kind": "section",
+		"title": "9.4 RLHF vs RLAIF",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part9"
+	},
+	{
+		"id": "section-9-5",
+		"kind": "section",
+		"title": "9.5 The Blind Taste Test",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part9"
+	},
+	{
+		"id": "section-9-6",
+		"kind": "section",
+		"title": "9.6 A Toy Refusal",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part9"
+	},
+	{
+		"id": "part-10",
+		"kind": "part",
+		"title": "Reward Hacking",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part10"
+	},
+	{
+		"id": "section-10-1",
+		"kind": "section",
+		"title": "10.1 Best-of-N Against Your RM",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part10"
+	},
+	{
+		"id": "section-10-2",
+		"kind": "section",
+		"title": "10.2 Goodhart's Law, Live",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part10"
+	},
+	{
+		"id": "section-10-3",
+		"kind": "section",
+		"title": "10.3 The KL Fix",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part10"
+	},
+	{
+		"id": "part-11",
+		"kind": "part",
+		"title": "RLVR & GRPO",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part11"
+	},
+	{
+		"id": "section-11-1",
+		"kind": "section",
+		"title": "11.1 From Labels to Rewards",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part11"
+	},
+	{
+		"id": "section-11-2",
+		"kind": "section",
+		"title": "11.2 Three Arenas",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part11"
+	},
+	{
+		"id": "section-11-3",
+		"kind": "section",
+		"title": "11.3 GRPO Mechanics",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part11"
+	},
+	{
+		"id": "section-11-4",
+		"kind": "section",
+		"title": "11.4 Edit the Reward Function",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part11"
+	},
+	{
+		"id": "section-11-5",
+		"kind": "section",
+		"title": "11.5 The Full R1 Recipe",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part11"
+	},
+	{
+		"id": "part-12",
+		"kind": "part",
+		"title": "Agents",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part12"
+	},
+	{
+		"id": "section-12-1",
+		"kind": "section",
+		"title": "12.1 Tools as Tokens",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part12"
+	},
+	{
+		"id": "section-12-2",
+		"kind": "section",
+		"title": "12.2 The Scratchpad",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part12"
+	},
+	{
+		"id": "section-12-3",
+		"kind": "section",
+		"title": "12.3 The Story-World Database",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part12"
+	},
+	{
+		"id": "section-12-4",
+		"kind": "section",
+		"title": "12.4 Consistency Rewards",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part12"
+	},
+	{
+		"id": "part-13",
+		"kind": "part",
+		"title": "Frontier & Inference",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part13"
+	},
+	{
+		"id": "section-13-1",
+		"kind": "section",
+		"title": "13.1 Mixture of Experts",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part13"
+	},
+	{
+		"id": "section-13-2",
+		"kind": "section",
+		"title": "13.2 MTP, Muon, QK-Clip",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part13"
+	},
+	{
+		"id": "section-13-3",
+		"kind": "section",
+		"title": "13.3 KV Cache & Sampling",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part13"
+	},
+	{
+		"id": "section-13-4",
+		"kind": "section",
+		"title": "13.4 Quantization",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part13"
+	},
+	{
+		"id": "section-13-5",
+		"kind": "section",
+		"title": "13.5 Speculative Decoding",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part13"
+	},
+	{
+		"id": "section-13-6",
+		"kind": "section",
+		"title": "13.6 The SmolLM Cameo",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part13"
+	},
+	{
+		"id": "part-14",
+		"kind": "part",
+		"title": "Epilogue",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part14"
+	},
+	{
+		"id": "section-14-1",
+		"kind": "section",
+		"title": "14.1 The Scale Map",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part14"
+	},
+	{
+		"id": "section-14-2",
+		"kind": "section",
+		"title": "14.2 What Nobody Knows",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part14"
+	},
+	{
+		"id": "section-14-3",
+		"kind": "section",
+		"title": "14.3 Two Birds, Fully Grown",
+		"image": "Hero.webp",
+		"thumb": "hero",
+		"inherited": true,
+		"comp": "Part14"
+	}
+]

@@ -1,0 +1,702 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+:root {
+	--color-bg: #f8f8fc;
+	--color-bg-secondary: #f1f0f8;
+	--color-bg-tertiary: #e9e8f3;
+	--color-surface: #ffffff;
+	--color-surface-hover: #f5f4fa;
+	--color-border: #e3e1ef;
+	--color-border-light: #edecf5;
+	--color-text: #1a1730;
+	--color-text-secondary: #4e4b66;
+	--color-text-muted: #9b98b0;
+	--color-text-inverse: #ffffff;
+
+	--color-primary: #4f46e5;
+	--color-btn-agent: #9c6b10;
+	--panel-glass: color-mix(in srgb, var(--color-bg-secondary) 93%, transparent);
+	--color-primary-light: #6366f1;
+	--color-primary-dim: #eef2ff;
+	--color-primary-text: #4338ca;
+
+	--color-branch-main: #4f46e5;
+	--color-branch-feature: #059669;
+	--color-branch-hotfix: #dc2626;
+	--color-branch-release: #d97706;
+
+	--color-note: #2563eb;
+	--color-note-bg: #eff6ff;
+	--color-note-border: #bfdbfe;
+	--color-tip: #0284c7;
+	--color-tip-bg: #f0f9ff;
+	--color-tip-border: #7dd3fc;
+	--color-important: #db2777;
+	--color-important-bg: #fdf2f8;
+	--color-important-border: #f9a8d4;
+	--color-warning: #d97706;
+	--color-warning-bg: #fffbeb;
+	--color-warning-border: #fcd34d;
+	--color-caution: #dc2626;
+	--color-caution-bg: #fef2f2;
+	--color-caution-border: #fca5a5;
+
+	--color-terminal-bg: #f0eff8;
+	--color-terminal-text: #232037;
+	--color-terminal-prompt: #059669;
+	--color-terminal-command: #1a1730;
+	--color-terminal-output: #4e4b66;
+	--color-terminal-border: #d6d4e6;
+	--color-terminal-header: #e6e4f1;
+
+	--color-playground-bg: #fcecf5;
+	--color-playground-border: #ee92c6;
+	--color-playground-header: #f9e0ee;
+
+	/* Challenges — the graded sibling of the playground, in fired-clay
+	   terracotta. The card chrome is indigo and the playground accent is the
+	   --color-important pink, so the challenge family had to be warm and
+	   unmistakably neither: terracotta sits far from indigo on hue, and it is
+	   darker and browner than the pink, the amber --color-warning, and the
+	   signal-red --color-caution — a challenge is a test, not a hazard.
+
+	   The -bright variants are the COMPLETED lift: the same hue with
+	   lightness and chroma raised, used only where a solved mark sits next
+	   to an unsolved one. Completion must read as a brightness/fill change —
+	   under deuteranopia the hue axis cannot be trusted to carry it, the
+	   lightness axis can. --color-earned-bright is the matching lift for the
+	   success-green family, for the solved tick beside a challenge row. */
+	--color-challenge: #a2401f;
+	--color-challenge-bright: #d1490f;
+	--color-earned-bright: #12923f;
+
+	--color-diff-add: #166534;
+	--color-diff-add-bg: rgba(22, 101, 52, 0.08);
+	--color-diff-del: #b91c1c;
+	--color-diff-del-bg: rgba(185, 28, 28, 0.06);
+	--color-diff-hunk: #1d4ed8;
+	--color-diff-hash: #92400e;
+	--color-diff-meta: #166534;
+
+	--color-code-bg: #efeef7;
+	--color-code-text: #232037;
+
+	--color-vibe: #8b5cf6;
+	--color-vibe-text: #7c3aed;
+	--color-vibe-bg: #f5f3ff;
+
+	/* The quiet hairline hanging a part's children off its icon in the
+	   sidebar. A neutral wash of the text ink rather than --color-border:
+	   the border tokens are tuned for card edges on the surface colour, and
+	   on the sidebar's translucent fabric they read either invisible or
+	   like chrome. Dark lifts it — the same 10% of a light ink on a dark
+	   ground disappears. */
+	--thread-lit: color-mix(in srgb, var(--color-text) 10%, transparent);
+
+	/* 249.5, not the round 280 it used to be — measured, then padded, never
+	   eyeballed. A part row is 5.5 (nav pad) + 12 (row pad) + 17 (icon) + 10
+	   (gap) + label + 10 (gap) + 20 (caret) − 4 (its -mr-1) + 12 (row pad) +
+	   5.5 (nav pad) = label + 88, and the widest label in the nav
+	   ("Enterprise Onboarding" at its active weight 700) renders at 155.5px,
+	   so the rows need 243.5. The deepest child row ("Parallel Agents:
+	   Worktrees") needs 241.5 by the same walk. 6px on top absorbs
+	   platform-to-platform font rasterisation drift — the labels are
+	   `white-space: nowrap`, so a flush width would clip, not wrap, on any
+	   machine that draws them a hair wider. Everything past that was dead
+	   space to the right of every hover pill. The left 5.5 is fixed by the
+	   26px icon column (see Sidebar.svelte), so the trim comes off the
+	   right. */
+	--sidebar-width: 249.5px;
+	--sidebar-collapsed-width: 52px;
+	--header-height: 48px;
+	/* The playground's half of the page: a terminal, a file tree and a commit
+	   graph all have to be legible at once.
+
+	   THE RULE for every reading-mode panel: whatever width it takes, the
+	   content margin must be driven by the SAME token. These once differed —
+	   a 40rem tutor against a 44rem margin — and the mismatch left a strip of
+	   nothing down the right of the page that read as a layout bug, which is
+	   what makes the three panels three tokens rather than one shared width. */
+	--panel-reading-width: min(46vw, 42rem);
+	/* The tutor is a conversation, and a conversation does not want half a
+	   page. Chat lines set far past ~70 characters get hard to track back to
+	   the start, and the panel was inheriting the playground's width purely
+	   because they had been made to match. Slimmer, and the reading column it
+	   leaves behind is wider for it. */
+	--agent-reading-width: min(34vw, 30rem);
+	/* The cheat sheet reads BESIDE an exercise, so its width is bounded by what
+	   it takes away from the text, not by the longest string in it. A handful of
+	   the longest commands wrap onto a second line here, and that is the cheaper
+	   trade: sizing the panel to fit `git config --global core.excludesFile
+	   ~/.gitignore_global` on one line cost nearly six rems that every other row
+	   paid for. Wrapping is at spaces, so a wrapped row still reads as one
+	   command. Note the usable width is ~15px less on platforms that put a real
+	   scrollbar inside the box (Linux, Windows) than on ones that overlay it. */
+	--cheatsheet-width: 23.5rem;
+
+	--font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+	--font-heading: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
+	--font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not(.light) {
+		--color-bg: #0d0b17;
+		--color-bg-secondary: #131021;
+		--color-bg-tertiary: #1b172c;
+		--color-surface: #151222;
+		--color-surface-hover: #1b172c;
+		--color-border: #27223c;
+		--color-border-light: #1f1b31;
+		--color-text: #e9e7f4;
+		--color-text-secondary: #a19dba;
+		--color-text-muted: #625e7d;
+		--color-text-inverse: #0d0b17;
+
+		--color-primary: #818cf8;
+		--color-btn-agent: #f2c94c;
+		--panel-glass: color-mix(in srgb, var(--color-bg-secondary) 68%, transparent);
+		--color-primary-light: #a5b4fc;
+		--color-primary-dim: #1e1b4b;
+		--color-primary-text: #a5b4fc;
+
+		--color-note-bg: #0f172a;
+		--color-note-border: #1e3a5f;
+		--color-tip-bg: #0c1929;
+		--color-tip-border: #0c4a6e;
+		--color-important: #f472b6;
+		--color-important-bg: #2a0a18;
+		--color-important-border: #9f1239;
+		--color-warning-bg: #1c1508;
+		--color-warning-border: #422006;
+		--color-caution-bg: #1f0a0a;
+		--color-caution-border: #450a0a;
+
+		--color-terminal-bg: #171326;
+		--color-terminal-text: #cdd6f4;
+		--color-terminal-prompt: #a6e3a1;
+		--color-terminal-command: #f5f5f5;
+		--color-terminal-output: #a6adc8;
+		--color-terminal-border: #2b2542;
+		--color-terminal-header: #120f1e;
+
+		--color-playground-bg: #1e1019;
+		--color-playground-border: #532a44;
+		--color-playground-header: #170c12;
+
+		/* Dark keeps the same three challenge roles; the base terracotta rises
+		   to stay readable on near-black, and the -bright lifts rise with it
+		   so the solved/unsolved gap survives (lightness, not hue, carries
+		   completion — see the light block's note). */
+		--color-challenge: #e0784f;
+		--color-challenge-bright: #ff9b66;
+		--color-earned-bright: #4ade80;
+
+		--color-diff-add: #a6e3a1;
+		--color-diff-add-bg: rgba(166, 227, 161, 0.1);
+		--color-diff-del: #f38ba8;
+		--color-diff-del-bg: rgba(243, 139, 168, 0.1);
+		--color-diff-hunk: #89b4fa;
+		--color-diff-hash: #f9e2af;
+		--color-diff-meta: #a6e3a1;
+
+		--color-code-bg: #1b172c;
+		--color-code-text: #e9e7f4;
+
+		--color-vibe: #a78bfa;
+		--color-vibe-text: #c4b5fd;
+		--color-vibe-bg: #160f2e;
+
+		--thread-lit: color-mix(in srgb, var(--color-text) 15%, transparent);
+	}
+}
+
+:root.light {
+	--color-bg: #f8f8fc;
+	--color-bg-secondary: #f1f0f8;
+	--color-bg-tertiary: #e9e8f3;
+	--color-surface: #ffffff;
+	--color-surface-hover: #f5f4fa;
+	--color-border: #e3e1ef;
+	--color-border-light: #edecf5;
+	--color-text: #1a1730;
+	--color-text-secondary: #4e4b66;
+	--color-text-muted: #9b98b0;
+	--color-text-inverse: #ffffff;
+	--color-primary: #4f46e5;
+	--color-btn-agent: #9c6b10;
+	--panel-glass: color-mix(in srgb, var(--color-bg-secondary) 93%, transparent);
+	--color-primary-light: #6366f1;
+	--color-primary-dim: #eef2ff;
+	--color-primary-text: #4338ca;
+	--color-note-bg: #eff6ff;
+	--color-note-border: #bfdbfe;
+	--color-tip-bg: #f0f9ff;
+	--color-tip-border: #7dd3fc;
+	--color-important-bg: #f5f3ff;
+	--color-important-border: #c4b5fd;
+	--color-warning-bg: #fffbeb;
+	--color-warning-border: #fcd34d;
+	--color-caution-bg: #fef2f2;
+	--color-caution-border: #fca5a5;
+	--color-code-bg: #efeef7;
+	--color-code-text: #232037;
+	--color-vibe: #8b5cf6;
+	--color-vibe-text: #7c3aed;
+	--color-vibe-bg: #f5f3ff;
+	--color-challenge: #a2401f;
+	--color-challenge-bright: #d1490f;
+	--color-earned-bright: #12923f;
+	--color-diff-add: #166534;
+	--color-diff-add-bg: rgba(22, 101, 52, 0.08);
+	--color-diff-del: #b91c1c;
+	--color-diff-del-bg: rgba(185, 28, 28, 0.06);
+	--color-diff-hunk: #1d4ed8;
+	--color-diff-hash: #92400e;
+	--color-diff-meta: #166534;
+	--thread-lit: color-mix(in srgb, var(--color-text) 10%, transparent);
+}
+
+:root.dark {
+	--color-bg: #0d0b17;
+	--color-bg-secondary: #131021;
+	--color-bg-tertiary: #1b172c;
+	--color-surface: #151222;
+	--color-surface-hover: #1b172c;
+	--color-border: #27223c;
+	--color-border-light: #1f1b31;
+	--color-text: #e9e7f4;
+	--color-text-secondary: #a19dba;
+	--color-text-muted: #625e7d;
+	--color-text-inverse: #0d0b17;
+	--color-primary: #818cf8;
+	--color-btn-agent: #f2c94c;
+	--panel-glass: color-mix(in srgb, var(--color-bg-secondary) 68%, transparent);
+	--color-primary-light: #a5b4fc;
+	--color-primary-dim: #1e1b4b;
+	--color-primary-text: #a5b4fc;
+	--color-note-bg: #0f172a;
+	--color-note-border: #1e3a5f;
+	--color-tip-bg: #0c1929;
+	--color-tip-border: #0c4a6e;
+	--color-important: #f472b6;
+	--color-important-bg: #2a0a18;
+	--color-important-border: #9f1239;
+	--color-warning-bg: #1c1508;
+	--color-warning-border: #422006;
+	--color-caution-bg: #1f0a0a;
+	--color-caution-border: #450a0a;
+	--color-terminal-bg: #171326;
+	--color-terminal-text: #cdd6f4;
+	--color-terminal-prompt: #a6e3a1;
+	--color-terminal-command: #f5f5f5;
+	--color-terminal-output: #a6adc8;
+	--color-terminal-border: #2b2542;
+	--color-terminal-header: #120f1e;
+	--color-playground-bg: #1e1019;
+	--color-playground-border: #532a44;
+	--color-playground-header: #170c12;
+	--color-challenge: #e0784f;
+	--color-challenge-bright: #ff9b66;
+	--color-earned-bright: #4ade80;
+	--color-diff-add: #a6e3a1;
+	--color-diff-add-bg: rgba(166, 227, 161, 0.1);
+	--color-diff-del: #f38ba8;
+	--color-diff-del-bg: rgba(243, 139, 168, 0.1);
+	--color-diff-hunk: #89b4fa;
+	--color-diff-hash: #f9e2af;
+	--color-diff-meta: #a6e3a1;
+	--color-code-bg: #1b172c;
+	--color-code-text: #e9e7f4;
+	--color-vibe: #a78bfa;
+	--color-vibe-text: #c4b5fd;
+	--color-vibe-bg: #160f2e;
+	--thread-lit: color-mix(in srgb, var(--color-text) 15%, transparent);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+	scroll-padding-top: calc(var(--header-height) + 24px);
+}
+
+html {
+	/* The page color lives on <html>; <body> stays transparent so the fixed
+	   BackgroundPixels canvas (z-index -1) shows through wherever content
+	   doesn't paint its own surface. */
+	background-color: var(--color-bg);
+}
+
+body {
+	font-family: var(--font-sans);
+	background-color: transparent;
+	color: var(--color-text);
+	line-height: 1.7;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-size: 15px;
+	font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: var(--font-heading);
+}
+
+p {
+	letter-spacing: 0.005em;
+}
+
+strong {
+	font-weight: 650;
+}
+
+/* On mobile, expanded sidebar is an overlay — content stays at collapsed width */
+@media (max-width: 1023px) {
+	.main-content {
+		margin-left: var(--sidebar-collapsed-width) !important;
+		/* Reading mode is desktop-only: below 1024px panels overlay the page. */
+		margin-right: 0 !important;
+	}
+	/* Below 1024px the open sidebar overlays the article instead of pushing
+	   it (see the margin-left above), and the panel's normal fabric is a 55%
+	   wash of --color-bg, so body text showed through the contents list.
+	   Opaque while it is an overlay, translucent when it is an edge — hence
+	   `.is-open`, which is the only state that overlays. */
+	.sidebar-panel.is-open {
+		background: var(--color-bg) !important;
+	}
+}
+
+/* Desktop reading mode: an open side panel RESHAPES the page — the course
+   text reflows into the remaining column instead of being covered, so
+   learners read beside the Agent, the Playground, or the cheat sheet. */
+@media (min-width: 1024px) {
+	.main-content.reading-mode {
+		margin-right: var(--panel-reading-width);
+	}
+
+	/* Each panel that is narrower than the playground hands the difference back
+	   to the content. Every one of these must match its panel's own width token
+	   exactly — the gap this prevents is invisible in code and obvious on the
+	   page. */
+	.main-content.reading-mode.agent-mode {
+		margin-right: var(--agent-reading-width);
+	}
+
+	.main-content.reading-mode.cheat-mode {
+		margin-right: var(--cheatsheet-width);
+	}
+
+	/* Tighter section gutters while sharing the viewport with a panel. */
+	.main-content.reading-mode :where(.px-6) {
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+}
+
+code,
+pre,
+kbd {
+	font-family: var(--font-mono);
+}
+
+::selection {
+	background-color: var(--color-primary);
+	color: white;
+}
+
+/* Syntax highlighting tokens for shell commands (see $lib/data/git-syntax.ts).
+   Shared by CodeBlock and the header Search results. */
+.tok-git {
+	color: var(--color-text-muted);
+}
+
+.tok-subcommand,
+.tok-command {
+	color: var(--color-primary-text);
+	font-weight: 600;
+}
+
+.tok-flag {
+	color: var(--color-vibe-text);
+}
+
+.tok-string {
+	color: var(--color-diff-add);
+}
+
+.tok-placeholder {
+	color: var(--color-diff-hash);
+	font-style: italic;
+}
+
+.tok-hash {
+	color: var(--color-diff-hash);
+}
+
+.tok-arg {
+	color: var(--color-text-secondary);
+}
+
+.tok-comment {
+	color: var(--color-terminal-output);
+	font-style: italic;
+}
+
+.tok-conflict {
+	color: var(--color-diff-del);
+	font-weight: 600;
+}
+
+::-webkit-scrollbar {
+	width: 5px;
+	height: 5px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: color-mix(in srgb, var(--color-text-muted) 45%, transparent);
+	border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: color-mix(in srgb, var(--color-text-muted) 75%, transparent);
+}
+
+/* Auto-hiding scrollbars for panel scroll areas (sidebar TOC, cheat sheet,
+   playground terminal): invisible at rest, a slim theme-tinted thumb while
+   hovering or scrolling. Applied via the autohideScroll action. */
+.autohide-scrollbar {
+	scrollbar-width: thin;
+	scrollbar-color: transparent transparent;
+	transition: scrollbar-color 0.3s ease;
+}
+
+.autohide-scrollbar:hover,
+.autohide-scrollbar.is-scrolling {
+	scrollbar-color: color-mix(in srgb, var(--color-text-muted) 45%, transparent) transparent;
+}
+
+.autohide-scrollbar::-webkit-scrollbar {
+	width: 6px;
+}
+
+.autohide-scrollbar::-webkit-scrollbar-thumb {
+	background: transparent;
+	border-radius: 999px;
+	transition: background 0.3s ease;
+}
+
+.autohide-scrollbar:hover::-webkit-scrollbar-thumb,
+.autohide-scrollbar.is-scrolling::-webkit-scrollbar-thumb {
+	background: color-mix(in srgb, var(--color-text-muted) 45%, transparent);
+}
+
+.autohide-scrollbar::-webkit-scrollbar-thumb:hover {
+	background: color-mix(in srgb, var(--color-text-muted) 75%, transparent);
+}
+
+/* Mermaid overrides for professional look */
+.mermaid-container svg {
+	width: 100%;
+	height: auto;
+}
+
+/* Flowchart node styling */
+.mermaid-container .node rect,
+.mermaid-container .node circle,
+.mermaid-container .node polygon {
+	rx: 10;
+	ry: 10;
+}
+
+.mermaid-container .node .label {
+	font-family: var(--font-sans);
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.mermaid-container .edgeLabel {
+	font-family: var(--font-sans);
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.mermaid-container .cluster rect {
+	rx: 12 !important;
+	ry: 12 !important;
+}
+
+/* Text centering inside Mermaid nodes */
+.mermaid-container .node foreignObject div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.mermaid-container .nodeLabel,
+.mermaid-container .label {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+/* Flowchart edge/arrow lines */
+.mermaid-container .flowchart-link {
+	stroke-width: 1.5px !important;
+}
+
+.mermaid-container .edgePath .path {
+	stroke-width: 1.5px !important;
+}
+
+.mermaid-container marker path {
+	stroke-width: 1px !important;
+}
+
+/* Git graph styling */
+.mermaid-container .gitTitleText {
+	font-family: var(--font-sans);
+	font-weight: 600;
+}
+
+.mermaid-container .branch-label {
+	font-family: var(--font-sans);
+	font-size: 13px !important;
+	font-weight: 600;
+}
+
+.mermaid-container .commit-label {
+	font-family: var(--font-sans);
+	font-size: 12px !important;
+}
+
+/* Git graph branch lines — clean, not too thick */
+.mermaid-container .branch {
+	stroke-width: 2px !important;
+}
+
+/* Git graph commit circles */
+.mermaid-container .commit {
+	stroke-width: 2px !important;
+}
+
+/* Git graph arrow/merge lines */
+.mermaid-container .arrow {
+	stroke-width: 1.5px !important;
+}
+
+/* ───── Accessibility ───── */
+
+/* Respect users who prefer reduced motion: no smooth scrolling, no
+   decorative transitions or animations. */
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+/* Skip-to-content link: invisible until focused via keyboard */
+.skip-link {
+	position: fixed;
+	top: -100px;
+	left: 16px;
+	z-index: 200;
+	padding: 10px 16px;
+	border-radius: 8px;
+	background: var(--color-primary);
+	color: white;
+	font-size: 14px;
+	font-weight: 600;
+	transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+	top: 12px;
+}
+
+/* Heading permalink anchors */
+.heading-anchor {
+	margin-left: 0.4em;
+	opacity: 0;
+	color: var(--color-text-muted);
+	font-weight: 400;
+	text-decoration: none;
+	transition: opacity 0.15s ease;
+}
+
+h2:hover .heading-anchor,
+h3:hover .heading-anchor,
+h4:hover .heading-anchor,
+.heading-anchor:focus {
+	opacity: 1;
+}
+
+/* ───── Print styles ───── */
+@media print {
+	header,
+	aside,
+	nav,
+	.skip-link,
+	.heading-anchor {
+		display: none !important;
+	}
+
+	main.main-content {
+		margin-left: 0 !important;
+		padding-top: 0 !important;
+	}
+
+	body {
+		background: white;
+	}
+}
+
+/* The root page scrollbar auto-hides too: visible only while scrolling
+   (the .is-scrolling class is toggled from the page's scroll listener). */
+html {
+	scrollbar-width: thin;
+	scrollbar-color: transparent transparent;
+	transition: scrollbar-color 0.3s ease;
+}
+
+html.is-scrolling {
+	scrollbar-color: color-mix(in srgb, var(--color-text-muted) 45%, transparent) transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+	background: transparent;
+	border-radius: 999px;
+	transition: background 0.3s ease;
+}
+
+html.is-scrolling::-webkit-scrollbar-thumb {
+	background: color-mix(in srgb, var(--color-text-muted) 45%, transparent);
+}
