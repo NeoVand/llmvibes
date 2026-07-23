@@ -35,8 +35,9 @@
 	let lastMetrics = $state<TrainStepMetrics | null>(null);
 	let totalSteps = $state(0);
 
-	let samples = $state<string[]>([]);
+	let samples = $state<Array<{ text: string; temp: number }>>([]);
 	let sampling = $state(false);
+	let temperature = $state(0.8);
 	let inspected = $state<PerTokenInfo[] | null>(null);
 
 	let quillTok: BpeTokenizer | null = null;
@@ -119,8 +120,8 @@
 		sampling = true;
 		try {
 			const prompt = bird === 'quill' ? quillTok!.encode('Once upon a time') : [0];
-			const r = await engine.sample(prompt, { temperature: 0.8, topK: 40, maxTokens: 100 });
-			samples = [r.text, ...samples].slice(0, 3);
+			const r = await engine.sample(prompt, { temperature, topK: 40, maxTokens: 100 });
+			samples = [{ text: r.text, temp: temperature }, ...samples].slice(0, 3);
 			const promptAndSample = [...prompt, ...r.tokens].slice(0, config.blockSize);
 			inspected = await engine.inspect(promptAndSample);
 		} catch (e) {
@@ -205,6 +206,11 @@
 				{#if sampling}<Loader2 size={14} class="animate-spin" />{:else}<Sparkles size={14} />{/if}
 				Sample
 			</button>
+			<label class="flex items-center gap-2 text-xs" style="color: var(--color-text-muted);">
+				temp
+				<input type="range" min="0.1" max="1.5" step="0.1" bind:value={temperature} class="w-24" />
+				<span style="color: var(--color-text-secondary); font-weight: 600; min-width: 2ch;">{temperature.toFixed(1)}</span>
+			</label>
 		</div>
 
 		<div class="rounded-lg border p-3" style="border-color: var(--color-border-light);">
@@ -231,7 +237,8 @@
 			<div class="mt-3 space-y-2">
 				{#each samples as s, i (i)}
 					<div class="rounded-lg border p-3 text-[13px] leading-relaxed" style="border-color: var(--color-border-light); color: var(--color-text); font-family: {bird === 'rook' ? 'var(--font-mono)' : 'inherit'};">
-						{s}
+						<span class="mr-1 rounded px-1 text-[10px]" style="background: var(--color-surface-hover); color: var(--color-text-muted);">T={s.temp.toFixed(1)}</span>
+						{s.text}
 					</div>
 				{/each}
 			</div>

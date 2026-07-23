@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
 
-	// The pre-generated PDF (scripts/make-cheatsheet-pdf.mjs) shipped in static/
-	const pdfHref = asset('/gitvibes-cheatsheet.pdf');
 	import { autohideScroll } from '$lib/actions/autohide-scroll';
 	import {
 		X,
@@ -324,20 +322,10 @@
 			class="text-xs font-semibold tracking-wider uppercase"
 			style="color: var(--color-text-muted); letter-spacing: 0.08em;"
 		>
-			Git Cheat Sheet
+			Reference Card
 		</span>
 		<div class="flex items-center gap-0.5">
 			{@render focusToggle()}
-			<a
-				href={pdfHref}
-				download="gitvibes-cheatsheet.pdf"
-				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md transition-colors hover:opacity-70"
-				style="color: var(--color-text-muted);"
-				aria-label="Download as PDF"
-				title="Download as PDF"
-			>
-				<Download size={14} />
-			</a>
 			<button
 				onclick={() => (modalOpen = true)}
 				class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md transition-colors hover:opacity-70"
@@ -451,20 +439,10 @@
 					class="text-xs font-semibold tracking-wider uppercase"
 					style="color: var(--color-text-muted); letter-spacing: 0.08em;"
 				>
-					Git Cheat Sheet
+					Reference Card
 				</span>
 				<div class="flex items-center gap-1">
 					{@render focusToggle()}
-					<a
-						href={pdfHref}
-						download="gitvibes-cheatsheet.pdf"
-						class="flex h-7 cursor-pointer items-center gap-1.5 rounded-md border px-2.5 text-[11px] font-medium transition-colors hover:opacity-80"
-						style="color: var(--color-text-secondary); border-color: var(--color-border);"
-						aria-label="Download as PDF"
-					>
-						<Download size={12} />
-						PDF
-					</a>
 					<button
 						onclick={() => (modalOpen = false)}
 						class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-md transition-colors hover:opacity-70"

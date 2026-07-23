@@ -205,7 +205,7 @@
 			class="cheatsheet-btn flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg transition-all"
 			class:is-active={cheatSheetOpen}
 			aria-pressed={cheatSheetOpen}
-			aria-label="Git Cheat Sheet"
+			aria-label="Reference Card"
 		>
 			<ScrollText size={16} />
 		</button>

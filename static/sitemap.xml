@@ -6,48 +6,73 @@
 		<priority>1.0</priority>
 	</url>
 	<url>
-		<loc>https://neovand.github.io/llmvibes/parts/setup-and-cloning</loc>
+		<loc>https://neovand.github.io/llmvibes/parts/hatch/</loc>
 		<changefreq>monthly</changefreq>
-		<priority>0.8</priority>
+		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://neovand.github.io/llmvibes/parts/core-safety-loop</loc>
+		<loc>https://neovand.github.io/llmvibes/parts/tokens/</loc>
 		<changefreq>monthly</changefreq>
-		<priority>0.8</priority>
+		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://neovand.github.io/llmvibes/parts/branching-and-pull-requests</loc>
+		<loc>https://neovand.github.io/llmvibes/parts/transformer/</loc>
 		<changefreq>monthly</changefreq>
-		<priority>0.8</priority>
+		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://neovand.github.io/llmvibes/parts/undo-toolkit</loc>
+		<loc>https://neovand.github.io/llmvibes/parts/learning/</loc>
 		<changefreq>monthly</changefreq>
-		<priority>0.8</priority>
+		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://neovand.github.io/llmvibes/parts/advanced-workflows</loc>
+		<loc>https://neovand.github.io/llmvibes/parts/pretraining/</loc>
 		<changefreq>monthly</changefreq>
-		<priority>0.8</priority>
+		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://neovand.github.io/llmvibes/parts/git-for-ai-agents</loc>
+		<loc>https://neovand.github.io/llmvibes/parts/world-models/</loc>
 		<changefreq>monthly</changefreq>
-		<priority>0.8</priority>
+		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://neovand.github.io/llmvibes/parts/vs-code-cockpit</loc>
+		<loc>https://neovand.github.io/llmvibes/parts/sft/</loc>
 		<changefreq>monthly</changefreq>
-		<priority>0.8</priority>
+		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://neovand.github.io/llmvibes/parts/ci-bots-and-releases</loc>
+		<loc>https://neovand.github.io/llmvibes/parts/synthetic-data/</loc>
 		<changefreq>monthly</changefreq>
-		<priority>0.8</priority>
+		<priority>0.7</priority>
 	</url>
 	<url>
-		<loc>https://neovand.github.io/llmvibes/parts/conclusion</loc>
+		<loc>https://neovand.github.io/llmvibes/parts/preferences/</loc>
 		<changefreq>monthly</changefreq>
-		<priority>0.8</priority>
+		<priority>0.7</priority>
+	</url>
+	<url>
+		<loc>https://neovand.github.io/llmvibes/parts/reward-hacking/</loc>
+		<changefreq>monthly</changefreq>
+		<priority>0.7</priority>
+	</url>
+	<url>
+		<loc>https://neovand.github.io/llmvibes/parts/rlvr/</loc>
+		<changefreq>monthly</changefreq>
+		<priority>0.7</priority>
+	</url>
+	<url>
+		<loc>https://neovand.github.io/llmvibes/parts/agents/</loc>
+		<changefreq>monthly</changefreq>
+		<priority>0.7</priority>
+	</url>
+	<url>
+		<loc>https://neovand.github.io/llmvibes/parts/frontier/</loc>
+		<changefreq>monthly</changefreq>
+		<priority>0.7</priority>
+	</url>
+	<url>
+		<loc>https://neovand.github.io/llmvibes/parts/epilogue/</loc>
+		<changefreq>monthly</changefreq>
+		<priority>0.7</priority>
 	</url>
 </urlset>

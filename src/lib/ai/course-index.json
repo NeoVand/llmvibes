@@ -21,49 +21,133 @@
 		"id": "section-1-1",
 		"part": 1,
 		"title": "1.1 Meet Quill & Rook",
-		"text": "Two birds, one architecture: Quill writes children's stories, Rook plays chess, and both are nothing but next-token predictors over different streams. You'll meet the live pair you'll train yourself, their larger flagship siblings, and the scrubber that rewinds either one to the moment before it knew anything."
+		"text": "Two birds, one architecture: Quill writes children's stories, Rook plays chess, and both are nothing but next-token predictors over different streams. You'll meet the live pair you'll train yourself, their larger flagship siblings, and the scrubber that rewinds either one to the moment before it knew anything. Quill — the storyteller A quill is a feather. Quill reads children's stories and learns to continue them, one token at a time. Give it \"Once upon a time, there was a little robot\" and it predicts what comes next — and then what comes after that, and after that, until a story exists that no one wrote. Rook — the chess player A rook is a corvid — a very clever bird. Rook reads chess games as sequences of moves and learns to continue them. Give it the moves so far and it predicts the next one. Nobody tells it the rules of chess. Whether it figures them out anyway is one of the best questions in this course (Part 6). Here is the thesis of the entire course, stated once and then demonstrated for thirteen chapters: a language model is a next-token predictor over a stream of tokens, and it does not care what the tokens mean."
+	},
+	{
+		"id": "section-1-1",
+		"part": 1,
+		"title": "1.1 Meet Quill & Rook",
+		"text": "Feed the same architecture a stream of story text and it becomes a storyteller. Feed it a stream of chess moves and it becomes a chess player. Same code, same training loop, same loss function — different world. Every time a concept in this course feels abstract for one bird, the other bird makes it concrete. That's why there are two. The road both birds travel Every modern LLM you've used — the chatbots, the coding assistants — was raised through roughly the same stages. You will walk Quill and Rook through all of them, and each stage gets its own act of the course: Pretraining (Parts 2–6) — the model reads the corpus and learns to predict the next token. This is where almost all of its ability comes from, and almost all of the compute goes. Supervised fine-tuning (Part 7) — teach the pretrained predictor to follow instructions instead of just continuing text. Preference tuning (Parts 9–10) — you personally rate its outputs, and your clicks become a training signal. Then you watch that signal get gamed. Verifiable rewards (Part 11) — replace human taste with a checker that can't be argued with (did Rook's move win?"
+	},
+	{
+		"id": "section-1-1",
+		"part": 1,
+		"title": "1.1 Meet Quill & Rook",
+		"text": "did Quill's story include the required word?) and let reinforcement learning push against it. Three sizes of bird You'll actually meet each bird at more than one size, because \"train it live in a browser tab\" and \"impressive output\" pull in opposite directions: Tier Size Who trains it Role Hatchlings under ~2M params You, live, in seconds-to-minutes Per-lesson minis for single ideas The live pair a few million params You, live, over a coffee break The Quill & Rook you raise at every stage Flagships ~15–25M params Trained offline for days; you download them The impressive pair, with scrubbable history The flagships come with their whole training history saved as checkpoints, which powers the course's favorite instrument: the time machine . Drag a slider and the model rewinds — from fluent, back through broken grammar, back through word soup, back to the uniform static of random weights. Every scrap of skill a model has lives in its parameters, and the scrubber lets you watch those parameters mean less and less until they mean nothing. Frontier models have hundreds of billions of parameters; Quill and Rook have a few million."
+	},
+	{
+		"id": "section-1-1",
+		"part": 1,
+		"title": "1.1 Meet Quill & Rook",
+		"text": "What makes them worth raising is that nothing conceptual is missing : tokenizer, transformer, pretraining, fine-tuning, preference learning, reinforcement learning — the full modern pipeline, small enough to run on your GPU, in your browser, with no account and no cloud. Where scale genuinely changes the story, the course says so out loud (Part 14 is entirely about that)."
 	},
 	{
 		"id": "section-1-2",
 		"part": 1,
 		"title": "1.2 The Corpora",
-		"text": "What do the birds eat? Millions of tiny tales from TinyStories for Quill, millions of recorded games from Lichess for Rook. An explorer over real slices of both corpora shows what \"training data\" actually looks like before any model touches it."
+		"text": "A corpus is the complete diet of a model: every token it will ever learn from, gathered into one big pile before training starts. The model gets no dictionary, no grammar book, no rules of chess — only the stream. Whatever isn't in the corpus, the model will never know. Quill's diet: 3,000 tiny stories Quill's corpus is a 3,000-story slice of TinyStories — a dataset of children's stories written to use only a small vocabulary, the words a young child would understand. That constraint is the whole trick: with a small world of words, a small model can actually master the language instead of drowning in it. The slice is about 2.6 MB of plain text. Here is its very first story, exactly as Quill will see it: Read a few of these and you'll notice the pattern: simple sentences, concrete nouns, a small cast of Lilys and Toms and talking animals, a gentle lesson at the end. Three thousand of them add up to roughly a million tokens of training data — a rounding error by frontier standards, and exactly enough for a few-million-parameter bird. TinyStories was created by Ronen Eldan and Yuanzhi Li (2023) and is shared under the CDLA-Sharing-1.0 license."
+	},
+	{
+		"id": "section-1-2",
+		"part": 1,
+		"title": "1.2 The Corpora",
+		"text": "It's a small marvel of dataset design, and Part 8 has a secret to tell you about it. Rook's diet: 6,000 games of legal nonsense Rook's corpus is 6,000 chess games, up to 60 half-moves each, recorded as sequences of moves in coordinate notation. And here's the twist: they are random-legal games . Each move was chosen by a random number generator picking uniformly among the legal moves in the position. No grandmasters, no strategy, no plans — just the rules of chess, rolled like dice, sixty times per game. Here's the opening of the first game in the corpus: White opens with the timid pawn push ; Black replies by developing a knight to the edge of the board, where knights famously don't belong. No chess teacher would approve of a single move here. Every move is legal; almost none of them are good. Training on random-legal games is a deliberate experimental choice, borrowed from a famous interpretability study on the game Othello. Because the games contain zero strategy , anything Rook learns beyond noise must be about the rules and the board itself — which pieces exist, where they stand, what they may legally do. In Part 6 we'll open Rook's head and look for that board directly."
+	},
+	{
+		"id": "section-1-2",
+		"part": 1,
+		"title": "1.2 The Corpora",
+		"text": "If we'd trained on strong human games, we could never separate \"understands the position\" from \"memorized what strong players do.\" Purity now, payoff later. The two corpora, side by side Quill's corpus 3,000 stories · ~2.6 MB of text · ~1.1 million tokens once tokenized (Part 2 explains how). Natural language: ambiguous, redundant, full of structure at every distance. Rook's corpus 6,000 games · ~60 moves each · ~364,000 tokens. A formal language: every \"sentence\" is machine-verified legal, and the grammar is the rules of chess. For perspective: frontier models pretrain on trillions of tokens scraped from the web, books, and code — a pile roughly ten million times larger than Quill's. The pipeline you are about to walk through is the same one those teams run; only the exponents change. And at every scale, the first law of machine learning holds: the model becomes its data . Quill will write like TinyStories because that's all it has ever read. Rook will play legal-but-aimless chess because that's all it has ever seen. Remember this when a later chapter asks you to fix a model's behavior — the first place to look is always the data."
 	},
 	{
 		"id": "section-1-3",
 		"part": 1,
 		"title": "1.3 Cleaning & Dedup",
-		"text": "Raw corpora arrive full of junk, and duplicates quietly teach a model to recite instead of generalize. Cleaning and deduplication get treated as first-class ideas here — and the favor gets repaid in Part 4, when you watch a model memorize a story it saw too many times."
+		"text": "Raw corpora arrive full of junk, and duplicates quietly teach a model to recite instead of generalize. Cleaning and deduplication get treated as first-class ideas here — and the favor gets repaid in Part 4, when you watch a model memorize a story it saw too many times. Our two slices arrive clean, because they were built that way: TinyStories was written under tight constraints, and Rook's games were generated by a rules engine that cannot produce an illegal move. Enjoy it — it's the last time data will be this easy. Real-world corpora are scraped from the web, and the web is a landfill with some libraries in it. Cleaning: deciding what counts as food A raw web scrape contains navigation menus repeated on every page of a site, cookie banners, SEO keyword sludge, broken text encodings, auto-generated boilerplate, other languages than the ones you're targeting, personal information that must not be learned, and text so garbled no one could learn from it. Frontier teams spend enormous effort — arguably their most closely guarded effort — on filters that decide, token by token, what a model gets to eat."
+	},
+	{
+		"id": "section-1-3",
+		"part": 1,
+		"title": "1.3 Cleaning & Dedup",
+		"text": "Every choice shapes the model: filter too little and it learns junk; filter too aggressively and you delete the diversity that makes it robust. It's tempting to treat data preparation as janitorial work before the \"real\" machine learning starts. The field learned otherwise: at a fixed size and compute budget, data quality is one of the strongest levers on final model ability. TinyStories itself is the proof you'll be holding all course long — a dataset designed so carefully that million-parameter models trained on it speak in coherent paragraphs. Deduplication: why seeing it twice is worse than it sounds Suppose one story appears in the corpus fifty times — the web is full of mirrored and re-posted text, so at scale this is the norm, not the exception. Training rewards the model for predicting the next token well. For forty-nine of those fifty encounters, there is a strategy that predicts every token perfectly: remember the whole story and recite it . Memorization is the lowest-loss move, so the optimizer takes it. The parameters that could have learned reusable patterns — grammar, plot shapes, how needles behave — get spent storing one specific text verbatim."
+	},
+	{
+		"id": "section-1-3",
+		"part": 1,
+		"title": "1.3 Cleaning & Dedup",
+		"text": "The damage comes in three flavors: wasted capacity (a copy is stored instead of a generalization), skewed behavior (the model regurgitates the duplicated text at the slightest prompt), and leaked data (if the duplicate contained something private, the model can now be coaxed into repeating it). In Part 4, once you can read training curves, you'll run the demo: a corpus with one story duplicated many times, and a model that dutifully becomes a parrot for exactly that story while staying mediocre at everything else. Exact copies and near copies Catching byte-identical copies is easy — hash every document, drop the collisions. The hard cases are near duplicates: the same article with a different headline, the same story with one name changed, the same code with different whitespace. Production pipelines fingerprint documents by the sets of short word-chunks they contain and drop pairs whose fingerprints overlap too much — near-copies caught without comparing every document to every other. The same machinery has a second job you'll meet in Part 5: decontamination — making sure the test questions you'll grade the model on aren't sitting in its training data."
+	},
+	{
+		"id": "section-1-3",
+		"part": 1,
+		"title": "1.3 Cleaning & Dedup",
+		"text": "A model that has already read the exam is not \"smart,\" and a benchmark it has memorized measures nothing. Keep this chapter's claim in mind: duplicates cause memorization . It's stated here as a rule; in Part 4 you'll watch it happen live, on a training curve, with a story a model saw too many times. Course-wide pattern: every rule we assert, we eventually make you watch."
 	},
 	{
 		"id": "part-2",
 		"part": 2,
 		"title": "Part 2 · Tokens",
-		"text": "A language model never sees letters, words, or chessboards — it sees a stream of integers. This chapter is about the machinery that turns the world into that stream: one vocabulary learned from data, one designed by hand, and the inspector you'll use to look at token streams for the rest of the course. This chapter's interactive playground arrives with a later milestone."
+		"text": "A language model never sees letters, words, or chessboards — it sees a stream of integers. This chapter is about the machinery that turns the world into that stream: one vocabulary learned from data, one designed by hand, and the inspector you'll use to look at token streams for the rest of the course. This chapter is already partly live: the tokenizer box in 2.2 runs Quill's real vocabulary in your browser. The full token-stream inspector arrives with a later milestone."
 	},
 	{
 		"id": "section-2-1",
 		"part": 2,
 		"title": "2.1 Why Tokens",
-		"text": "Characters make sequences too long, whole words can't cover everything a human might type — tokens are the compromise every modern model lives with. Here's why the choice matters more than it looks, and why your emoji is about to become four strange tokens."
+		"text": "Characters make sequences too long, whole words can't cover everything a human might type — tokens are the compromise every modern model lives with. Here's why the choice matters more than it looks, and why your emoji is about to become four strange tokens. Start from the constraint: a neural network eats numbers. Specifically, it has a fixed menu — a vocabulary — and every input must be expressed as a sequence of IDs from that menu. Quill's menu has 512 entries; a frontier model's has one or two hundred thousand. Either way the menu is frozen before training begins, and everything the model ever reads or writes passes through it. So the real design question is: what should one entry on the menu stand for? One character per token? Nothing is ever out of vocabulary — but sequences get brutally long. A 1,000-character story becomes 1,000 steps of prediction, and attention's cost grows with the square of sequence length. The model spends its capacity spelling instead of thinking. One word per token? Compact — but no finite word list covers what humans type."
+	},
+	{
+		"id": "section-2-1",
+		"part": 2,
+		"title": "2.1 Why Tokens",
+		"text": "Typos, names, new slang, \"needleish\", 🦉: each one is an out-of-vocabulary wall, and the model has literally no ID to represent what it just saw. Subword tokens The compromise: common chunks (\"the \", \"look\", \"ed \") get their own IDs, rare stuff falls back to smaller pieces, worst case single bytes. Short sequences for common text, a guaranteed spelling for everything else. Quill's tokenizer is byte-level : its atoms are not characters but the 256 possible bytes of UTF-8. That guarantee is airtight — any text on Earth is a byte sequence, so nothing can ever be unrepresentable. The cost shows up with characters that UTF-8 spells with several bytes. An owl emoji is four bytes, so if no merge covers it, 🦉 enters the model as four tokens that individually mean nothing: This is why tokenization is worth a whole chapter: it silently shapes what a model finds easy or hard. Questions like \"why are LLMs bad at counting letters?\" or \"why does it handle English better than my language?\" are usually tokenizer questions wearing a model costume. The model never sees your letters — it sees the chunks its vocabulary happened to make."
 	},
 	{
 		"id": "section-2-2",
 		"part": 2,
 		"title": "2.2 Train a BPE Live",
-		"text": "Byte-pair encoding is simple enough to watch happen: start from raw bytes, repeatedly merge the most frequent pair, and a vocabulary grows in front of you — \"th\", then \"the\", then whole words. You'll train Quill's tokenizer yourself, live, on real story text."
+		"text": "Byte-pair encoding is simple enough to watch happen: start from raw bytes, repeatedly merge the most frequent pair, and a vocabulary grows in front of you — \"th\", then \"the\", then whole words. The box below runs Quill's actual tokenizer — byte-level BPE with 512 tokens, trained on the same TinyStories slice Quill pretrains on in Part 5. The algorithm fits in five lines, and none of them contain machine learning — BPE is pure counting: Each merge invents one new token, so the vocabulary is a perfect fossil record of the corpus's statistics. Quill's vocabulary is 512 tokens: the 256 bytes plus 256 merges learned from the story slice. And the actual merge list is full of personality. The very first merge — the most frequent byte pair in all of TinyStories — is not \"th\". It's followed by a space: word-final \"e\" is that common in English."
+	},
+	{
+		"id": "section-2-2",
+		"part": 2,
+		"title": "2.2 Train a BPE Live",
+		"text": "\"th\" arrives as merge number three, and by merge thirteen the pieces snap together into the most common word in the language: (The ‿ marks a trailing space — merges happily cross the letter/space boundary, which is why so many tokens carry their following space along.) Later merges climb from fragments to whole words: by the end of training, Quill's vocabulary contains , , and — fittingly for TinyStories — token 511, the final merge, is . Nobody chose those words. The corpus did. Now try it. This is not a mock-up: the box below loads Quill's real 512-token vocabulary and tokenizes as you type. A sentence in TinyStories style (\"Once upon a time…\") tokenizes into big, satisfying chunks. Now try a word the corpus never taught it — \"photosynthesis\" — and watch it shatter into byte-sized gravel. Try an emoji: four opaque byte tokens, exactly as promised. The compression ratio under the box is the tokenizer's report card: on its own training slice, Quill's BPE averages 2.34 characters per token."
+	},
+	{
+		"id": "section-2-2",
+		"part": 2,
+		"title": "2.2 Train a BPE Live",
+		"text": "That ratio is the payoff of the whole exercise: the 2.6 MB story slice becomes roughly 1.1 million tokens instead of 2.6 million byte-steps — the same text in less than half the sequence length, which means less than half the prediction steps and a context window that holds more than twice the story. Frontier tokenizers play the identical game with bigger budgets: tens of thousands of merges instead of 256, trained on terabytes instead of megabytes, averaging around four characters per token. Same algorithm. Same counting loop."
 	},
 	{
 		"id": "section-2-3",
 		"part": 2,
 		"title": "2.3 Rook's Designed Vocabulary",
-		"text": "Rook's vocabulary was never learned — it was designed: one token per chess move, 1,968 geometric moves plus a handful of special tokens, including the Elo tags that will matter in Part 7. Learned versus designed vocabularies — and why not characters, why not FEN."
+		"text": "Rook's vocabulary was never learned — it was designed: one token per chess move, plus a separator between games. Learned versus designed vocabularies is this chapter's real thesis — and the panel below settles why not characters, and why not board diagrams. Chess moves have a standard coordinate notation called UCI: source square, destination square, and a letter for promotions. pushes the king's pawn; promotes a pawn to a queen. Rook's vocabulary assigns one token to each distinct move — no merging, no counting, no training. Across Rook's 6,000-game corpus, 1,930 distinct UCI moves actually occur; add one separator token, \" />, that marks where one game ends and the next begins, and you get Rook's entire menu: 1,931 tokens, written down by hand before the model ever saw a game. Why design instead of learn? Because in chess, unlike English, we already know the units . Language has no clean atomic unit — words blur into morphemes, spellings vary, vocabulary is open-ended — so we let BPE discover units statistically. Chess has a perfect unit handed to us by the rules: the move. When the domain gives you natural atoms, take them. When it doesn't, learn them."
+	},
+	{
+		"id": "section-2-3",
+		"part": 2,
+		"title": "2.3 Rook's Designed Vocabulary",
+		"text": "That's the whole design space of tokenization in two sentences. Why not characters? Why not FEN? Two alternatives were on the table, and rejecting them teaches more than the choice itself. Here's the same three-move opening in all three encodings: Characters: shredded meaning Sequences run three to five times longer, and the natural unit is destroyed: the model must first learn that , , , form one action before it can learn anything about the action. All cost, no benefit — chess has no \"rare words\" needing byte fallback. FEN: the answer key in the question FEN spells out the full board every step — so the model never needs to infer the board. Part 6's entire experiment is asking whether Rook builds an internal board from moves alone. Feed it FEN and the experiment evaporates: you can't discover a world model in a model you spoon-fed the world. Move tokens have one more gift for us: every token is a complete, meaningful action, so every position in the stream corresponds to a full board state."
+	},
+	{
+		"id": "section-2-3",
+		"part": 2,
+		"title": "2.3 Rook's Designed Vocabulary",
+		"text": "When Part 6 goes probing Rook's residual stream for a board, and when attention maps get drawn as arrows between moves in Part 3, that clean one-token-one-move grid is what makes the pictures legible. A designed vocabulary can smuggle in information a learned one can't. The flagship Rook's vocabulary adds a few extra designed tokens: Elo-bucket tags that mark the strength of the players in each game. Prefix a game with a strength tag at generation time and you can ask the same model to play weaker or stronger. That trick — conditioning versus fine-tuning — is a Part 7 lesson, but the groundwork is being laid right here, in the token menu."
 	},
 	{
 		"id": "section-2-4",
 		"part": 2,
 		"title": "2.4 The Token-Stream Inspector",
-		"text": "The course's universal instrument makes its debut: paste anything, see exactly what the model sees, token by token — including a per-token surprise heatmap. It will come back to teach perplexity, pretraining progress, and loss masking in later chapters."
+		"text": "The course's universal instrument makes its debut: paste anything, see exactly what the model sees, token by token — including a per-token surprise heatmap. It will come back to teach perplexity, pretraining progress, and loss masking in later chapters. You've already used its first slice: the tokenizer box in 2.2 shows text as a row of token chips. The full inspector adds the layer that makes it an instrument rather than a viewer — what the model thought at every position. A trained model assigns a probability to each token before revealing it; from that probability comes a number worth internalizing now: Paint each token's background by its surprise and a text becomes a heatmap: cool where the model coasted, hot where it was caught off guard. On a well-trained Quill, \"Once upon a\" is ice cold — is nearly free — while the name of a brand-new character burns hot, because no model could have guessed \"Marisol\" from a cold start. The heatmap is a direct visualization of the training loss itself, token by token: the number training pushes down (Part 4) is exactly the average of these surprises."
+	},
+	{
+		"id": "section-2-4",
+		"part": 2,
+		"title": "2.4 The Token-Stream Inspector",
+		"text": "That's why this one component keeps coming back — it's the same lens aimed at different stages of the model's life: Part 4: average surprise, exponentiated, is perplexity — the standard score for a language model, taught on this heatmap. Part 5: watch the same paragraph cool down, checkpoint by checkpoint, as pretraining teaches the model what English is — the loss curve, made spatial. Part 7: during instruction tuning, some tokens are deliberately excluded from the loss — the inspector shows masked tokens going grey, and loss masking stops being an abstract config flag. The full inspector — with the surprise heatmap and a trained model behind it — arrives with a later milestone, once Part 5 gives you a model whose surprises are worth inspecting. The tokenizer box above is the same component in its plain mode."
 	},
 	{
 		"id": "part-3",
@@ -75,127 +159,331 @@
 		"id": "section-3-1",
 		"part": 3,
 		"title": "3.1 Embeddings & the Residual Stream",
-		"text": "Every token becomes a vector, and every vector flows down one shared highway — the residual stream — that each layer reads from and writes back to. Getting this picture right first makes everything else in the transformer feel inevitable rather than arbitrary."
+		"text": "Every token becomes a vector, and every vector flows down one shared highway — the residual stream — that each layer reads from and writes back to. Getting this picture right first makes everything else in the transformer feel inevitable rather than arbitrary. Part 2 ended with the world reduced to integers. But an integer ID is a name, not a description — token 268 isn't \"more than\" token 267 in any useful sense. Step one of the transformer is to swap each ID for something with room for meaning: a vector. The embedding table is a big matrix with one row per token in the vocabulary , and \"embedding a token\" is nothing fancier than grabbing its row. For the pocket Rook you'll train in Part 5, that table is 1,931 rows (one per move token) of 128 numbers each; pocket Quill's is 512 rows of the same width. Here's the part that deserves a pause: those numbers are learned . The table starts as random noise and gets nudged by training like every other parameter. Nobody tells Rook that and are similar moves; training discovers that treating them similarly reduces prediction error, and their rows drift together."
+	},
+	{
+		"id": "section-3-1",
+		"part": 3,
+		"title": "3.1 Embeddings & the Residual Stream",
+		"text": "Meaning ends up encoded as geometry — directions and distances in a 128-dimensional space — because that's the only language the rest of the network speaks. The residual stream: the model's one highway After embedding, each position in the sequence owns one 128-dimensional vector. That per-position vector, flowing from the bottom of the network to the top, is the residual stream — and it is the single most useful mental model in this course. Every sub-layer in the transformer has the same job description: read the stream, compute something, and add the result back into the stream. Nothing gets overwritten; information is accumulated by addition, layer after layer. Two kinds of workers alternate along the highway. Attention is the only place where positions exchange information — where move 31 gets to look at move 4. The MLP processes each position by itself, no peeking at neighbors. Everything else — the norms, the residual additions — is plumbing that keeps the highway stable. At the very top, the stream's final vector is compared against every row of an unembedding matrix, producing one score per vocabulary token: the model's bets on what comes next."
+	},
+	{
+		"id": "section-3-1",
+		"part": 3,
+		"title": "3.1 Embeddings & the Residual Stream",
+		"text": "Because each sub-layer's output is added to its input, the sub-layer only has to learn the difference — the residual — between what the stream already says and what it should say next. Small refinements are easier to learn than full rewrites, and the additive highway also gives gradients a clean, unobstructed path from the loss back to the earliest layers (Part 4 will make you care about that). This one wiring decision is much of why deep stacks train at all — and in Part 6, it's the surface we'll press our probes against."
 	},
 	{
 		"id": "section-3-2",
 		"part": 3,
 		"title": "3.2 Attention, Two Ways",
-		"text": "Attention lets every token look back at every token before it and decide what matters. For Quill that's spans of text lighting up; for Rook it's arrows between moves on a board — one mechanism, two visualizations, and the contrast is the lesson."
+		"text": "Attention lets every token look back at every token before it and decide what matters. For Quill that's spans of text lighting up; for Rook it's arrows between moves on a board — one mechanism, two visualizations, and the contrast is the lesson. The problem attention solves: when Rook is predicting move 32, the information it needs is scattered across the whole game — which pieces already moved, where they went, what got captured. A fixed rule like \"look at the previous 3 tokens\" would be useless; which earlier moves matter depends entirely on the position. Attention makes the lookup itself learned and content-dependent. Every position produces three vectors, each a learned linear projection of its residual stream: a query — \"here's what I'm looking for\" (what would help predict my next token) a key — \"here's what I can be found by\" (an advertisement of what this position holds) a value — \"here's what you get if you pick me\" (the payload actually delivered) Each position's query is dotted against every earlier position's key — a compatibility score."
+	},
+	{
+		"id": "section-3-2",
+		"part": 3,
+		"title": "3.2 Attention, Two Ways",
+		"text": "Softmax turns the scores into weights that sum to one, and the position collects the weighted mix of the corresponding values into its stream. The whole mechanism is four lines: Two details earn their keep. The scaling keeps dot products from growing with vector width — unscaled, softmax saturates into winner-take-all and its gradients die. And the causal mask is the transformer honoring the deal it made: it's a next-token predictor, so position i may only attend to positions at or before i . During training the model predicts every position of the sequence at once, and the mask is what keeps each prediction honest — no copying tomorrow's answer from tomorrow. Many heads, many kinds of \"relevant\" One softmax produces one pattern of looking — but \"which earlier token matters\" has many simultaneous right answers. So attention runs several heads in parallel: the 128-wide stream is split into 4 heads of 32 dimensions each (in the pocket pair), each head runs the exact attention above with its own learned projections, and their outputs are concatenated and projected back into the stream."
+	},
+	{
+		"id": "section-3-2",
+		"part": 3,
+		"title": "3.2 Attention, Two Ways",
+		"text": "Each head is free to specialize in a different relationship type : in language models, heads emerge that track a pronoun back to its noun, watch sentence boundaries, or copy repeated names; in a move-stream model, heads can track what last touched the square being moved to, or where the moving piece came from. And that's why this chapter belongs to Rook. Attention weights are just numbers between positions, and for Quill you render them the standard way: spans of earlier text glowing brighter where weight is higher. Interpretable, but fuzzy — language relationships are gradient things. Rook's positions are moves , so the identical numbers render as arrows between moves drawn over a chessboard — and an arrow from back to (the move that put that knight on f3) is a claim you can check against the rules of chess. One mechanism, two pictures; the formal world makes the informal one legible."
 	},
 	{
 		"id": "section-3-3",
 		"part": 3,
 		"title": "3.3 RoPE & Context Windows",
-		"text": "Attention by itself has no idea which token came first — position has to be smuggled in, and rotary embeddings are how modern models do it. Along the way: what a context window actually is, and why every model eventually runs out of one."
+		"text": "Attention by itself has no idea which token came first — position has to be smuggled in, and rotary embeddings are how modern models do it. Along the way: what a context window actually is, and why every model eventually runs out of one. Look back at the attention equations: nothing in them mentions order. Shuffle the tokens and every query–key dot product gives the same score — attention treats the sequence as a bag . For chess that's fatal: as move one and as a replayed idea on move forty mean different things, and \"the previous move\" must be findable. Position information has to be injected, and RoPE — rotary position embeddings, the modern standard — injects it with a trick of geometry: That relative-position property is the entire sales pitch. A dot product between two rotated vectors depends on the angle between them, and that angle is proportional to the gap between their positions. So a head can learn \"attend two tokens back\" as a fixed geometric relationship that works identically at position 10 and position 90 — the pattern travels."
+	},
+	{
+		"id": "section-3-3",
+		"part": 3,
+		"title": "3.3 RoPE & Context Windows",
+		"text": "Each dimension pair rotates at its own frequency , fast pairs resolving nearby order precisely while slow pairs keep long-range gaps distinguishable — a clock with many hands, from seconds to hours. Honesty checkpoint. The pocket models you'll train live in Part 5 do not use RoPE — they use the older recipe: a second learned table, one row per position , added to the token embedding at the bottom of the stack. It's simpler, it's fast, and at a 128-token window it works fine — but position 7 is just an arbitrary learned vector, and nothing generalizes across positions. RoPE is taught here because it's the modern standard, and it arrives with the offline-trained flagship models. When the course can show you both side by side, the difference stops being trivia. The context window: the edge of the world The context window is the block of tokens the model can see at once — the width of the attention computation. The pocket pair's window is 128 tokens. For Quill, at 2.34 characters per token, that's roughly 300 characters of story — a paragraph. For Rook it's about two full random-legal games, or one long game with room to spare."
+	},
+	{
+		"id": "section-3-3",
+		"part": 3,
+		"title": "3.3 RoPE & Context Windows",
+		"text": "Anything before the window's left edge does not exist: not \"remembered vaguely,\" but architecturally invisible — attention has nothing to dot against. Every \"the model forgot my earlier instructions\" story you've heard is this edge. Frontier windows have grown from 2,048 tokens to hundreds of thousands, but the cost is real — attention compares every position with every earlier one, so doubling the window roughly quadruples that work — and the edge always exists somewhere. When Part 12 gives Quill a scratchpad tool, it will be precisely because a fixed window makes long-story consistency impossible without external memory. The limit is the lesson."
 	},
 	{
 		"id": "section-3-4",
 		"part": 3,
 		"title": "3.4 SwiGLU, RMSNorm, the Block",
-		"text": "The last pieces click in: the gated feed-forward network where most of the parameters live, the normalization that keeps activations sane, and the pre-norm wiring that stacks it all into a block you can repeat a dozen times to get a real model."
+		"text": "The last pieces click in: the gated feed-forward network where most of the parameters live, the normalization that keeps activations sane, and the pre-norm wiring that stacks it all into a block you can repeat a dozen times to get a real model. RMSNorm: keep the vectors on a leash Residual addition has a side effect: the stream's magnitude drifts as layers keep adding to it, and layers deeper in the stack would see ever-wilder inputs. The fix is to rescale before each sub-layer: Just as important is where the norm sits. Modern blocks are pre-norm : normalize the copy of the stream a sub-layer reads, but add the sub-layer's output back to the un -normalized stream. The highway itself is never squeezed — each worker just gets a standardized view of it. That wiring keeps the residual path clean for gradients and is a big part of why you can stack dozens of blocks and have training simply work. The MLP: where the parameters live After attention has gathered information between positions, the MLP processes each position on its own: expand the 128-wide vector to 4× the width, apply a nonlinearity, project back down, add to the stream."
+	},
+	{
+		"id": "section-3-4",
+		"part": 3,
+		"title": "3.4 SwiGLU, RMSNorm, the Block",
+		"text": "This is the transformer's per-token thinking space — and its biggest line item in the parameter budget. The modern nonlinearity is a gated design called SwiGLU : Same honesty rule as RoPE: the live pocket models use the classic ReLU MLP — two matrices, no gate — because at pocket scale it's fast and the difference is small. They do use RMSNorm and pre-norm wiring exactly as taught above. SwiGLU arrives with the flagships, where the recipe matches what frontier models actually ship. The block, assembled — and counted That's every part. One block is: norm, attention, add — then norm, MLP, add. Stack N blocks between the embedding and the unembedding and you have the whole architecture. The pocket pair stacks 4 blocks; the flagships stack more and go wider; frontier models stack around a hundred."
+	},
+	{
+		"id": "section-3-4",
+		"part": 3,
+		"title": "3.4 SwiGLU, RMSNorm, the Block",
+		"text": "Here's exactly where pocket Quill's parameters sit: Component Shape Parameters Token embedding 512 × 128 65,536 Position embedding 128 × 128 16,384 Attention, 4 layers (Wq, Wk, Wv, Wo each 128 × 128) 4 × 4 × 128 × 128 262,144 MLPs, 4 layers (128 → 512 → 128) 4 × 2 × 128 × 512 524,288 Unembedding 128 × 512 65,536 Total 933,888 Read the weights, not just the total: the MLPs hold more than half the model, attention a quarter, and the embeddings the rest. Pocket Rook is the identical stack with different bookends — its 1,931-token vocabulary makes the embedding and unembedding bigger, for about 1.3M parameters total. Same blocks, same highway, different menu. Right now every one of those parameters is random noise, and both birds predict static. Part 4 is about the machine that turns noise into knowledge: the loss, the gradient, and the loop that runs them a few thousand times."
 	},
 	{
 		"id": "part-4",
 		"part": 4,
 		"title": "Part 4 · Learning",
-		"text": "A transformer with random weights is an elaborate way to produce noise. This chapter is about the loop that turns noise into skill: a loss that scores every prediction, gradients that assign blame, an optimizer that acts on it — and the strange things that happen when a model learns too well, or keeps learning long after it should have stopped. This chapter's interactive playground arrives with a later milestone."
+		"text": "\"A model learns exactly one thing: to be less surprised by what comes next.\" A transformer with random weights is an elaborate way to produce noise. This chapter is about the loop that turns noise into skill: a loss that scores every prediction, gradients that assign blame, an optimizer that acts on it — and the strange things that happen when a model learns too well, or keeps learning long after it should have stopped. This chapter's interactive playground arrives with a later milestone. But everything you learn here runs for real in Part 5 — the numbers in this chapter are the exact numbers you'll watch on your own screen."
 	},
 	{
 		"id": "section-4-1",
 		"part": 4,
 		"title": "4.1 Softmax, Cross-Entropy, Perplexity",
-		"text": "Softmax turns raw scores into probabilities, cross-entropy measures how surprised the model was by the truth, and perplexity turns that surprise into a number you can read at a glance. This is the quantity the entire rest of the course is trying to push down."
+		"text": "Softmax turns raw scores into probabilities, cross-entropy measures how surprised the model was by the truth, and perplexity turns that surprise into a number you can read at a glance. This is the quantity the entire rest of the course is trying to push down. Where the Numbers Come From Part 3 left off at the transformer's final layer: for every position in the input, the model emits one raw score per vocabulary entry. These scores are called logits . Quill emits 512 of them (its byte-BPE vocab), Rook emits 1931 (its UCI move vocab). Logits are just real numbers — they can be negative, they don't sum to anything, and you can't bet on them yet. Softmax fixes that in one move: exponentiate every logit (now everything is positive), then divide by the total (now everything sums to 1). The exponential does one more thing worth noticing: it exaggerates gaps. A logit that's 2 points ahead doesn't get 2 more units of probability — it gets about 7&times; as much. That sharpening is a feature, and in Part 5 you'll meet the dial (temperature) that controls it. Cross-Entropy: Scoring One Prediction Training data comes with the answer key: the corpus itself."
+	},
+	{
+		"id": "section-4-1",
+		"part": 4,
+		"title": "4.1 Softmax, Cross-Entropy, Perplexity",
+		"text": "The model predicts a distribution over the next token; the corpus knows which token actually came next. The loss for that one prediction is brutally simple: — take whatever probability the model assigned to the truth, and take its negative log. Everything else it predicted is ignored. That last line is why the log is there. A loss of would treat \"gave the truth 1% chance\" and \"gave it 0.0001%\" as nearly the same mistake. The log makes confident wrongness catastrophically expensive, so the model learns to hedge exactly as much as its actual uncertainty deserves. During training, this per-token loss is averaged over every position in every sequence of the batch — thousands of graded predictions per step. The Starting Line Is ln(V) Here's a prediction you can verify with your own eyes. An untrained model has random weights, so its logits are meaningless and roughly equal — softmax turns that into a uniform distribution: every token gets probability 1/V. The loss is therefore , before a single step of training. When you press play on the labs in the next chapter, Quill's loss curve begins at 6.24 and Rook's at 7.57 — not approximately, not by coincidence."
+	},
+	{
+		"id": "section-4-1",
+		"part": 4,
+		"title": "4.1 Softmax, Cross-Entropy, Perplexity",
+		"text": "Watching ln(V) appear on your own screen is your proof that nothing here is staged: the theory and the pixels agree. Perplexity: Loss You Can Read Loss is in nats — a logarithmic unit nobody has intuitions for. Undo the log and you get perplexity : . Read it as: the model is effectively choosing uniformly among this many tokens . This is the number the whole course pushes down. Pretraining (Part 5) attacks it directly; every later stage — instruction tuning, preference training, RL — reshapes which tokens the model bets on while trusting this machinery underneath. When frontier labs report a model's loss, this exact quantity, computed this exact way, is what they mean."
 	},
 	{
 		"id": "section-4-2",
 		"part": 4,
 		"title": "4.2 Backpropagation",
-		"text": "One number — the loss — has to become an instruction for millions of weights, and backpropagation is the bookkeeping trick that makes it cheap: blame flowing backward through the same graph the prediction flowed forward through."
+		"text": "One number — the loss — has to become an instruction for millions of weights, and backpropagation is the bookkeeping trick that makes it cheap: blame flowing backward through the same graph the prediction flowed forward through. The Problem: The loss says \"you were surprised by 4.7 nats.\" Quill has millions of weights, and every single one of them contributed something to that prediction. Which weights were at fault, and by how much? Guessing weight-by-weight would take millions of forward passes per update. Backprop does it in one. The Gradient: A Blame Number for Every Weight For each weight, ask: if I nudged this weight up a tiny bit, would the loss go up or down, and how steeply? That per-weight answer is the gradient — how much each weight moved the loss."
+	},
+	{
+		"id": "section-4-2",
+		"part": 4,
+		"title": "4.2 Backpropagation",
+		"text": "A positive gradient means \"this weight is making things worse; lower it.\" A gradient near zero means \"this weight is innocent this round.\" Once you have it, the update rule is one line: The Chain Rule, Walked Backwards The trick that makes millions of gradients affordable: a transformer is nothing but a long composition of simple operations — multiply, add, softmax, RMSNorm — and each simple operation knows its own local derivative. The chain rule says the derivative of a composition is the product of the local derivatives along the way. So the forward pass builds a graph of everything it computed, and the backward pass walks that same graph in reverse: start at the loss with a gradient of 1, and at each operation, multiply by its local derivative and hand the result upstream. A weight deep in layer one influenced the loss through every path that passes through it — attention heads, MLPs, the residual stream — and the backward sweep sums the blame over all of those paths automatically, in a single pass that costs roughly two forward passes. That's credit assignment: the loss doesn't shout at the model as a whole, it whispers a precise, individual instruction to every weight."
+	},
+	{
+		"id": "section-4-2",
+		"part": 4,
+		"title": "4.2 Backpropagation",
+		"text": "We won't derive the calculus here — what matters for everything downstream is the shape of the idea: gradients flow backward through the exact structure that predictions flowed forward through, splitting and merging where the computation split and merged. The Loop You'll Run in Part 5 That's the entire loop. Not a sketch of it — the actual loop. When you press play in Part 5, a Web Worker runs exactly these five lines against your GPU, thousands of times. GPT-4-class training is this loop with more zeros attached."
 	},
 	{
 		"id": "section-4-3",
 		"part": 4,
 		"title": "4.3 AdamW & Schedules",
-		"text": "Raw gradients are too jumpy to follow directly. AdamW smooths them with running averages, warmup and cosine schedules shape the learning rate over a run, and gradient clipping catches the occasional spike before it wrecks the weights."
+		"text": "Raw gradients are too jumpy to follow directly. AdamW smooths them with running averages, warmup and cosine schedules shape the learning rate over a run, and gradient clipping catches the occasional spike before it wrecks the weights. The Problem: Each gradient is computed from one small batch — a tiny, noisy sample of the corpus. Follow it literally and you zigzag. Worse, different weights need wildly different step sizes: the embedding row for a rare token gets a real gradient once in a thousand batches, while attention weights get hammered every step. AdamW — the default optimizer of the entire LLM era — answers with three ingredients: Momentum Keep a running average of recent gradients. Noise cancels out across batches; the direction that survives the averaging is the one worth following. Per-weight scaling Also track each weight's average squared gradient, and divide by its square root. Weights with chronically large gradients get small careful steps; quiet, rarely-updated weights get bigger ones. Decoupled weight decay Every step, shrink every weight slightly toward zero — applied separately from the gradient, which is the \"W\" that distinguishes AdamW from Adam."
+	},
+	{
+		"id": "section-4-3",
+		"part": 4,
+		"title": "4.3 AdamW & Schedules",
+		"text": "This gentle pressure against complexity stars in section 4.5. Note the cost: and are two extra numbers per weight — the optimizer's memory is twice the model's. Harmless at Quill's size; at flagship size it's the reason LoRA exists, which is exactly how Part 7 will use it. Schedules: the Learning Rate Is a Curve, Not a Constant Warmup: at step zero the weights are random, so the first gradients point somewhere confidently wrong. Taking full-size steps on them can distort the model before learning starts. The fix is to begin with a learning rate near zero and ramp it up over the first few hundred steps — let the model earn its step size. Cosine decay: after warmup, glide the learning rate back down along a cosine curve. Big steps early, when everything is wrong and any direction helps; small steps late, so the model can settle into a minimum instead of orbiting it."
+	},
+	{
+		"id": "section-4-3",
+		"part": 4,
+		"title": "4.3 AdamW & Schedules",
+		"text": "(You'll also see warm-stable-decay schedules in modern runs — hold the rate flat, then decay at the end — handy when you don't know the run length in advance.) Gradient Clipping: the Seatbelt Once in a while a weird batch produces a giant gradient, and one giant step can undo hours of training — you'd see it as a vertical spike on the loss curve. Clipping measures the overall size (norm) of the full gradient and, if it exceeds a cap (typically 1.0), scales the whole thing down to fit. Same direction, sane size. It does nothing at all on normal steps — it's purely a seatbelt. AdamW with warmup, cosine decay, and clipping is the recipe — it's what trains Quill and Rook when you press play in Part 5, and, at different constants, what trained the frontier model you talked to this morning."
 	},
 	{
 		"id": "section-4-4",
 		"part": 4,
 		"title": "4.4 Train/Val, Overfitting, Memorization",
-		"text": "A falling training loss can mean the model is learning — or just memorizing. Held-out validation data tells the two apart, and a hatchling that recites a story word-for-word shows why Part 1's deduplication was never optional."
+		"text": "A falling training loss can mean the model is learning — or just memorizing. Held-out validation data tells the two apart, and a hatchling that recites a story word-for-word shows why Part 1's deduplication was never optional. The Problem: A student who aces the exact problems from the homework might understand algebra — or might have memorized the answer key. You can't tell from the homework score. You need problems they've never seen. The fix is old and unglamorous: before training, carve off a slice of the corpus — the validation set — and never, ever train on it. Now you have two loss numbers: Train loss Surprise on data the model trains on. Measures fit. Can be driven arbitrarily low by sheer memorization — it is flatterable. Validation loss Surprise on held-out data. Measures generalization — whether the model learned the language or just the examples . This is the honesty check. Read them together. Both falling: the model is learning things that transfer. Train falling while val flattens or rises: the model has started spending its capacity on memorizing specifics that don't transfer — overfitting . The gap between the two curves is memorization made visible."
+	},
+	{
+		"id": "section-4-4",
+		"part": 4,
+		"title": "4.4 Train/Val, Overfitting, Memorization",
+		"text": "The Memorized-Story Demo Here's the cleanest way to see it, and a demo this course will ship as a hatchling: take a Quill-sized model and train it on just fifty stories, for thousands of steps. Train loss marches toward zero — the model becomes literally certain of every next token. Then prompt it with the opening words of one of those stories. It recites the rest verbatim . Every word, every comma. Meanwhile val loss, after an early dip, has been climbing the whole time: on stories it hasn't seen, this model is getting worse . The general lesson: a model with enough parameters can always drive train loss to zero by becoming a lookup table. Train loss alone proves nothing. The val curve is the only witness that what fell was surprise about the world, not surprise about the flashcards. Why Part 1's Dedup Was Never Optional This is the payoff of the deduplication you did back in Part 1, and it lands twice. First: a story that appears a hundred times in the corpus is worth memorizing even for a model honestly minimizing loss — duplication turns memorization into the correct strategy, at the expense of everything else."
+	},
+	{
+		"id": "section-4-4",
+		"part": 4,
+		"title": "4.4 Train/Val, Overfitting, Memorization",
+		"text": "Second, and sneakier: if a duplicate straddles the split — the same story in both train and val — then val loss on it is flattered by memorization, and your honesty check quietly lies to you. Nothing crashes. The curve just looks better than reality. This exact failure, scaled up, is benchmark contamination — a headline problem for frontier models that Part 5 returns to when we talk evals. Web-scale corpora are full of near-duplicates, which is why serious labs treat dedup and decontamination as core infrastructure, not cleanup. The classical remedies: stop when val loss stops improving, get more data, or add regularization pressure like weight decay. Modern LLM pretraining mostly picks door number two — the corpus is so large the model sees most data about once, and overfitting recedes as a concern. But it never disappears: every fine-tune in Acts II and III runs on small data, where these curves become your primary instrument again."
 	},
 	{
 		"id": "section-4-5",
 		"part": 4,
 		"title": "4.5 The Grokking Interlude",
-		"text": "Sometimes a model memorizes its training set, plateaus for thousands of steps — and then, long after any reasonable person would have stopped training, suddenly generalizes. You'll scrub through a recorded run of this phenomenon and watch understanding arrive late."
+		"text": "Sometimes a model memorizes its training set, plateaus for thousands of steps — and then, long after any reasonable person would have stopped training, suddenly generalizes. You'll scrub through a recorded run of this phenomenon and watch understanding arrive late. Section 4.4 drew a tidy picture: memorization and generalization as rivals, val loss as the referee. In 2022, researchers at OpenAI (Power et al.) found a case where the story takes a turn nobody expected — a result so odd it got its own verb: grokking . The Setup Take a tiny transformer — hatchling-sized — and teach it modular arithmetic: problems like , written as token sequences. There are only 97&times;97 possible problems, so you can enumerate the entire universe of them. Show the model a random slice — say half the table — as training data, and hold out the rest as validation. Then train with AdamW and weight decay, and just... don't stop. What Happens Phase one is exactly section 4.4's nightmare: the model memorizes its slice of the table in a few hundred steps. Train accuracy 100%, val accuracy at chance. Textbook overfitting — every rule says stop. Then, thousands of steps of apparently nothing."
+	},
+	{
+		"id": "section-4-5",
+		"part": 4,
+		"title": "4.5 The Grokking Interlude",
+		"text": "And then, abruptly, val accuracy snaps from chance to essentially perfect. The model stopped reciting the table and started doing modular arithmetic . What's Actually Going On Remember weight decay — AdamW's constant gentle pull toward zero? The memorization solution is a sprawling, expensive lookup table spread across large weights. The general algorithm is compact. Both drive train loss to zero, but under weight decay's pressure the lookup table keeps paying rent while the compact algorithm doesn't. Through the long plateau, gradient descent is quietly assembling the cheap general circuit, and once it works, the expensive table gets dismantled — which is the moment the val curve leaps. Follow-up interpretability work found the algorithm itself, and it's beautiful: the model arranges the 97 number embeddings into a circle and does modular addition as rotation around it — trigonometry it was never taught, discovered as the cheapest way to be right. Structure like that, found by opening up a trained model, is exactly what Part 6 does to Rook. Canonical grokking needs 10,000+ steps — beyond this course's coffee-break budget for live training."
+	},
+	{
+		"id": "section-4-5",
+		"part": 4,
+		"title": "4.5 The Grokking Interlude",
+		"text": "A recorded run with a scrubber (plus a patient live mode you can leave running in the background) arrives with a later milestone. The phenomenon is what matters here, and it's fully real: this exact experiment reproduces on a laptop. Why end the chapter here? Because grokking is the honest asterisk on everything above. Loss curves are instruments, not oracles: a flat val curve tells you the model hasn't generalized yet — it cannot tell you what's assembling under the surface. Inside networks, understanding is sometimes a phase change, not a slope. Hold that thought through the next chapter, where you'll watch abilities switch on mid-training — and through Part 6, where we go looking for the circuits directly."
 	},
 	{
 		"id": "part-5",
 		"part": 5,
 		"title": "Part 5 · Pretraining",
-		"text": "Everything so far was preparation; this is the payoff. Both birds train side by side on your GPU, and over a coffee break Quill's output climbs from gibberish to words to grammar while Rook's moves go from random to legal to dangerous. This is the chapter the whole course is built around. This chapter's interactive playground arrives with a later milestone."
+		"text": "\"One loop, two worlds: the same falling curve teaches one bird to speak and the other to see a board.\" Everything so far was preparation; this is the payoff. Both birds train side by side on your GPU, and over a coffee break Quill's output climbs from gibberish to words to grammar while Rook's moves go from random to legal to dangerous. This is the chapter the whole course is built around. The two live training labs in section 5.3 are real: real tokens, real gradients, your GPU. They need WebGPU (current Chrome and Edge have it; Safari and Firefox are getting there). No WebGPU on this machine? Read on anyway — every number in this chapter is quoted from the same runs you'd be doing."
 	},
 	{
 		"id": "section-5-1",
 		"part": 5,
 		"title": "5.1 Twin Dashboards",
-		"text": "Two dashboards, one lesson: loss falling beside sampled stories for Quill, loss falling beside a legal-move gauge for Rook. Watching the same curve produce two different kinds of competence is the twin-spine thesis made visible."
+		"text": "Two dashboards, one lesson: loss falling beside sampled stories for Quill, loss falling beside a legal-move gauge for Rook. Watching the same curve produce two different kinds of competence is the twin-spine thesis made visible. Look at what's actually identical between the two labs you're about to run. The architecture: the same 4-layer, 128-wide, 4-head transformer from Part 3, weight for weight in structure. The objective: cross-entropy on the next token, straight from Part 4. The optimizer: AdamW, warmup, clipping — same constants. The loop: the exact five lines from section 4.2. Nothing in the machine knows whether it's learning bedtime stories or chess. The only difference is the stream of token IDs flowing in. Quill eats TinyStories through its 512-token byte-BPE vocab; Rook eats random-legal chess games through its 1931-token UCI move vocab. You'll even see the difference before training starts: Quill's loss begins at ln(512) = 6.24 and Rook's at ln(1931) = 7.57 — two different starting heights for no deeper reason than vocabulary size, exactly as Part 4 predicted."
+	},
+	{
+		"id": "section-5-1",
+		"part": 5,
+		"title": "5.1 Twin Dashboards",
+		"text": "\"It's all next-token prediction over token streams.\" Not a slogan — a falsifiable claim, and this chapter is the experiment. If one architecture with one objective produces a storyteller from story tokens and a chess player from move tokens, the intelligence isn't in the wiring. It's in what the data demands the model become in order to predict it. Each dashboard pairs the loss curve with the thing loss can't show you: what the model actually produces. For Quill, sampled text. For Rook, sampled move sequences and how many of those moves are legal. Keep your eye on both halves — the curve tells you learning is happening, the samples tell you what kind."
 	},
 	{
 		"id": "section-5-2",
 		"part": 5,
 		"title": "5.2 Temperature & Sampling",
-		"text": "The model outputs a probability distribution; something still has to pick the next token. Temperature is the dial between playing it safe and getting weird — taught here, at the moment the first sampled output appears on screen."
+		"text": "The model outputs a probability distribution; something still has to pick the next token. Temperature is the dial between playing it safe and getting weird — taught here, at the moment the first sampled output appears on screen. The Problem: In a minute you'll press \"sample\" and get a story. But a trained model doesn't emit text — it emits, at every step, 512 probabilities. Turning that distribution into one concrete token is a genuine decision, made once per token, and the policy you choose changes the output's whole character. The obvious policy — always take the most probable token ( greedy decoding ) — fails in a characteristic way: it's deterministic and it loops. Once a small model finds a comfortable phrase, the most likely continuation of \"the little girl and the little girl\" is more little girl. The fix is to actually sample : draw the next token at random, in proportion to its probability. Now likely tokens come up often, unlikely ones occasionally, and the output has texture. Temperature: Reshaping the Distribution Before You Draw Between the logits and the softmax sits one dial."
+	},
+	{
+		"id": "section-5-2",
+		"part": 5,
+		"title": "5.2 Temperature & Sampling",
+		"text": "Divide every logit by a temperature T before exponentiating: Concretely, three tokens with logits 2, 1, 0: T → 0 Collapses to greedy. Deterministic, cautious, prone to loops. Sample twice, get the identical output twice. T ≈ 0.7–1.0 The useful zone: enough randomness for variety, enough sharpness for coherence. Most chat models you've used live here. T high Approaches uniform sampling over the vocab — which for an untrained model it literally is. Chaos, by construction. Top-k: Cutting the Tail One refinement worth knowing now: even a good distribution has a long tail of hundreds of tokens at a fraction of a percent each. Individually negligible — collectively they hold real probability mass, so pure sampling occasionally lands on genuine junk mid-sentence. Top-k sampling keeps only the k most probable tokens (say, 40), renormalizes, and samples from those. The tail's collective weight gets redistributed to plausible candidates. Its cousin top-p, plus tricks like repetition penalties, wait for Part 13 — temperature and top-k are all you need to drive the labs."
+	},
+	{
+		"id": "section-5-2",
+		"part": 5,
+		"title": "5.2 Temperature & Sampling",
+		"text": "Because the first thing you'll see from an untrained model is uniform garbage, and you should know that's the distribution's fault, not the sampler's. And because when you crank the temperature later and watch a trained Quill dissolve back into byte soup, you'll recognize what you're seeing: yourself, manually undoing the sharpening that training bought."
 	},
 	{
 		"id": "section-5-3",
 		"part": 5,
 		"title": "5.3 Your First Real Run",
-		"text": "Press start and pretrain the live pair for real — millions of tokens through a few million parameters, on WebGPU, in your tab. The arc from noise to language happens while you watch, and the checkpoints it leaves behind belong to you."
+		"text": "Press start and pretrain the live pair for real — real tokens through real parameters, on your GPU, in this tab. Watch the loss fall from ln(V) — the uniform-guess ceiling — and sample as you go: Quill's output climbs from byte soup toward words, and Rook's moves from noise toward legal chess. Train longer and sample again; the difference is the lesson. Set your expectations honestly before you press anything. Measured on an Apple M4, Quill trains at roughly 13,000 tokens per second, so the 200-step run below takes about twenty seconds. In those seconds, loss falls from 6.24 to around 4.0 — perplexity from 512 down to about 55. That buys you proto-words , not prose. A real sample from this exact lab at step 200: Look at what twenty seconds bought: spaces in the right places, real short words (\"she\", \"wanted\", \"the\", \"was\"), capital letters starting sentences, periods ending them — and earnest almost-words like \"sper\" where the byte-level statistics are right but the dictionary isn't. That's what loss 4.0 looks like . Sample before training and compare: at loss 6.24 you get uniform byte soup, no spaces, no structure at all."
+	},
+	{
+		"id": "section-5-3",
+		"part": 5,
+		"title": "5.3 Your First Real Run",
+		"text": "Now Rook — same architecture, same loop, and the corpus is the only thing that changes. Its loss starts higher (ln of 1931) and its progress reads differently: samples go from random move tokens toward chess-shaped sequences — openings that look like openings, moves that a board would mostly accept. Watch the legal-move gauge rather than the raw text; legality is Rook's version of spelling. Both labs share one architecture — only the corpus differs. Quill's loss starts near ln(512) ≈ 6.2, Rook's near ln(1931) ≈ 7.6, and both fall the same way: the transformer doesn't know which world it's learning. That's the thesis of this course, live on your screen. Now Actually Play With It One 200-step run is a taste. The weights persist between runs, so press train again — and again. Each round of 200 steps sharpens the samples: \"sper the found\" gives way to real words, then to short grammatical clauses, then to sentences that almost track a thought. The gibberish→words→grammar arc takes minutes of accumulated steps, not seconds; this is the coffee-break run the course is named for. Sample between rounds so you can feel the model move."
+	},
+	{
+		"id": "section-5-3",
+		"part": 5,
+		"title": "5.3 Your First Real Run",
+		"text": "Three experiments worth running right now: sample at temperature 0 twice (identical output, and probably a loop — section 5.2 said so). Crank the temperature high on your best-trained Quill and watch it dissolve back toward byte soup. And peek at the per-token coloring in the sample stream: the token-level loss heatmap from Part 2's inspector, now showing you which predictions are still expensive — surprise retreating from easy tokens first."
 	},
 	{
 		"id": "section-5-4",
 		"part": 5,
 		"title": "5.4 The Training Time Machine",
-		"text": "The flagship models trained for days offline, and their history ships with the course: drag a slider through their checkpoints and watch ability assemble itself — including the sudden step where in-context copying clicks into place."
+		"text": "The flagship models trained for days offline, and their history ships with the course: drag a slider through their checkpoints and watch ability assemble itself — including the sudden step where in-context copying clicks into place. Your live pair tops out around five million parameters — the price of training in a browser tab. The course's flagship Quill and Rook are 15–25M-parameter versions of the same architecture, trained offline for days on the full corpora. You don't get to train them live. You get something arguably better: their entire history , saved as checkpoints you can scrub through like video. The idea this teaches: a training run isn't a before and an after — it's a trajectory, and abilities arrive along it in a fairly stable order. Early checkpoints of flagship Quill make your live bird's mistakes (character statistics, word-shaped noise); mid-run checkpoints write clean sentences that forget the character's name; late ones hold a plot. Rook's trajectory runs opening moves → mostly-legal middlegames → moves that win material. Same slider, same left-to-right arrow of competence. The Induction Bump One landmark on that trajectory deserves its own name."
+	},
+	{
+		"id": "section-5-4",
+		"part": 5,
+		"title": "5.4 The Training Time Machine",
+		"text": "Fairly early in training, loss curves for transformers show a sudden extra drop — a visible bend — that interpretability work has traced to the formation of induction heads : pairs of attention heads implementing a copy rule — find the last time the current token appeared, look at what followed it, and predict that again . It's the moment in-context copying clicks. Before it, flagship Quill treats a character's name as a rare token and fumbles it; after it, a name introduced once is reused correctly — the model has learned to consult its own context instead of relying on global statistics. This bend is marked on the flagship's logged training curve; catching it live in your own runs is a bonus, not a promise. The time machine — checkpoint scrubbers for both flagships, with the induction bump annotated on the real logged curve — ships once the flagship training pipeline lands. The concept is here now because 5.5 and 5.6 build on it: checkpoints are how you measure when an ability arrived, not just whether it did."
 	},
 	{
 		"id": "section-5-5",
 		"part": 5,
 		"title": "5.5 A Tiny Scaling Law",
-		"text": "Train three hatchlings of three sizes on the same data and plot their losses: even at toy scale, the points fall on a line. The straight line on that log-log plot is the same one frontier labs bet billions on."
+		"text": "Train three hatchlings of three sizes on the same data and plot their losses: even at toy scale, the points fall on a line. The straight line on that log-log plot is the same one frontier labs bet billions on. The mini-lab is simple: three hatchlings — small, medium, large — same corpus, same steps, same recipe. Every run lands at a different final loss, and when you plot final loss against parameter count with both axes logarithmic, the three points sit close to a straight line. Three points prove nothing alone; what they demonstrate is the shape of one of the most consequential empirical facts in the field: loss falls predictably with scale — smoothly, as a power law, across many orders of magnitude of parameters, data, and compute. Sit with how strange that is. Almost nothing else about these models is predictable — not what they'll say, not when an ability like induction will switch on. But the loss of a not-yet-trained 10&times;-bigger model can be forecast from a fit like this before anyone pays for the run."
+	},
+	{
+		"id": "section-5-5",
+		"part": 5,
+		"title": "5.5 A Tiny Scaling Law",
+		"text": "That predictability is why scaling became a strategy rather than a gamble — the \"bitter lesson\" in action: general methods plus more compute keep beating clever handcrafted structure. The Chinchilla Intuition That balance was the Chinchilla paper's headline: the era's giant models were badly undertrained — too many parameters, too few tokens — and a smaller model fed more data beat them at the same compute. Check the balance on your own birds: live Quill has a few million parameters and a corpus slice of a few million tokens, so it sits near-ish the compute-optimal ratio, if far below it in scale — and the E term is why no amount of training makes a 5M-parameter model write like a frontier one. Some loss you buy off with scale; some is the noise floor of language itself. They predict loss , not abilities. Section 5.4 showed abilities arriving as jumps; a smooth loss forecast tells you nothing about which jumps happen when. Predictable curve, surprising contents — both true at once, and much of the field's ongoing argument lives in that gap."
 	},
 	{
 		"id": "section-5-6",
 		"part": 5,
 		"title": "5.6 How Do We Know It's Working?",
-		"text": "Loss went down — but is the model good? Evals as a first-class topic: Rook's clean Elo and a set of never-seen positions that separate memorized openings from a modeled board; Quill scored by a judge model; and why public benchmarks saturate and leak."
+		"text": "Loss went down — but is the model good? Evals as a first-class topic: Rook's clean Elo and a set of never-seen positions that separate memorized openings from a modeled board; Quill scored by a judge model; and why public benchmarks saturate and leak. The Problem: Val loss measures surprise at held-out text. But \"rarely surprised by TinyStories\" and \"writes a good story\" are different claims — a model can ace the first while its stories wander, contradict themselves, and bore children. Loss is the training signal; an eval is a measurement of the thing you actually wanted. The gap between them is where all the trouble lives. Rook: the Luxury of Ground Truth Chess is the easy case, which is exactly why this course has a chess bird. Rules are checkable: run every sampled move through a chess engine's rulebook and get a hard legal-move rate — the gauge you watched in 5.3, no judgment calls involved. Strength is measurable: play flagship Rook against Stockfish at fixed skill levels and estimate an Elo from the results. Numbers with external meaning, cheap to compute, impossible to argue with. One subtlety even here: legal on which positions?"
+	},
+	{
+		"id": "section-5-6",
+		"part": 5,
+		"title": "5.6 How Do We Know It's Working?",
+		"text": "Openings repeat endlessly in the corpus, so a model could score well by memorizing them — section 4.4 in a new costume. The fix is an out-of-distribution position set : weird-but-legal midgame positions that appear nowhere in training. High legality there can't come from recall; it has to come from something that models the board. That distinction — memorized surface vs internal model — is precisely Part 6's question, and this eval is its first piece of evidence. Quill: When There's No Answer Key No rulebook decides whether a story is good. The TinyStories paper met this head-on and pioneered the now-standard move: use a stronger LLM as the grader. Give the model a story opening, have it complete the ending, then hand the completion to a judge model with a rubric — grammar, creativity, consistency with the beginning — scored like a teacher marking homework. Judged evals scale to thousands of stories and correlate well with human ratings, at a price: the judge has taste, and taste has bugs. Judges favor longer answers, favor confident phrasing, and can be gamed — a fact that returns with teeth in Part 10, because a judge is a reward model wearing a different hat."
+	},
+	{
+		"id": "section-5-6",
+		"part": 5,
+		"title": "5.6 How Do We Know It's Working?",
+		"text": "Later in the course, the judge grading your Quill is the course's tutor model, rubric on screen. Benchmarks: Saturation and Contamination Scale this up and you get the frontier's eval problem. Public benchmarks saturate: once every leading model scores 89-vs-91%, the test stops discriminating. And they leak: benchmarks are published text, pretraining corpora are scraped text, so test questions — often with answers — end up inside training sets , and a model \"aces\" questions it has effectively already seen. This is section 4.4's contaminated-val-set failure at civilizational scale, and the defenses are the same machinery as Part 1's dedup (n-gram overlap checks against test sets, i.e. decontamination) plus held-out private test sets and fresh questions written after the training cutoff. When you read a leaderboard, the first question is never \"what's the score?\" — it's \"could the model have seen the test?\" Every training stage for the rest of this course ends with the same discipline: a before/after story test for Quill, a before/after play test for Rook, against fixed eval sets neither bird trains on."
+	},
+	{
+		"id": "section-5-6",
+		"part": 5,
+		"title": "5.6 How Do We Know It's Working?",
+		"text": "Optimize a number long enough and the number detaches from the goal — you'll watch that failure happen on purpose in Part 10."
 	},
 	{
 		"id": "part-6",
 		"part": 6,
 		"title": "Part 6 · World Models",
-		"text": "Rook has only ever seen move tokens — never a board. So does it secretly have one? This chapter opens the model up and looks: the course's interpretability interlude, and the reason a chess model earned a place beside a storyteller. This chapter's interactive playground arrives with a later milestone."
+		"text": "\"The model has never seen a board. Open it up, and there one is — maybe.\" Rook has only ever seen move tokens — never a board. So does it secretly have one? This chapter opens the model up and looks: the course's interpretability interlude, and the reason a chess model earned a place beside a storyteller. Probing and patching labs on your own Rook arrive with the flagship milestone — they need the bigger offline-trained model to be worth dissecting. This chapter teaches the published science those labs will reproduce, so read it as the lab manual for an experiment you'll run. Frame the stakes first. In Part 5 you watched next-token prediction produce competence, and the skeptic's reading is available and respectable: maybe it's all surface statistics — enormously sophisticated autocomplete that never models the world behind the tokens, a \"stochastic parrot.\" For stories, the question is hard to even pose crisply. That's why the chess bird exists: a game of chess written as move tokens has a precise hidden world — the board — and we can check, mechanically, whether a model trained only on the tokens built the world inside itself."
+	},
+	{
+		"id": "part-6",
+		"part": 6,
+		"title": "Part 6 · World Models",
+		"text": "This is the cleanest version science currently has of the question \"does a language model understand?\""
 	},
 	{
 		"id": "section-6-1",
 		"part": 6,
 		"title": "6.1 Linear Probes",
-		"text": "Train a tiny classifier on Rook's residual stream and it can read off the full board state — every square, at every move — from activations that were never told the rules. A linear probe is the simplest possible microscope, and what it finds here is remarkable."
+		"text": "Train a tiny classifier on Rook's residual stream and it can read off the full board state — every square, at every move — from activations that were never told the rules. A linear probe is the simplest possible microscope, and what it finds here is remarkable. The Problem: \"Does the model represent the board?\" sounds philosophical. Make it operational: after the model reads , its residual stream (Part 3) holds a vector at every position. If the board is in there, it should be extractable from those vectors. Extraction is an experiment, and experiments have answers. The Simplest Possible Microscope A linear probe is a single linear layer — a multiply-and-add, the least powerful classifier worth naming — trained to predict some fact from a frozen activation vector. For chess: freeze the trained model, run games through it, collect the residual-stream vector after each move token, and train one tiny probe per square of the board to answer \"what's on this square right now?\" The probe's weakness is the whole point. A deep probe could compute the board itself from almost any input, telling you nothing."
+	},
+	{
+		"id": "section-6-1",
+		"part": 6,
+		"title": "6.1 Linear Probes",
+		"text": "A linear probe can only succeed if the information is already sitting in the activations in essentially explicit, linearly readable form. A probe is a stethoscope, not a surgeon. What the Experiments Found The landmark result is Othello-GPT (Li et al., 2023): a GPT trained purely on Othello move sequences — no rules, no board, just legal games — from which probes recovered the full board state at every move. Kenneth Li and colleagues concluded the model had built an emergent world model : an internal board it computes, move by move, because tracking the board is the effective way to predict legal continuations. Adam Karvonen (2024) then showed the same for real chess: a GPT trained on raw game text, probes decoding the position of every piece with high accuracy — and, as a bonus, probes could read off an estimate of the players' skill level from the activations. The model wasn't just tracking the board; it was tracking who was at it. The control experiment matters: run the same probes on a randomly initialized, never-trained copy of the model and they fail. Whatever the probes are reading, training put it there."
+	},
+	{
+		"id": "section-6-1",
+		"part": 6,
+		"title": "6.1 Linear Probes",
+		"text": "The Mine/Theirs Twist Early Othello-GPT probes only worked well if they were nonlinear — a puzzle, since it suggested the board wasn't stored plainly. Neel Nanda's follow-up dissolved the puzzle with a reframe: probe not for \"black piece / white piece\" but for mine / theirs — relative to whoever moves next — and suddenly plain linear probes work excellently. The model doesn't store an observer's board; it stores a player's board, re-encoded every ply from the current mover's perspective. Which makes sense: \"my pieces can move, theirs block me\" is the frame next-move prediction actually needs. Lesson for every interpretability attempt you'll ever make: when a probe fails, the concept may be there in a coordinate system you didn't think to try. The model owes you nothing about your ontology. These published results are on other people's models. Rook's UCI move tokens make it an unusually clean probing target — every single token defines a complete board state to predict. Probe training on flagship Rook, square by square on your screen, ships with the flagship milestone."
 	},
 	{
 		"id": "section-6-2",
 		"part": 6,
 		"title": "6.2 Activation Patching",
-		"text": "Reading is one thing; editing is proof. Reach into a forward pass, flip the model's belief about a single square, and watch its chosen move change to match the board it now believes in — causal evidence that the internal board is doing real work."
+		"text": "Reading is one thing; editing is proof. Reach into a forward pass, flip the model's belief about a single square, and watch its chosen move change to match the board it now believes in — causal evidence that the internal board is doing real work. The Problem: A probe result is a correlation. Maybe the model uses its internal board to choose moves — or maybe the board is a passive by-product, computed and ignored, while moves come from somewhere else entirely. A car's windshield reflects the road without steering the car. To tell representation from decoration, you need an intervention. The Intervention The probe gives you more than a readout — it gives you a direction : the axis in activation space along which \"this square holds my knight\" varies. Activation patching uses that direction as a scalpel. Mid-forward-pass, capture the residual-stream vector, push it along the probe direction until the probe reports the belief you chose — knight gone, or moved elsewhere — then let the rest of the forward pass continue, computing on the edited belief. Then ask the only question that matters: did the behavior change to match the edited belief ? It did."
+	},
+	{
+		"id": "section-6-2",
+		"part": 6,
+		"title": "6.2 Activation Patching",
+		"text": "In Othello-GPT, patching the board representation made the model's legal-move predictions rearrange to fit the fictional board — including for board states that never occur in real games. Karvonen's chess models behave the same way: erase the model's belief in a piece, and its move distribution updates the way a player's would if the piece genuinely weren't there. Why This Is the Gold Standard This is the interpretability equivalent of a controlled experiment: hold the input fixed, change one internal variable, observe the output shift — causal, not correlational. The representation isn't just present; it is load-bearing . Cut the chain at the board belief and the move follows the belief, not the input. Note the equipment list, though: patching needs a forward pass you can capture and modify mid-flight — a \"hooked\" forward — which is precisely the capability this course's engine work reserves for the flagship-Rook lab. When you run it, you'll place a knight where no knight is, and watch Rook defend against a phantom."
 	},
 	{
 		"id": "section-6-3",
 		"part": 6,
 		"title": "6.3 Board or Bag of Heuristics?",
-		"text": "Not everyone agrees the probe results mean \"world model\" — maybe it's a thousand shallow tricks that add up to one. The critique gets presented honestly, because how much models really understand is exactly the open question at the frontier."
+		"text": "Not everyone agrees the probe results mean \"world model\" — maybe it's a thousand shallow tricks that add up to one. The critique gets presented honestly, because how much models really understand is exactly the open question at the frontier. Here's the strongest version of the counterargument, and it deserves your respect. Suppose the model learned not one board but thousands of local heuristics: \"after this opening sequence, that square usually holds a knight,\" \"if a pawn advanced two squares last move, the square behind it is empty,\" and on and on. Each is shallow. But superimpose enough of them and a probe could reconstruct the full board from their combined traces — without the model containing anything you'd honestly call a board object . Reconstructability is a fact about what's recoverable from the activations; \"world model\" is a claim about how the computation is organized. The probe can't tell them apart. This isn't hypothetical pedantry."
+	},
+	{
+		"id": "section-6-3",
+		"part": 6,
+		"title": "6.3 Board or Bag of Heuristics?",
+		"text": "A 2024 circuits-level reanalysis of Othello-GPT argued for exactly this reading — publishing under the phrase \"bag of heuristics\" : the board-relevant computation decomposes into many small, redundant, special-case rules rather than one clean unified algorithm. Patching survives this critique, note — editing the activations would still shift behavior, because the heuristics' outputs live in those same activations. The debate is about organization, not about whether the probes and patches work. The Tell: Edge Cases If the model had a clean board plus rules, legality would be near-perfect everywhere. It isn't — quite. Chess-playing transformers still emit rare illegal moves, and the failures cluster exactly where local heuristics run out: pins , above all — a piece that looks free to move by every local pattern, except that moving it exposes its own king along a line crossing the whole board. A heuristic bag handles the common case and misses the global constraint; a genuine board-plus-rules engine wouldn't. Those rare blunders are the strongest single piece of evidence that whatever Rook-like models have, it isn't a crisp symbolic board with a rulebook attached."
+	},
+	{
+		"id": "section-6-3",
+		"part": 6,
+		"title": "6.3 Board or Bag of Heuristics?",
+		"text": "Where That Leaves Us A fair scoreboard. Established: board state is linearly decodable from move-trained models, in the mine/theirs frame; edits to it causally steer behavior; none of it exists in untrained models. Contested: whether that constitutes a unified world model or an aggregate of heuristics dense enough to imitate one — and whether, at some density, that distinction still marks a real difference. This is a live scientific debate; both camps accept the same experimental facts, and this course won't pretend a verdict that doesn't exist. And that's precisely why this chapter sits in a course about frontier models. \"Does it truly model the world or just interpolate an enormous bag of heuristics?\" is the argument people are having about the model you talked to this morning — usually with vibes for evidence. Rook is small enough to settle pieces of it with experiments you can run: probe, patch, and test the edge cases where the two stories come apart. When the flagship lab lands, you'll do all three — and you'll have earned an opinion."
 	},
 	{
 		"id": "part-7",
@@ -207,31 +495,79 @@
 		"id": "section-7-1",
 		"part": 7,
 		"title": "7.1 Instruction Data",
-		"text": "The only difference between a completer and an assistant is what it was fine-tuned on: pairs of instructions and responses. TinyStories-Instruct gives Quill exactly that — write a story about a brave fox, and a story about a brave fox follows."
+		"text": "The only difference between a completer and an assistant is what it was fine-tuned on: pairs of instructions and responses. TinyStories-Instruct gives Quill exactly that — write a story about a brave fox, and a story about a brave fox follows. First, be honest about what you have. Five chapters of pretraining produced a model that answers one question, superbly: what token comes next in text like my corpus? Nobody asked it to be useful. Type an instruction at base Quill and it does the only thing it knows how to do — treat your instruction as the opening of a story and keep going: It didn't refuse. It didn't fail. It continued — your instruction was just more text, and text like that is usually followed by more text like that. The requested words never appear, the ending is whatever falls out, and it never stops. This isn't a small model being dumb; a raw pretrained frontier model does exactly the same thing, just more eloquently. Pretraining optimizes \"what comes next in the corpus\", not \"what does this human want\"."
+	},
+	{
+		"id": "section-7-1",
+		"part": 7,
+		"title": "7.1 Instruction Data",
+		"text": "Those objectives overlap just enough to be confusing — a completer often looks like it's obeying, because almost any prompt has plausible continuations that resemble compliance. The gap shows up the moment you add a constraint it must actually track. Supervised fine-tuning (SFT) closes the gap with almost insulting simplicity: keep training, same loss, same optimizer, same next-token prediction — but on a corpus of (instruction → response) pairs. Nothing about the machinery from Part 4 changes. Only the data changes, and the data is the message: text where instructions are followed by their answers makes a model that follows instructions. Quill's instruction corpus exists off the shelf: TinyStories-Instruct , the instruction-conditioned variant of the corpus Quill grew up on. Each entry prefixes a story with the recipe for that story — which words it must contain, which features it should have (dialogue, a moral, a twist), sometimes a one-line summary to expand: The first block is the instruction; the story is the response. Fine-tune on a few hundred thousand of these and Quill learns the conditional distribution: given this recipe, produce a story satisfying it."
+	},
+	{
+		"id": "section-7-1",
+		"part": 7,
+		"title": "7.1 Instruction Data",
+		"text": "In this course the live birds get a full fine-tune — every parameter updated, coffee-break sized — while the flagships get the LoRA treatment from section 7.3. SFT is not where models learn facts or grammar — that happened in pretraining. It's where they learn format and behavior : answer the question, use the constraint, stop at the end. Because the capability is already in the base model, a few thousand clean, consistent pairs routinely beat millions of sloppy ones. Frontier labs learned this the expensive way; you get to learn it in a browser tab."
 	},
 	{
 		"id": "section-7-2",
 		"part": 7,
 		"title": "7.2 Chat Templates & Loss Masking",
-		"text": "Under every chat interface is a rigid token format: special tokens fencing off who said what, a loss mask so the model learns to write answers rather than questions, and an EOS token so it knows when to stop. The inspector makes all three visible."
+		"text": "Under every chat interface is a rigid token format: special tokens fencing off who said what, a loss mask so the model learns to write answers rather than questions, and an EOS token so it knows when to stop. The inspector makes all three visible. When you chat with a frontier model, you see a conversation. The model sees one long token stream, formatted by a chat template . The template is not documentation, not a UI convention — it is literal tokens in the sequence, and the model was trained on millions of sequences shaped exactly like it. Quill's is deliberately tiny: The fences — \" />, \" />, \" /> — are special tokens : single reserved IDs appended to the vocabulary, exactly like Rook's Elo-bucket tokens from Part 2. They are never produced by BPE merges, so ordinary text a user types can't accidentally (or deliberately) tokenize into one — the byte-level tokenizer will spell an impostor \"<|user|>\" out as plain characters. The fence tokens are the model's only ground truth about who is speaking. Naively, you'd compute the training loss over the whole sequence."
+	},
+	{
+		"id": "section-7-2",
+		"part": 7,
+		"title": "7.2 Chat Templates & Loss Masking",
+		"text": "Do that and the model spends a large fraction of its gradient learning to generate instructions — it gets great at writing \"Words: lantern, hop\" and mediocre at writing stories. Every practical SFT stack masks the prompt: loss is computed only on the response tokens (and the EOS). The prompt tokens still flow through the forward pass — the model conditions on them — they just contribute nothing to the loss. Notice what's inside the mask: the \" /> token. That one masked-in token is how the model learns to stop . Base Quill rambles until you cut it off, because nothing in a pretraining stream ever says \"done\". After SFT, the model has been trained to emit \" /> when the story completes, and the sampler halts when it sees it. Stopping is learned behavior, and it's learned from exactly one token per example. When this chapter's lab lands, the token-stream inspector — the same one that showed you per-token loss in Part 4 — gains a mask overlay: prompt tokens greyed out, response tokens lit, so you can see where the gradient flows in a real training batch. The template used at inference must match the one used in training, byte for byte."
+	},
+	{
+		"id": "section-7-2",
+		"part": 7,
+		"title": "7.2 Chat Templates & Loss Masking",
+		"text": "A missing newline after \" /> puts every inference query slightly off the training distribution — the model still answers, just measurably worse, and nothing errors. Whole GitHub issues full of \"fine-tune seems dumb\" trace back to this. When something feels off, diff the token streams, not the strings."
 	},
 	{
 		"id": "section-7-3",
 		"part": 7,
 		"title": "7.3 LoRA",
-		"text": "Instead of updating millions of weights, freeze them and train two thin matrices per layer. LoRA is how the flagship birds get fine-tuned inside your browser — and toggling the adapter off instantly recovers the original model, a trick later chapters lean on hard."
+		"text": "Instead of updating millions of weights, freeze them and train two thin matrices per layer. LoRA is how the flagship birds get fine-tuned inside your browser — and toggling the adapter off instantly recovers the original model, a trick later chapters lean on hard. Full fine-tuning is expensive in a way that has little to do with the forward pass. Every trainable parameter drags company along: a gradient, plus two Adam moment estimates — roughly three extra floats per weight. For the live 5M birds, fine. For a 25M flagship inside a browser tab's memory budget, that overhead is the difference between \"runs\" and \"doesn't\". LoRA — Low-Rank Adaptation — starts from an empirical observation: the change a fine-tune makes to a weight matrix is approximately low-rank. So don't learn the change as a full matrix; parametrize it as a product of two thin ones and learn those: Concretely: a attention projection holds 262,144 weights. A rank-8 adapter beside it holds — about 3% of that layer, and since adapters typically attach only to the attention projections, the trainable total lands around 0.1–1% of the model . Optimizer state shrinks by the same factor."
+	},
+	{
+		"id": "section-7-3",
+		"part": 7,
+		"title": "7.3 LoRA",
+		"text": "That's what makes flagship fine-tuning fit in a tab. The zero-initialization of is the elegant part. At step 0 the bypass contributes , so the adapted model is the pretrained model, exactly — training starts from known-good behavior instead of a random perturbation of it. But zero-init has a sneaky consequence that bites real engineers: While benchmarking this course's own training engine, a LoRA probe showed exactly-zero adapter gradients — for a bad hour it looked like a broken WebGPU autodiff. It wasn't. One cause was precisely the math above (zero-init output projections make upstream grads mathematically zero at step 0); the others were a frozen zero-init base and a degenerate test input that zeroed the softmax backward. The autodiff was correct the whole time. When you see zero gradients, check your initialization story before you blame the framework — \"exactly zero\" is a structural clue, \"small and noisy\" is a numerical one. Because the base stays frozen, adapters swap like cartridges ."
+	},
+	{
+		"id": "section-7-3",
+		"part": 7,
+		"title": "7.3 LoRA",
+		"text": "Each post-training stage of the flagships ships as a small adapter file — under a megabyte — against one shared base: slot in the instruct adapter, the preference adapter from Part 9, or nothing at all. And \"nothing at all\" is itself load-bearing: adapter-off is the frozen reference model . Parts 9 and 10 need a pristine copy of the pre-alignment model to compare against and to anchor a KL penalty to — with LoRA, that copy costs zero extra memory. Flip the adapter off and you're looking at the reference. LoRA shrinks trainable parameters and optimizer state — not compute. The forward and backward passes still traverse the full frozen model, and activation memory still scales with sequence length and batch size. That's why the in-browser flagship fine-tune runs at short sequence lengths with small batches. \"Cheap to train\" here means cheap in memory and state, not cheap in FLOPs."
 	},
 	{
 		"id": "section-7-4",
 		"part": 7,
 		"title": "7.4 Conditioning vs Fine-Tuning",
-		"text": "Two ways to make Rook play stronger: fine-tune it on elite games, or just prepend a high-Elo token and ask. Comparing them side by side makes a deep distinction visceral — changing the weights versus changing the prompt."
+		"text": "Two ways to make Rook play stronger: fine-tune it on elite games, or just prepend a high-Elo token and ask. Comparing them side by side makes a deep distinction visceral — changing the weights versus changing the prompt. Rook's cameo this chapter is a controlled experiment you rarely get to run this cleanly. Recall from Part 2 that every game in Rook's corpus begins with an Elo-bucket token — the rating band of the players. Pretraining on labeled games taught Rook a family of conditional distributions: how 1200s play, how 2200s play, selected by one token: The alternative is what this chapter is about: take pretrained Rook and fine-tune it on elite games only . Both produce a stronger player. But they are doing fundamentally different things, and the side-by-side makes it visible: Conditioning selects. The 2200-token points at behavior the corpus already contains. Flip the token back to 1200 and weak play returns intact — nothing was lost, because nothing was changed. But conditioning has a hard ceiling: it cannot summon play stronger than the strongest games the corpus showed at that label. Fine-tuning moves. After elite-only SFT, expert play is the default — no token needed."
+	},
+	{
+		"id": "section-7-4",
+		"part": 7,
+		"title": "7.4 Conditioning vs Fine-Tuning",
+		"text": "But the distribution shifted: the model's grip on weak, weird, human chess fades. You gained a specialist and quietly paid for it with range. This is the distinction hiding inside every \"prompt engineering vs fine-tuning\" debate. A system prompt — \"you are an expert programmer\" — is an Elo token with more words: it steers the model toward a region of behavior pretraining already covered. SFT moves the whole distribution to live in that region. Prompting is reversible, cheap, and bounded by what's already in there; fine-tuning is powerful, persistent, and pays a tax you'll measure in the next section. Before instruct-tuning existed, people prompted raw GPT-3 with a few examples of a task and it \"just worked\". Now you can name what that was: conditioning. The few-shot examples were a soft Elo token — they selected task-shaped behavior already present in a corpus that contains Q&A pages, exams, and tutorials. SFT didn't create instruction following so much as make it the default, no conditioning required."
 	},
 	{
 		"id": "section-7-5",
 		"part": 7,
 		"title": "7.5 Before & After",
-		"text": "Every stage boundary in this course ends the same way: the same prompts, the same positions, before and after. Here it's the first one — base Quill versus instruct Quill — plus an honest look at what fine-tuning quietly made worse."
+		"text": "Every stage boundary in this course ends the same way: the same prompts, the same positions, before and after. Here it's the first one — base Quill versus instruct Quill — plus an honest look at what fine-tuning quietly made worse. The ritual is fixed for the rest of the course: a frozen set of prompts for Quill, a frozen set of positions for Rook, run through the model before the stage and after it. Not cherry picks — the same set every time, chosen before you saw the results. For this first boundary, three things should jump out: Constraints bind now. Ask for \"lantern\" and \"hop\" and both words appear. Ask for a moral and one shows up at the end, in TinyStories' earnest house style. It stops. Instruct Quill ends its story and emits \" />. Base Quill runs until the token budget cuts it off mid-sentence. One masked-in token, visible behavior change. It answers instead of continues. The instruction is treated as a request, not as the opening line of a story about someone named Write. Now the honest column. Evaluate instruct Quill on a held-out slice of the pretraining mix — plain stories, no instruction scaffolding — and its loss is higher than base Quill's."
+	},
+	{
+		"id": "section-7-5",
+		"part": 7,
+		"title": "7.5 Before & After",
+		"text": "Not catastrophically; measurably. The distribution moved toward instruction-shaped text, and raw story-continuation, the thing pretraining perfected, drifted slightly out of focus. Sampled stories also get a touch more uniform: the fine-tune's house style smooths over some of the base model's variety. This trade has a name at frontier scale: the alignment tax. Every post-training stage buys a behavior — instruction following now, preference alignment in Part 9 — and pays for it somewhere in the base distribution. Labs measure the tax on benchmark suites; you just measured it on a held-out loss. The pattern repeats at every stage boundary from here on, which is exactly why the before/after ritual exists: never let a stage tell you only what it improved."
 	},
 	{
 		"id": "part-8",
@@ -243,25 +579,61 @@
 		"id": "section-8-1",
 		"part": 8,
 		"title": "8.1 TinyStories Was Synthetic All Along",
-		"text": "The corpus Quill grew up on was never written by humans — GPT wrote every one of those tiny tales, from templates and word lists, in 2023. Your bird is already a second-generation model, and that turns out to be the norm now, not the exception."
+		"text": "The corpus Quill grew up on was never written by humans — GPT wrote every one of those tiny tales, from templates and word lists, in 2023. Your bird is already a second-generation model, and that turns out to be the norm now, not the exception. Back in Part 1 you scrolled the corpus explorer through thousands of small, warm, oddly-samey children's stories. Here's what wasn't said: no human wrote them. TinyStories was generated in 2023 by researchers at Microsoft prompting GPT-3.5 and GPT-4, as an experiment in how small a model can get and still produce coherent English. Every story Quill ever ate came out of another language model. Quill is a model trained on a model's output — and so, to varying degrees, is nearly every small open model you can download today. The obvious question is why the corpus isn't just the same story five hundred thousand times. Ask a big model for \"a children's story\" half a million times and you will get endless minor variations on maybe a few dozen plots — sampling temperature wiggles the words, not the ideas. The TinyStories authors engineered their way around this, and the engineering is the actual lesson of this chapter."
+	},
+	{
+		"id": "section-8-1",
+		"part": 8,
+		"title": "8.1 TinyStories Was Synthetic All Along",
+		"text": "Two constraints, baked into every generation prompt: A constrained vocabulary. Stories draw from roughly the words a young child knows. That's what makes a 5M-parameter model viable at all — Quill never had to learn \"photosynthesis\", so its capacity goes to grammar and narrative instead. Randomized required features. Each prompt draws a random verb, noun, and adjective from word lists, plus a random subset of story features — dialogue, plot twist, bad ending, moral. Multiply the combinations and the prompt space is vastly larger than the dataset: diversity is forced structurally, before the model generates a single word. Diversity in synthetic data comes from the prompt distribution , not from sampling temperature. Temperature adds noise within a mode; randomized constraints force the generator into different modes. Every serious synthetic pipeline since — instruction datasets, persona-driven corpora, code data — is a variation on this move: engineer a wide distribution of prompts, then let the model fill it in. And notice what the randomized word lists bought beyond diversity: they became the instruction data."
+	},
+	{
+		"id": "section-8-1",
+		"part": 8,
+		"title": "8.1 TinyStories Was Synthetic All Along",
+		"text": "TinyStories-Instruct — the corpus from Part 7 — is just the generation recipe kept with the story instead of thrown away. The metadata you engineered for diversity is a free instruction-tuning corpus. Keep your pipeline's provenance; it's worth more than the samples."
 	},
 	{
 		"id": "section-8-2",
 		"part": 8,
 		"title": "8.2 Generation Pipelines",
-		"text": "Good synthetic data is engineered, not wished for: seed words to force diversity, templates to control format, self-instruct loops to bootstrap variety. The course's tutor model generates samples live so you can watch a pipeline produce — and occasionally embarrass — itself."
+		"text": "Good synthetic data is engineered, not wished for: seed words to force diversity, templates to control format, self-instruct loops to bootstrap variety. The course's tutor model generates samples live so you can watch a pipeline produce — and occasionally embarrass — itself. TinyStories used fixed word lists because stories are one task. To synthesize data for many tasks — the \"write me an email / explain this error / summarize this\" spread an assistant needs — the field's workhorse is self-instruct : use the model to expand a small human-written seed set into a large task distribution, filtering as you go. The loop matters more than any single pass: new instructions join the pool, so the next round's random examples are drawn from a wider distribution than the seeds. A few hundred hand-written tasks bootstrap into tens of thousands. The 2023 Alpaca recipe — which put fine-tuned open models on the map — was exactly this: seed tasks, a frontier model generating 52,000 instruction pairs, a small model trained on the output for a few hundred dollars. The failure modes are as instructive as the successes."
+	},
+	{
+		"id": "section-8-2",
+		"part": 8,
+		"title": "8.2 Generation Pipelines",
+		"text": "Left unfiltered, generators collapse toward their favorite phrasings; they invent tasks that reference attachments that don't exist; they answer their own questions wrong with total confidence. Modern variants attack the diversity problem with heavier machinery — sampling a random persona (\"a lighthouse keeper\", \"a tax auditor\") per generation is the same trick as TinyStories' random word triple, at industrial scale — but every pipeline is still the same skeleton: widen the prompt distribution, generate cheap, filter hard. When this chapter's lab lands, the on-site tutor model generates around ten samples live — enough to watch a pipeline think, repeat itself, and get caught by a filter. Ten samples will not budge a 5M-parameter model, and this course won't pretend otherwise. The dataset you'll actually fine-tune on in 8.4 comes from a large shipped pool, pre-generated by the same pipeline; your job is the part that matters — the filtering."
 	},
 	{
 		"id": "section-8-3",
 		"part": 8,
 		"title": "8.3 Verifier Filtering & Dedup",
-		"text": "Generation is cheap; the value is in what you throw away. Verifiers score and reject, dedup catches the near-copies a generator loves to emit, and decontamination keeps the eval set out of the training set — the unglamorous steps that decide data quality."
+		"text": "Generation is cheap; the value is in what you throw away. Verifiers score and reject, dedup catches the near-copies a generator loves to emit, and decontamination keeps the eval set out of the training set — the unglamorous steps that decide data quality. The deep asymmetry this whole chapter rests on: checking is easier than creating. Writing a story that includes \"lantern\" is generation; checking whether \"lantern\" appears is one call. Whenever a sample has checkable properties , you can pass a generator's sloppy output through a strict verifier and keep only what survives — a weak generator plus a strong verifier yields strong data. The course's verifier stack makes this concrete for both birds: Hold onto that asymmetry — it comes back twice. In Part 9, judgments replace verifiers where properties aren't checkable (\"is this story better?\"). In Part 11, RLVR turns verifiers directly into reward signal. The verifier stack you meet here as a data filter is the same module that will later grade reinforcement learning. Filtering handles bad samples. Two quieter problems handle good ones: Deduplication. Generators love near-copies — same plot, three words swapped."
+	},
+	{
+		"id": "section-8-3",
+		"part": 8,
+		"title": "8.3 Verifier Filtering & Dedup",
+		"text": "Near-duplicates waste training compute, and worse, they teach memorization: you watched a duplicated story get recited verbatim in Part 4's overfitting demo, which is why Part 1 made dedup a first-class idea. Exact matching misses near-copies, so real pipelines compare n-gram overlap or hash sketches of documents to catch \"same story, different names\". Decontamination. Dedup's security-critical sibling: make sure no eval prompt appears in the training set. A generator that has seen your benchmark will happily emit its test cases back into your training data, and your benchmark score becomes a memory test. Part 5 called this benchmark contamination from the consumer side; here you're the producer, and it's your job to grep your own data for your own evals. A contaminated model doesn't look broken — it looks great. Loss goes down, benchmarks go up, and nothing on any dashboard tells you the improvement is recitation. That's what makes dedup and decontamination unglamorous and non-negotiable: the failure mode of skipping them is indistinguishable from success until someone tests out-of-distribution. Step back and name the overall shape: distillation ."
+	},
+	{
+		"id": "section-8-3",
+		"part": 8,
+		"title": "8.3 Verifier Filtering & Dedup",
+		"text": "A big model's outputs, curated by verifiers, become a small model's curriculum. The teacher paid the cost of learning from the messy human internet; the student learns from the teacher's cleaned-up summary of it. This is how most small open models are made — and TinyStories makes the chain visible at toy scale: human text taught GPT-4, GPT-4 wrote a curriculum, the curriculum raised Quill. The student's ceiling is the teacher's data distribution, but a careful curriculum can make a tiny student punch far above its weight within that distribution. Quill's coherent grammar at 5M parameters is the proof you've already trained."
 	},
 	{
 		"id": "section-8-4",
 		"part": 8,
 		"title": "8.4 Fine-Tune on Your Own Data",
-		"text": "The act's capstone: filter a large pre-generated pool with the verifier stack, keep what survives your standards, and fine-tune Quill on the dataset you just curated. The bird learns what you chose to feed it — data work, made personal."
+		"text": "The act's capstone: filter a large pre-generated pool with the verifier stack, keep what survives your standards, and fine-tune Quill on the dataset you just curated. The bird learns what you chose to feed it — data work, made personal. When this chapter's lab arrives (it lands with a later milestone, alongside the tutor-model download), the whole chapter compresses into one live pipeline you drive end to end: Step 2 is where you stop being a spectator. Every threshold is a knob with a visible trade: demand all required words present and the pool shrinks by half; tolerate one missing word and it doubles, dirtier. Strictness buys quality and pays in quantity — the fundamental exchange rate of data work, and you'll feel it directly because the dataset that comes out the other side has your fingerprints on it. Two learners with different thresholds produce two measurably different Quills. That's the point of the exercise. \"Data quality matters\" is a poster slogan; watching your own lenient threshold produce a Quill that occasionally drops its required words — while your strict run nails them with a smaller, cleaner diet — is an experience."
+	},
+	{
+		"id": "section-8-4",
+		"part": 8,
+		"title": "8.4 Fine-Tune on Your Own Data",
+		"text": "At frontier scale, the people doing this job are called data engineers, and entire model generations are won or lost on step 2. Notice what you never touched in this chapter: the architecture, the optimizer, the loss. Every behavioral difference between your Quill and your neighbor's traces back to what each of you let through the filter. When a model misbehaves, the reflex \"what's wrong with the weights?\" is usually the wrong question — start with \"what was it fed?\""
 	},
 	{
 		"id": "part-9",
@@ -273,37 +645,91 @@
 		"id": "section-9-1",
 		"part": 9,
 		"title": "9.1 You Are the Annotator",
-		"text": "Two stories, one prompt, one click: which is better? The job data-labeling contractors do for frontier labs, you'll do for Quill — and about a hundred honest clicks is all the next section needs."
+		"text": "Two stories, one prompt, one click: which is better? The job data-labeling contractors do for frontier labs, you'll do for Quill — and about a hundred honest clicks is all the next section needs. Start with why SFT can't finish the job. SFT teaches by demonstration: here is an instruction, here is the response, imitate it. That works when a right answer exists. But most of what you actually want from a storyteller has no right answer. Ask instruct-Quill for a story about a lost kitten and sample twice: both stories satisfy the instruction, both would have been valid SFT targets — and one of them is clearly better. More alive, better paced, an ending that lands. \"Correct\" can't see the difference. Better-versus-worse is a different kind of signal than right-versus-wrong , and no amount of demonstration data contains it. There's a subtler ceiling too: an SFT model imitates its demonstrations, so it can only be as good as its average demonstration. To push past the data, you need a signal that ranks the model's own outputs against each other. That signal has to come from a judge — and for Quill, the judge is you."
+	},
+	{
+		"id": "section-9-1",
+		"part": 9,
+		"title": "9.1 You Are the Annotator",
+		"text": "When this chapter's lab lands, the annotation screen is exactly this: one prompt, two sampled stories side by side, and a click. Which would you rather read? No rubric, no scoring guide — your honest preference is the ground truth being collected. This is, without simplification, the job thousands of contractors do to align frontier models. The interface they use looks like the one you'll use. You could imagine rating each story 1–10 instead. Labs tried; it works badly. People drift — your 7 on Monday is your 5 on Friday — and two annotators' scales never line up. But show the same two stories to the same person twice and the comparison comes back stable. Pairwise preference is the low-noise interface to human judgment, which is why essentially all preference data is collected as comparisons. A few hundred clicks alone is too noisy to train a good reward model — that's not modesty, it's statistics, and this course won't pretend otherwise. So the lab blends: your clicks train the reward model together with a shipped preference set, weighted so your taste tilts the result. On-screen it reads \"your 100 votes + 5,000 others\"."
+	},
+	{
+		"id": "section-9-1",
+		"part": 9,
+		"title": "9.1 You Are the Annotator",
+		"text": "Skip the clicking entirely and the default set carries the chapter, labeled as such. Your votes are seasoning with real flavor — they're just not the whole meal."
 	},
 	{
 		"id": "section-9-2",
 		"part": 9,
 		"title": "9.2 A Reward Model From Your Clicks",
-		"text": "Your votes — blended with a few thousand shipped ones — train a model that predicts which story you'd prefer. A learned, differentiable stand-in for your taste: the load-bearing idea of RLHF, and the thing Part 10 will gleefully break."
+		"text": "Your votes — blended with a few thousand shipped ones — train a model that predicts which story you'd prefer. A learned, differentiable stand-in for your taste: the load-bearing idea of RLHF, and the thing Part 10 will gleefully break. Clicks are precious and slow; training needs millions of judgments. The move that makes preference training scale is to learn a model of the judge : a reward model (RM) that reads a prompt and a response and outputs a single number — its estimate of how much you'd like it. Once trained, it can score a million stories a second and never gets tired of kittens. But your clicks are comparisons, not numbers. The bridge from \"A beats B\" to a scalar score is a 1952 result from ranking chess players, the Bradley-Terry model : assume every response has a latent quality score, and the probability you prefer A over B depends only on the gap between scores: Note what the loss never asks: what the score means . Only gaps matter — the RM learns a taste ordering , calibrated in units of \"how reliably you'd click this one\"."
+	},
+	{
+		"id": "section-9-2",
+		"part": 9,
+		"title": "9.2 A Reward Model From Your Clicks",
+		"text": "Architecturally, Quill's RM is barely a new thing: a transformer of the same breed you've trained five times, with the vocabulary-sized output head swapped for a single-number head. Same residual stream, same attention; instead of \"what token comes next?\" it answers \"how much would the annotator like this?\" Sit with how strange the object you've built is: a differentiable model of your taste . It will score stories no human has ever read. It is also — and this is the load-bearing subtlety of the next three chapters — a model of your taste, trained on a few thousand points of it: approximately right where the data was dense, and quietly wrong everywhere else. Part 10 is entirely about what optimization pressure does to \"quietly wrong everywhere else\"."
 	},
 	{
 		"id": "section-9-3",
 		"part": 9,
 		"title": "9.3 DPO",
-		"text": "Direct preference optimization skips the RL loop entirely: a loss applied straight to the preference pairs nudges the chosen response up and the rejected one down. Both birds get the treatment, and the math turns out to be one clean equation."
+		"text": "Direct preference optimization skips the RL loop entirely: a loss applied straight to the preference pairs nudges the chosen response up and the rejected one down. Both birds get the treatment, and the math turns out to be one clean equation. The classic RLHF pipeline uses the RM the obvious way: run reinforcement learning against it. Sample stories from Quill, score them with the RM, nudge the policy toward higher-scoring behavior, repeat — historically with an algorithm called PPO, plus a KL leash you'll meet properly in Part 10. It works; it aligned the models that made chatbots a household word. It is also a running system with several interacting parts: In 2023, Direct Preference Optimization (DPO) showed that for this setup, the detour through an explicit RM and an RL loop can be skipped. The RLHF objective has a closed-form optimal policy, and rearranging it turns the whole pipeline into one supervised loss applied directly to your preference pairs: Read it from the inside out. Each bracket term is a log-ratio : how much more likely the policy makes this story than the reference does."
+	},
+	{
+		"id": "section-9-3",
+		"part": 9,
+		"title": "9.3 DPO",
+		"text": "The loss pushes the ratio up for the story you chose and down for the one you rejected — but always relative to the reference . If the policy drifts far from the SFT model, the ratios blow up and the gradient fades: the frozen reference tethers training to the distribution you started from, playing exactly the role the KL leash plays in the RL version. And notice the Bradley-Terry sigmoid is still right there — the RM didn't vanish, it became implicit: the log-ratio is the reward, β times over. The math of \"learn a score, then chase it\" collapsed into \"chase the pairs directly\". DPO needs and in memory at once — normally two full copies of the model. For our LoRA-adapted birds, the reference is free: adapter off is , adapter on is . One set of frozen base weights, two forward passes, no second copy. This is the payoff Part 7 promised when it made zero-init adapters a big deal. Both birds get the treatment: Quill on your blended story preferences, Rook on move preferences — which brings up the question of where Rook's labels come from."
 	},
 	{
 		"id": "section-9-4",
 		"part": 9,
 		"title": "9.4 RLHF vs RLAIF",
-		"text": "Quill's annotator is a human — you. Rook's is Stockfish, an engine that never sleeps and never gets bored. Human feedback versus AI feedback, taught by the twin contrast rather than by acronym definitions."
+		"text": "Quill's annotator is a human — you. Rook's is Stockfish, an engine that never sleeps and never gets bored. Human feedback versus AI feedback, taught by the twin contrast rather than by acronym definitions. You will not be clicking through chess positions — evaluating moves takes expertise you may not have, and Rook needs far more labels than any human would sit through. Instead, Rook's preference pairs are labeled by Stockfish : sample two candidate moves from Rook, ask the engine to evaluate both, and the better evaluation is the \"chosen\" move. Same Bradley-Terry loss, same DPO machinery, same everything — only the judge changed . That substitution has a name. When the labels come from humans, the technique is RLHF — reinforcement learning from human feedback. When they come from an automated judge, it's RLAIF — from AI feedback. The twin setup makes the trade legible in a way definitions can't: your clicks are expensive, slow, inconsistent (you will contradict yourself around click forty) — and they are the only source of signal for \"which story is better\", because story-taste exists nowhere else."
+	},
+	{
+		"id": "section-9-4",
+		"part": 9,
+		"title": "9.4 RLHF vs RLAIF",
+		"text": "Stockfish's labels are free, instant, tireless, and effectively unlimited — where such a judge exists. For chess it does. For prose, nothing like Stockfish exists, which is why frontier labs use their best available substitute: another language model, prompted to judge. The best-known industrial form is Constitutional AI , and one honest paragraph covers it: instead of humans labeling every harmful-vs-harmless pair, a model critiques and revises its own outputs against a short written list of principles — a constitution — and preference labels are generated by a model applying those principles. Human oversight doesn't disappear; it moves up a level, from labeling every example to writing the principles and auditing the result. It scales, and it inherits the judge model's blind spots — an AI judge can be lazy, gameable, or systematically biased toward, say, longer answers. Hold that thought for one chapter. Don't file RLHF and RLAIF as different algorithms — everything downstream of the click is identical. The design question is only ever: who judges, at what cost, with what blind spots?"
+	},
+	{
+		"id": "section-9-4",
+		"part": 9,
+		"title": "9.4 RLHF vs RLAIF",
+		"text": "You (slow, sincere), Stockfish (fast, narrow, nearly perfect), an LLM with a constitution (fast, broad, imperfect). Every alignment pipeline in production is some blend of the three."
 	},
 	{
 		"id": "section-9-5",
 		"part": 9,
 		"title": "9.5 The Blind Taste Test",
-		"text": "Did any of it work? Aligned Quill and SFT Quill answer the same prompts with the labels hidden, and you pick winners without knowing which is which. The score at the end is the chapter's verdict on itself."
+		"text": "Did any of it work? Aligned Quill and SFT Quill answer the same prompts with the labels hidden, and you pick winners without knowing which is which. The score at the end is the chapter's verdict on itself. Here's an uncomfortable fact about preference training: the usual dashboards can't tell you if it worked. Loss went down — the DPO loss, which measures fit to the preference pairs, not whether stories got better. The RM's average score went up — but the RM is the thing being optimized against, hardly a neutral referee. When the training target is \"what you like\", there is exactly one honest evaluation: blind comparison by the judge whose taste was trained on. So the chapter ends where it began, at the two-stories-one-click screen — with one change. Now one story comes from DPO-tuned Quill and the other from the SFT checkpoint, same prompt, sides shuffled, labels hidden . You click through twenty pairs; the reveal shows which model won each one."
+	},
+	{
+		"id": "section-9-5",
+		"part": 9,
+		"title": "9.5 The Blind Taste Test",
+		"text": "Blind matters more than it sounds: knowing which story is \"the aligned one\" measurably tilts human judgment — the placebo effect doesn't spare machine learning researchers, which is why serious labs run exactly this protocol, at contractor scale, and report win rates. A win rate meaningfully above 50% is the chapter working: the stack turned a few thousand clicks into a model whose outputs you verifiably prefer. And if your score hovers at 50% — that's a real result too, honestly reported. At this scale, with this much preference data, a perceptible-but-modest effect is the truthful outcome; the effect gets dramatic at frontier scale, where the preference sets have millions of pairs. Either way, you've now run the only eval of preference training that means anything. The twin version needs no blindfold: DPO-tuned Rook plays its SFT predecessor in a short match, and the score is the score. When a domain has ground truth, use it — chess doesn't need a taste test. Prose does. Knowing which of those situations you're in is half of evaluation design."
 	},
 	{
 		"id": "section-9-6",
 		"part": 9,
 		"title": "9.6 A Toy Refusal",
-		"text": "The same DPO machinery, pointed at safety: teach Quill to gently decline requests for scary stories. A toy refusal, honestly labeled as such — and a working glimpse of why preference training was invented in the first place."
+		"text": "The same DPO machinery, pointed at safety: teach Quill to gently decline requests for scary stories. A toy refusal, honestly labeled as such — and a working glimpse of why preference training was invented in the first place. One more run of the machinery, with a different target. Build a small preference set where the prompt asks for a scary story; the chosen response politely declines and offers an alternative, the rejected response complies: DPO on a few hundred such pairs, and Quill declines scary-story requests — while still writing every other kind of story. No new algorithm, no safety module: the identical loss from 9.3, pointed at pairs that encode \"declining is preferred here\". The transferable insight is what kind of thing the refusal is. It is preference-shaped, not rule-shaped. There is no line of code checking for the word \"scary\", no blocklist, no if-statement anywhere in the bird — just a probability distribution nudged until declining outweighs complying in a region of prompt space."
+	},
+	{
+		"id": "section-9-6",
+		"part": 9,
+		"title": "9.6 A Toy Refusal",
+		"text": "That one fact explains the texture of refusal behavior in every production model you've met: why refusals are probabilistic rather than crisp, why rephrasing a request sometimes slides past them (a jailbreak is a walk to a spot the preference data didn't cover), and why models sometimes over-refuse harmless requests near the boundary — the nudged region has soft edges in every direction. Quill declining spooky campfire stories is not safety work — scary stories aren't harmful, and a 5M-parameter model has nothing dangerous to withhold. The exercise earns its place because the mechanism is the real one: production harmlessness training is preference pairs feeding the same losses you just ran, at vastly larger scale, over genuinely harmful content, with the stakes attached. This course shows you the machinery honestly; it doesn't claim the machinery plus a toy dataset equals safety. And this closes a historical loop: preference training wasn't invented to make stories charming. It was invented because \"helpful and harmless\" has no answer key — no verifier, no gold label, only human judgment about which response is better."
+	},
+	{
+		"id": "section-9-6",
+		"part": 9,
+		"title": "9.6 A Toy Refusal",
+		"text": "Everything this chapter built, from the click screen to DPO, exists because someone needed to train on exactly that kind of signal. The charming stories were the demo; this was the reason."
 	},
 	{
 		"id": "part-10",
@@ -315,85 +741,211 @@
 		"id": "section-10-1",
 		"part": 10,
 		"title": "10.1 Best-of-N Against Your RM",
-		"text": "No reinforcement learning needed to hack a reward — just sample many stories and keep the one your reward model scores highest. Crank N and watch the winners drift from charming to \"dragon dragon dragon\": your own taste, Goodharted."
+		"text": "No reinforcement learning needed to hack a reward — just sample many stories and keep the one your reward model scores highest. Crank N and watch the winners drift from charming to \"dragon dragon dragon\": your own taste, Goodharted. The simplest way to use a reward model needs no training at all. Best-of-N sampling : sample N stories from Quill for one prompt, score all N with your RM, keep the highest scorer, discard the rest. No gradients, no RL, no update to any weight — pure search against the reward. At small N, this genuinely works — best-of-4 stories read noticeably better than single samples, which is why best-of-N is a real serving technique in production systems. The RM's judgment is decent near the middle of the distribution, and picking the best of a few ordinary samples stays in that comfortable region. Keep doubling N, though, and something turns. Your RM was trained on a few thousand comparisons; it is approximately your taste, and \"approximately\" means it has error — soft spots where it over-credits things you don't actually care about. Suppose your clicks taught it, correctly, that you enjoyed a couple of dragon stories."
+	},
+	{
+		"id": "section-10-1",
+		"part": 10,
+		"title": "10.1 Best-of-N Against Your RM",
+		"text": "In the RM's compressed version of your taste, that becomes a small standing bonus for dragon-ness. At N=4, that bias is noise. At N=256, the argmax hunts through the distribution's tail specifically for whatever maxes the bonus — and the maximum of \"slightly favors dragons\" is not a slightly better dragon story. It's dragon soup: Plot both judges against the dial and you get the signature picture of over-optimization — the chart this chapter exists to burn into your memory: The two curves rise together at first — that's the RM earning its keep. Past a knee they split: the proxy keeps climbing (it must; more search means a higher argmax) while true quality falls. The gap between the curves is the hack. Researchers at OpenAI measured exactly this shape systematically — proxy score up, gold-standard score up, knee, gold score down — and the shape recurs at every scale, from your browser-tab RM to frontier pipelines. Optimization pressure doesn't degrade gracefully; it works, works, works, then quietly starts working against you. A common mental shortcut files reward hacking under \"reinforcement learning goes wrong\"."
+	},
+	{
+		"id": "section-10-1",
+		"part": 10,
+		"title": "10.1 Best-of-N Against Your RM",
+		"text": "Notice what just happened: no RL, no training, not one weight changed. Sampling plus argmax was enough. Hacking is not a property of any particular algorithm — it is what strong optimization does to weak objectives , whether the optimizer is PPO, best-of-N, or a corporation chasing a quarterly metric."
 	},
 	{
 		"id": "section-10-2",
 		"part": 10,
 		"title": "10.2 Goodhart's Law, Live",
-		"text": "Give Rook a reward for winning material and it learns something you didn't ask for: it will happily hang its king to grab a queen. When a measure becomes a target, it stops being a good measure — here that's not a proverb, it's a replay you can watch."
+		"text": "Give Rook a reward for winning material and it learns something you didn't ask for: it will happily hang its king to grab a queen. When a measure becomes a target, it stops being a good measure — here that's not a proverb, it's a replay you can watch. The pattern has a name older than machine learning. Goodhart's law — coined by economist Charles Goodhart about banking targets, sharpened by anthropologist Marilyn Strathern into its familiar form: \"When a measure becomes a target, it ceases to be a good measure.\" School rankings, quarterly KPIs, citation counts — humans have been reward hacking their own proxies for centuries. What's new with learned optimizers is the pressure : an optimizer probes the measure millions of times, without embarrassment, and finds cracks no committee would think to look for. If this course teaches one alignment lesson, it is this one. Quill's version was subtle — taste is fuzzy, maybe you half-believe the RM about the dragons. So the chapter's second climax is deliberately unfuzzy. Chess has ground truth, and Rook is about to violate it."
+	},
+	{
+		"id": "section-10-2",
+		"part": 10,
+		"title": "10.2 Goodhart's Law, Live",
+		"text": "Write the most reasonable-looking reward you can for chess — the piece values every beginner memorizes: Optimize Rook against it and watch the replay. Facing a poisoned queen — a free-looking capture that walks into mate — material-Rook does not hesitate. Queen: +9. Checkmate next move: worth nothing in the ledger, because mate isn't a capture . The bird grabs the queen, gets mated, and banks a great score. Play on and it gets stranger: material-Rook learns to prefer long grubby sequences of even trades over clean wins, because trades generate reward events and checkmate ends the game — the reward stream — early. It has learned to farm the metric. Winning was never the objective; you only thought it was. Resist the framing \"Rook cheated\". Rook did precisely what you asked, brilliantly. The bug is upstream, in the specification: you wrote \"maximize material\" while meaning \"win\", and the gap between what you wrote and what you meant became the policy. This is why alignment people insist reward design is a specification problem, not a training problem — no optimizer, however good, recovers intent you didn't encode. A better optimizer just finds the gap faster."
+	},
+	{
+		"id": "section-10-2",
+		"part": 10,
+		"title": "10.2 Goodhart's Law, Live",
+		"text": "Now line the two failures up and see the shared anatomy. Every reward you will ever deploy is a proxy chain — each link a lossy compression of the thing you actually want: Every link leaks intent, and optimization pressure pools in the leaks. The frontier versions of dragon soup are already folklore: RMs that reward length, so models pad; RMs that reward agreement, so models flatter — sycophancy is dragon soup made of \"yes\"; coding agents rewarded on tests passing that delete the failing tests. Different proxies, one law. You've now watched it happen twice, on rewards you built, to birds you raised — which is the only way the lesson really lands."
 	},
 	{
 		"id": "section-10-3",
 		"part": 10,
 		"title": "10.3 The KL Fix",
-		"text": "The standard remedy: penalize the model for drifting too far from a frozen reference copy of itself. Add the KL term, re-run both failure cases, and watch the same optimization pressure produce sane behavior — the anchor every RLHF pipeline quietly depends on."
+		"text": "The standard remedy: penalize the model for drifting too far from a frozen reference copy of itself. Add the KL term, re-run both failure cases, and watch the same optimization pressure produce sane behavior — the anchor every RLHF pipeline quietly depends on. Ask where the RM went wrong and a fix suggests itself. Your RM learned your taste from stories sampled near the SFT model's distribution — normal stories, the kind it was shown pairs of. Inside that region, its scores mean something. \"Dragon dragon dragon\" comes from far outside it: the RM was never trained on degenerate text, so out there its score is pure extrapolation — confidently wrong, like a fitted curve read far beyond its data. The hack lives off-distribution. So: forbid the optimizer from leaving the region where the judge is sane. The tool is one you can now name precisely. Keep a frozen copy of the pre-optimization model — the reference — and charge the policy for every bit of probability mass it moves away from the reference, measured by KL divergence: Read the objective as an economy: reward pays, drift costs. Behavior the reference already finds plausible is nearly free, so ordinary good stories can rise."
+	},
+	{
+		"id": "section-10-3",
+		"part": 10,
+		"title": "10.3 The KL Fix",
+		"text": "\"Dragon dragon dragon\" — text the reference assigns vanishing probability — carries an enormous KL price no reward bonus can cover. The optimizer keeps all its pressure, but the pressure is now spent inside the region where the RM's judgment is calibrated. You met this term as the tether inside DPO's loss in Part 9; here it is out in the open, doing the same job explicitly. sets the exchange rate, and both extremes fail informatively: β huge and the policy is the reference, nothing learned; β tiny and the dragons return. Between them sits a genuine engineering trade, tuned by watching both curves from 10.1. Re-run both climaxes with the leash on. Quill at high N with a KL-penalized selection: story quality holds past the old knee — the winners get better and stay stories; dragons appear at sane rates. Rook, material reward plus KL to its pretrained reference: the poisoned queen is declined. Not because Rook now understands mate — because \"capture into mate\" is a move sequence its reference, trained on millions of human games where people avoid dying, finds deeply implausible."
+	},
+	{
+		"id": "section-10-3",
+		"part": 10,
+		"title": "10.3 The KL Fix",
+		"text": "The reference's common sense, learned in pretraining, becomes a guardrail the naive reward never wrote down. The KL term needs the reference's log-probabilities every step — normally a second full model in memory. Our birds fine-tune through LoRA adapters on a frozen base, so adapter-off is the reference : one weight copy, two forward passes. The trick that made browser-tab fine-tuning possible in Part 7 is the same trick that makes the KL leash affordable here, and it carries straight into GRPO next chapter. Be precise about what the KL fix buys. It does not repair the proxy — the RM still over-credits dragons, the material reward still can't see mate. It slows how fast optimization reaches the cracks, and past enough pressure the curves still bend. That's why production pipelines stack defenses: KL plus early stopping, fresh preference data collected from the current policy, bigger and better RMs, and humans auditing outputs. Goodhart is managed, never solved. Carry that sentence into every chapter that follows — Part 11 hands the reward to a verifier, which closes some cracks and opens others."
+	},
+	{
+		"id": "section-10-3",
+		"part": 10,
+		"title": "10.3 The KL Fix",
+		"text": "And that's the double climax resolved: two birds, two hand-built rewards, two hacks, one fix — and one law you'll never unsee. When Part 11 starts optimizing against verifiable rewards with GRPO, every piece on the table will be one you've already held: the sampling, the reward, the reference, the leash. The only new ingredient is the gradient."
 	},
 	{
 		"id": "part-11",
 		"part": 11,
 		"title": "Part 11 · RLVR & GRPO",
-		"text": "What if the reward can't be hacked because it's simply true? Checkmate is checkmate; a rhyme either lands or it doesn't. Reinforcement learning on verifiable rewards is the recipe behind the current generation of reasoning models, and this chapter runs it — GRPO and all — on your own hardware. This chapter's interactive playground arrives with a later milestone."
+		"text": "What if the reward can't be hacked because it's simply true? Checkmate is checkmate; a five-sentence story has five sentences or it doesn't. Reinforcement learning on verifiable rewards — RLVR — is the recipe behind the current generation of reasoning models, and this chapter runs it, GRPO and all, on your own hardware. This chapter's interactive playground arrives with a later milestone."
 	},
 	{
 		"id": "section-11-1",
 		"part": 11,
 		"title": "11.1 From Labels to Rewards",
-		"text": "The bridge from everything you've done to policy gradients is one sentence: sample from the model, then upweight every token of the samples that scored well. It's Part 4's training loop with the model writing its own data — no mystique required."
+		"text": "The bridge from everything you've done to policy gradients is one sentence: sample from the model, then upweight every token of the samples that scored well. It's Part 4's training loop with the model writing its own data — no mystique required. Rewind to Part 4. Cross-entropy looks at the correct next token and pushes its probability up. In Part 7 you ran SFT: exactly the same loss, applied to curated instruction data. Either way, somebody else supplies the tokens worth upweighting — the corpus, or an annotator. Now delete the labels. Let the model write: sample a handful of completions for a prompt, score each one with some reward, and treat the well-scored samples as if they were training data. The whole conceptual move fits in two lines: Read the second line slowly. If a sample earns , that line is literally the SFT loss applied to the model's own output — upweight every token of it. If it earns , the sample contributes nothing. Scores in between scale the push. This idea has a name — REINFORCE, published in 1992 — and it is the entire conceptual core of \"policy gradient methods.\" You understood it before you knew the acronym."
+	},
+	{
+		"id": "section-11-1",
+		"part": 11,
+		"title": "11.1 From Labels to Rewards",
+		"text": "Every modern RL-for-LLMs pipeline is this weighted loss plus two patches: something to reduce the variance of (so the updates aren't wild), and something to stop the model drifting too far from where it started (Part 10's KL leash). GRPO, in section 11.3, is exactly those two patches and nothing more. The remaining question is where comes from. Part 9's answer was a reward model trained on your clicks — a learned proxy — and Part 10 showed you exactly what optimization pressure does to learned proxies. This chapter's answer is different: compute the reward with a program. declares a move legal or it doesn't. A string search finds the required word or it doesn't. Stockfish confirms the checkmate or it doesn't. Rewards you verify rather than predict : that's the VR in RLVR. One honest caveat before the arenas. Verifiable does not mean your intent is safe. A verifier rewards exactly what it checks and nothing else — \"include the word lantern\" is perfectly satisfied by a graceless, bolted-on lantern. What disappears is the reward model's exploitable noise; what remains is the gap between what you meant and what you wrote down."
+	},
+	{
+		"id": "section-11-1",
+		"part": 11,
+		"title": "11.1 From Labels to Rewards",
+		"text": "Section 11.4 hands you the pen so you can feel that gap yourself."
 	},
 	{
 		"id": "section-11-2",
 		"part": 11,
 		"title": "11.2 Three Arenas",
-		"text": "Three verifiable playgrounds: Rook rewarded for legality and wins (the sure thing), Quill rewarded for satisfying story constraints like must-include words, and a little Countdown arithmetic solver — the honest gamble, scoped as such."
+		"text": "Three verifiable playgrounds: Rook rewarded for legality and wins (the sure thing), Quill rewarded for satisfying story constraints like must-include words, and a little Countdown arithmetic solver — the honest gamble, scoped as such. Arena Model Verifier Honest expectation Chess Rook chess.js rules + shallow Stockfish The clean anchor — reward climbs, visibly Story constraints Quill Word search + sentence counter Works for simple constraints; the Tülu 3 pattern Countdown A hatchling Arithmetic checker Reward curves climb — epiphanies not promised Arena 1: Rook — the clean anchor Rook's rewards come in two stages. Legality first: the fraction of sampled moves that accepts. After pretraining that gauge already sits high (you watched it climb in Part 5), so the real training signal is outcomes: play full games against a deliberately weak opponent — Stockfish throttled to shallow search — and score . Checkmate is checkmate. No judge, no partial credit, no argument about whether the reward is right. That certainty is why chess anchors the chapter. When the other arenas confuse you — a flat curve, a weird constraint interaction — come back here."
+	},
+	{
+		"id": "section-11-2",
+		"part": 11,
+		"title": "11.2 Three Arenas",
+		"text": "If GRPO is implemented correctly, Rook's win rate rises. It's the arena where the only moving part is the algorithm. Arena 2: Quill under constraints Quill's prompts carry conditions: \"write a story that includes the word lantern and is exactly five sentences long.\" The verifier is unglamorous — a string search and a sentence splitter from Part 8's verifier stack — and that's the point. This isn't a toy pattern, either: AI2's Tülu 3 used RLVR on exactly this class of instruction-following constraints (the IFEval style — length limits, required keywords, forbidden words) in a real open-weights release, right alongside math problems. You are running a production recipe on a pocket-sized model. A preview of a failure mode you'll meet formally in 11.3: GRPO learns from differences within a group of attempts. If every attempt at a prompt fails — reward zero across the board — there is no difference, no advantage, no gradient. Nothing happens, forever. This is why rhyming constraints got demoted from this chapter: TinyStories contains no verse, so base Quill essentially never rhymes, so every group scores all-zero."
+	},
+	{
+		"id": "section-11-2",
+		"part": 11,
+		"title": "11.2 Three Arenas",
+		"text": "The quiet lesson generalizes: RL sharpens abilities the base model already shows occasionally. It does not conjure them from nothing. Arena 3: the Countdown hatchling Countdown is the numbers game: given, say, , reach using each number at most once with the four arithmetic operations. It's beloved by RL researchers because it is perfectly verifiable — parse the expression, check the arithmetic, check the numbers used — and because solving it rewards search: try a path, notice it fails, back up. Its fame comes from TinyZero, the Berkeley reproduction of DeepSeek-R1's \"aha moment\" — spontaneous re-checking and backtracking emerging from pure RL — on Countdown, using 1.5B to 3B-parameter base models and about thirty dollars of compute. Our hatchling is roughly a thousand times smaller than that, so here is the honest contract: we warm-start it with SFT on synthetic solution traces (Part 8's pipeline), then run GRPO, and the promised payoff is reward rises and outputs lengthen . Not promised: epiphanies. If you ever catch your hatchling writing \"wait, that's wrong, let me try again\" unprompted — screenshot it. That would be above spec."
 	},
 	{
 		"id": "section-11-3",
 		"part": 11,
 		"title": "11.3 GRPO Mechanics",
-		"text": "GRPO's trick is comparing a group of attempts at the same prompt against each other — no value network, just relative advantage within the group, plus the KL leash from Part 10. Watch group scores, advantages, and reward curves move as training runs."
+		"text": "GRPO's trick is comparing a group of attempts at the same prompt against each other — no value network, just relative advantage within the group, plus the KL leash from Part 10. Watch group scores, advantages, and reward curves move as training runs. Group Relative Policy Optimization, exactly. For each prompt in a batch: sample a group of completions (say ) from the current model. Score every one with the verifier. Then convert raw rewards into advantages by standardizing within the group — subtract the group's mean, divide by its standard deviation: Then run 11.1's update with as the weight on every token of sample : tokens of above-average samples get pushed up, tokens of below-average samples get pushed down. That's the entire algorithm. The group is the baseline Why subtract the mean at all? Because raw rewards are noisy and offset. If every sample at some prompt scores around , plain REINFORCE upweights all of them — you burn your gradient budget teaching the model what it already does. The useful signal is which attempts were better than the others ."
+	},
+	{
+		"id": "section-11-3",
+		"part": 11,
+		"title": "11.3 GRPO Mechanics",
+		"text": "Classic policy-gradient methods call the thing you subtract a baseline, and PPO — the previous standard — estimates it with a critic : a second neural network, as large as the policy itself, trained alongside it to predict expected reward. GRPO's insight is that you already paid for a baseline estimate: the other samples in the group. Their mean is the expected reward at this prompt, measured rather than predicted. So delete the critic. That deletion is the headline memory win over PPO — half the networks, half the optimizer state — and it is, concretely, the reason this chapter fits inside a browser tab. The KL term needs a frozen reference copy of the policy — normally a second full set of weights in memory. The flagships dodge this: their post-training is LoRA, so switching the adapter off reproduces the frozen reference exactly. Same weights, two policies, zero extra memory. Clipping and the leash Two stabilizers ride along."
+	},
+	{
+		"id": "section-11-3",
+		"part": 11,
+		"title": "11.3 GRPO Mechanics",
+		"text": "The clipped surrogate (inherited from PPO): by the time you apply the update, the policy has shifted since the samples were drawn, so the loss uses the ratio of new to old token probability — and clips it to so no single batch can yank a token's probability by more than a few percent. And the KL to reference : Part 10's anchor, still attached, charging the model for drifting too far from the SFT policy no matter how much reward the drift earns. At real scale: DAPO and GSPO Push GRPO to frontier scale and cracks show, and the fixes have names you'll meet in papers. DAPO raises the upper clip bound so rare tokens can still be encouraged, drops all-zero-variance groups and resamples fresh prompts instead (the same trap you met in 11.2, patched at industrial scale), and averages the loss per token rather than per sample so long reasoning chains aren't diluted. GSPO computes the importance ratio per sequence instead of per token, which stabilizes RL on mixture-of-experts models. Both are refinements of the exact skeleton above — worth recognizing, not worth re-deriving here."
 	},
 	{
 		"id": "section-11-4",
 		"part": 11,
 		"title": "11.4 Edit the Reward Function",
-		"text": "The reward function is a text box, and it's yours: reweight terms, add bonuses, invent a new objective, and rerun to see what your incentive actually teaches. The fastest way to respect reward design is to write a bad one and watch it get obeyed."
+		"text": "The reward function is a text box, and it's yours: reweight terms, add bonuses, invent a new objective, and rerun to see what your incentive actually teaches. The fastest way to respect reward design is to write a bad one and watch it get obeyed. The editor arrives with this chapter's playground, but the idea is worth previewing now, because it's the punchline of Parts 9 through 11: the reward function is the specification, and the model is a specification-satisfier with no loyalty to what you meant. Here's the default reward for Quill's constraint arena: Three edits to try, each with a prediction to make first. Pay per occurrence of the word instead of a one-time bonus, and you've re-invented Part 10's \"dragon dragon dragon\" — except now there's a gradient behind it, so it arrives faster and harder. Reward story length and you get padding: repeated clauses, weather reports, anything that emits tokens. Drop the word term entirely and watch the constraint be serenely ignored — the model optimizes what's scored, not what's written in the prompt. The subtler craft is shaping ."
+	},
+	{
+		"id": "section-11-4",
+		"part": 11,
+		"title": "11.4 Edit the Reward Function",
+		"text": "A binary reward is honest but sparse: hard prompts produce all-zero groups (11.2's trap) and contribute nothing. Partial credit — say for a sentence count within one of the target — manufactures variance inside groups, and variance is what gradients are made of. At this scale, reward design is mostly variance engineering. Before every rerun, write down the exploit you expect. If the model surprises you, you just learned something about your own specification — which is the actual skill this section teaches. Frontier labs employ people whose entire job is this loop."
 	},
 	{
 		"id": "section-11-5",
 		"part": 11,
 		"title": "11.5 The Full R1 Recipe",
-		"text": "Zoom out and the pieces you've built snap into the published recipe for reasoning models: cold-start SFT, RL on verifiable rewards, rejection sampling, RL again. Plus a conceptual look at how DAPO and GSPO patch GRPO's cracks at real scale."
+		"text": "Zoom out and the pieces you've built snap into the published recipe for reasoning models: cold-start SFT, RL on verifiable rewards, rejection sampling, RL again. Plus a conceptual look at how DAPO and GSPO patch GRPO's cracks at real scale. DeepSeek-R1 is the paper that made this chapter's material famous, and it actually shipped two models. R1-Zero came first: pure GRPO on the base model — no SFT at all — with rewards for answer correctness and output format only. Reasoning behaviors emerged anyway: long chains of thought, re-checking, backtracking. But the prose was a mess — languages mixed mid-thought, formatting drifted — a model that reasoned before it could speak. R1 proper fixed that with a loop, and the loop is the recipe worth memorizing: Cold-start SFT: a small, curated set of long, readable reasoning traces gives the model a format to think in. RL: GRPO on verifiable rewards — math answers, code that passes tests, checkmate-class signals. Then the clever step: rejection sampling ."
+	},
+	{
+		"id": "section-11-5",
+		"part": 11,
+		"title": "11.5 The Full R1 Recipe",
+		"text": "Sample the RL checkpoint many times per prompt, keep only completions the verifier certifies, blend in general instruction data, and you've manufactured a bigger, better SFT set than the one you started with — written by the model, vouched for by the verifier. Retrain on it, then run RL once more with preference rewards folded in for general polish. Notice the structure: the RL model becomes a data factory for its own successor. Best-of-N, which Part 10 showed you as an attack on a learned reward, turns into a pipeline when the scorer is a verifier — keep-the-winners is exactly Part 8's filtering with a stronger generator. Alignment and synthetic data stop being separate chapters and start being one loop. And the emergence story is quantitative, not mystical: as reward rises during RL, completions get longer. The model is buying accuracy with tokens — more steps, more checking — because thinking longer wins reward. At frontier scale that pressure produces mid-chain self-correction, the paper's \"aha moment.\" At hatchling scale you'll see the honest miniature from 11.2: the reward curve climbs and the outputs stretch. Now count what you own. Cold-start SFT: Part 7."
+	},
+	{
+		"id": "section-11-5",
+		"part": 11,
+		"title": "11.5 The Full R1 Recipe",
+		"text": "Verifiable-reward RL: this chapter. Rejection sampling: Part 8's verifier filtering pointed at Part 10's best-of-N machinery. Preference polish: Part 9. The frontier recipe for reasoning models is a composition of chapters you have already run, on birds you raised yourself. Different exponents — Part 14 will be precise about how different — but the same loop."
 	},
 	{
 		"id": "part-12",
 		"part": 12,
 		"title": "Part 12 · Agents",
-		"text": "An agent is not a new kind of model — it's the same next-token predictor emitting tokens that make things happen. Quill gets two tools and a job long enough to need them: a story that outgrows its own context window. This chapter's interactive playground arrives with a later milestone."
+		"text": "An agent is not a new kind of model — it's the same next-token predictor emitting tokens that make things happen. Quill gets two tools and a job long enough to need them: a story that outgrows its own context window. One honest flag before we start: this is the course's stretch chapter. The machinery is real and the lesson stands either way, but the live lab ships only if a prototype gate passes — can a model this small learn the tool grammar at all? If it can't, the demos here run driven by the tutor model instead, and they'll say so on screen. This chapter's interactive playground arrives with a later milestone."
 	},
 	{
 		"id": "section-12-1",
 		"part": 12,
 		"title": "12.1 Tools as Tokens",
-		"text": "A tool call is just a special token sequence the model learned to emit, and a tool result is just tokens spliced back into its context. Demystifying that loop — the same one under every \"agentic\" product — is the whole point of the chapter."
+		"text": "A tool call is just a special token sequence the model learned to emit, and a tool result is just tokens spliced back into its context. Demystifying that loop — the same one under every \"agentic\" product — is the whole point of the chapter. Strip the word \"agent\" of its marketing and ask what a language model can actually do. It emits tokens. That's the complete list. So how does it \"look something up\" or \"take an action\"? It writes a request in a format someone taught it, and a loop of ordinary code around it does the rest. You already have every ingredient: Part 2 put special tokens in the vocabulary, and Part 7 taught a model to respect a template built from them. Tool use is the same trick with a runtime listening. Here is a raw token stream from a tool-using Quill, nothing hidden: Walk the mechanics in order, because each step kills a different piece of mystique: Mid-story, the model emits \" />, then , then \" /> — each one an ordinary next-token prediction, sampled exactly like the word \"door\" was. The runtime — a while-loop watching the stream — recognizes \" /> as a stop token and pauses sampling. The runtime executes the lookup with regular code. The model executes nothing."
+	},
+	{
+		"id": "section-12-1",
+		"part": 12,
+		"title": "12.1 Tools as Tokens",
+		"text": "It has no hands; it wrote a note, and a program read it. The result comes back as tokens, wrapped in \" /> markers, appended to the context. Sampling resumes. The fact \"Ember\" now sits in the context window, attended to like any other tokens — which is why the very next sentence can use the name. Function-calling APIs, MCP servers, coding agents running in your terminal — under each one sits this exact pattern: delimiter tokens (or a JSON schema playing the same role), a runtime that parses what the model wrote, and results spliced back as context. There is no new math anywhere in the stack. The model writes text; a program obeys it; the transcript grows. Where does the ability come from? Training data, same as everything else. The model sees traces containing tool-call tokens during fine-tuning and learns the pattern the way it learned dialogue formatting in Part 7 — when a dragon's name is needed and unknown, the high-probability continuation is \" />. Which is exactly why this chapter's gate question is whether a bird this small can learn that grammar reliably. Section 12.4 returns to it."
 	},
 	{
 		"id": "section-12-2",
 		"part": 12,
 		"title": "12.2 The Scratchpad",
-		"text": "Ask Quill for a story longer than its context window and it forgets its own characters mid-tale — the context limit from Part 3, now felt as pain. A note-taking tool is the fix, and the limitation itself is the lesson."
+		"text": "Ask Quill for a story longer than its context window and it forgets its own characters mid-tale — the context limit from Part 3, now felt as pain. A note-taking tool is the fix, and the limitation itself is the lesson. Make the pain concrete first. Quill's context window is a few hundred tokens — Part 3 showed you why: attention only runs over positions inside the window. Ask for a story twice that long and the opening slides out of view while the ending is still being written. The model cannot attend to tokens it can no longer see. The symptoms are exactly what you'd predict: the dragon quietly changes name, the lost locket is never found, a fresh protagonist wanders in around sentence forty. This is not a bug in Quill. It is the architecture doing precisely what the architecture does. The fix is embarrassingly human: give it a place to write things down. The mechanics matter: notes are stored outside the model , by the runtime, and re-injected at the top of every fresh context. The window still slides — nothing about the architecture changed — but the notes never leave it."
+	},
+	{
+		"id": "section-12-2",
+		"part": 12,
+		"title": "12.2 The Scratchpad",
+		"text": "Quill's job shifts from \"remember everything\" (impossible; the window is what it is) to \"decide what is worth writing down\" (learnable; it's just another token pattern with a payoff). Now look up from the toy. Frontier agents writing memory files, coding assistants keeping todo lists, chat products summarizing old conversation into a compact preamble — every one of these is this trick at scale. Context windows have grown a thousandfold, but the jobs grew too, and anything that must survive beyond the window has to live outside the model. The context limit isn't an inconvenience agents route around; it is the reason agent memory exists as a category. Notice what we didn't do: extend the window. We taught the model to live within it. That's the cheaper move at every scale, and it's the one the industry made — which is why you're learning it here rather than in an architecture chapter."
 	},
 	{
 		"id": "section-12-3",
 		"part": 12,
 		"title": "12.3 The Story-World Database",
-		"text": "The second tool lets Quill query facts about its story world — which character owns which dragon, what color the door was. Retrieval in miniature: the model looks things up instead of hallucinating them."
+		"text": "The second tool lets Quill query facts about its story world — which character owns which dragon, what color the door was. Retrieval in miniature: the model looks things up instead of hallucinating them. The scratchpad is freeform — the model writes whatever it deems important. The second tool is stricter: a structured store the story world lives in, with typed facts and stable keys. The trained behavior: before writing about a thing, query it. About to describe the door? first, write \"blue\" second. This is retrieval instead of recall — and it is RAG in miniature. Retrieval-augmented generation, the industry pattern where a model queries a document store before answering, has exactly this shape: fetch first, generate second, hallucinate less. Yours fits in a YAML file; the production version fits in a vector database; the loop is identical. But the deeper payoff isn't fewer hallucinations. It's this: once the facts live in a database, consistency stops being a vibe and becomes checkable . \"Does this story feel consistent?\" needs a judge — Part 5 taught you how expensive and slippery judged evals are. \"Does this story call the door red when the database says blue?\" needs a for-loop."
+	},
+	{
+		"id": "section-12-3",
+		"part": 12,
+		"title": "12.3 The Story-World Database",
+		"text": "You've moved a fuzzy literary property into checkmate territory. Moving a property from judged to verified is the general trick of the RLVR era. Every property you can move becomes trainable with Part 11's machinery — no reward model, no Goodhart tax on a learned proxy. The next section does exactly that to consistency."
 	},
 	{
 		"id": "section-12-4",
 		"part": 12,
 		"title": "12.4 Consistency Rewards",
-		"text": "Training the agent closes the course's loop: synthetic tool-use traces from Part 8's pipeline, then Part 11's RLVR with verifiers that hunt for contradictions between the story and the database. Every act of the course, compounded into one system."
+		"text": "Training the agent closes the course's loop: synthetic tool-use traces from Part 8's pipeline, then Part 11's RLVR with verifiers that hunt for contradictions between the story and the database. Every act of the course, compounded into one system. Stage one: learn the grammar. A model this small won't invent tool syntax from a description, so we manufacture the demonstrations — Part 8's pipeline, pointed at a new target. The tutor model writes stories with tool calls woven in at plausible moments, the verifier stack filters out malformed calls and pointless ones, and Quill fine-tunes on the survivors. After SFT, \" /> is a token pattern with learned habits around it, the same way chat formatting was after Part 7. Stage two: sharpen with RLVR. Run Part 11's GRPO loop where the verifier is a consistency checker: Honesty about the load-bearing line: is easy here and unsolved in general. Ours works because the schema is closed — colors, names, owners, places, a fixed cast — so claims can be pattern-matched against typed facts. Extracting arbitrary claims from arbitrary prose is an open research problem; if it were solved, half of Part 5's eval headaches wouldn't exist."
+	},
+	{
+		"id": "section-12-4",
+		"part": 12,
+		"title": "12.4 Consistency Rewards",
+		"text": "Small worlds are what make verification honest. And that's precisely why this little chapter points at the actual frontier. Agentic training on verifiable rewards is where the field is right now: Kimi K2's post-training, for instance, built a synthetic tool-use factory — thousands of real and simulated tools, generated tasks and multi-turn traces rolled out in simulated environments, filtered for quality, then reinforced with verifiable signals where checks exist. Same shape as your pipeline: synthetic traces to teach the grammar, verifiers to sharpen the behavior. The difference between your story-world and their tool universe is — say it with me — exponents. This chapter compounds every act of the course, which makes it the most likely to break: it needs the tool grammar (this part), the synthetic pipeline (Part 8), and RLVR (Part 11) all working at once, at 25M parameters. The gate is real: if the prototype shows the tool grammar doesn't stick at this scale, the lab demotes to a guided demo driven by the tutor model — labeled as such on screen, never passed off as your bird. Either way you'll watch the loop run; what's gated is whether Quill runs it."
+	},
+	{
+		"id": "section-12-4",
+		"part": 12,
+		"title": "12.4 Consistency Rewards",
+		"text": "Count the acts one more time: tokens and special vocabularies from Act I, a trained mind from Act II, SFT and synthetic data and verifiable rewards from Act III — assembled here into a system that writes, remembers, looks things up, and is graded by a program on whether its world holds together. That's an agent. It was never anything else."
 	},
 	{
 		"id": "part-13",
@@ -405,37 +957,91 @@
 		"id": "section-13-1",
 		"part": 13,
 		"title": "13.1 Mixture of Experts",
-		"text": "Replace one feed-forward network with many and route each token to a couple of them: more parameters, same compute per token. A routing visualization shows which experts wake up for which tokens — and whether any of it helps at this scale."
+		"text": "Replace one feed-forward network with many and route each token to a couple of them: more parameters, same compute per token. A routing visualization shows which experts wake up for which tokens — and whether any of it helps at this scale. Name the trade first. In a dense model — everything you've trained so far — every parameter touches every token, so capacity and compute grow in lockstep. Mixture of Experts decouples them: total parameters can be enormous while the compute spent per token stays small, because each token only visits a few parameters. The surgery happens in the block you built in Part 3. Attention stays. The one big MLP is replaced by small ones — the experts — plus a router : a tiny linear layer that scores all experts for each token. Keep the top-k scorers, run the token through only those, and blend their outputs by the router's weights: The unit of routing is the token , and that's worth sitting with. Not the prompt, not the sentence — every single token, at every MoE layer, gets its own routing decision. \"dragon\" might light up experts 3 and 7 while the \"the\" right before it went to 1 and 5."
+	},
+	{
+		"id": "section-13-1",
+		"part": 13,
+		"title": "13.1 Mixture of Experts",
+		"text": "The routing visualization in the lab makes this visible: feed a story through and watch the expert lanes flicker token by token. Two DeepSeek-flavored refinements are now standard. Fine-grained experts: instead of a few large experts picking one or two, use many small ones and activate several — more combinations of specialists per token, finer division of labor. And a shared expert that every token visits unconditionally: it absorbs the common patterns (grammar, punctuation, glue) so the specialists don't all waste capacity relearning them. The classic failure mode is router collapse : a couple of experts win early, get all the tokens, therefore all the gradient, therefore keep winning — while the rest go dead. The textbook fix is an auxiliary load-balancing loss nudging usage toward uniform, but it literally fights the language-modeling objective: you pay model quality for balance. DeepSeek-V3's aux-loss-free alternative is sneakier — give each expert a bias added to its routing score only for the top-k selection , not for the mixing weights, and have a controller nudge each bias up when its expert is underused and down when overused."
+	},
+	{
+		"id": "section-13-1",
+		"part": 13,
+		"title": "13.1 Mixture of Experts",
+		"text": "Balance gets steered by a thermostat instead of taxed into the loss. Honest verdict: at 25M parameters, MoE shows mechanism, not wins . Slicing a small MLP into eight tiny experts leaves each too small to specialize meaningfully, and our corpus is too narrow to demand it. MoE pays off when the dense model you'd otherwise want can't fit your hardware — ours fits with room to spare. Watch the routing come alive; don't expect a better loss curve."
 	},
 	{
 		"id": "section-13-2",
 		"part": 13,
 		"title": "13.2 MTP, Muon, QK-Clip",
-		"text": "Three tricks from recent frontier papers, each tried live: predicting several tokens ahead, racing the Muon optimizer against AdamW, and deliberately inducing an attention-logit explosion so QK-clip has something to fix. Verdicts included, hype not."
+		"text": "Three tricks from recent frontier papers, each tried live: predicting several tokens ahead, racing the Muon optimizer against AdamW, and deliberately inducing an attention-logit explosion so QK-clip has something to fix. Verdicts included, hype not. Multi-token prediction Your loss has always asked one question per position: what comes next? Multi-token prediction adds a second: what comes after next? DeepSeek-V3 bolts a small extra module onto the trunk that predicts one token further ahead, as an auxiliary objective during training only. The claim is data efficiency — every position now supplies two gradients instead of one, and planning two tokens out seems to build slightly better representations. At inference you can throw the module away, or keep it as a built-in draft generator for speculative decoding (13.5 explains why that's valuable). Muon AdamW, your loyal optimizer since Part 4, keeps two scalars of bookkeeping per weight and treats every weight as an island. Muon's observation: most of a transformer is weight matrices , and a matrix update has structure a per-weight view can't see."
+	},
+	{
+		"id": "section-13-2",
+		"part": 13,
+		"title": "13.2 MTP, Muon, QK-Clip",
+		"text": "Muon takes the momentum-averaged gradient of each matrix and orthogonalizes it (a few Newton-Schulz iterations — cheap matrix multiplies) before applying it, so the update pushes in many independent directions instead of piling onto a dominant few. Pedigree: Muon powers the nanoGPT speedrun leaderboard, and Kimi scaled it to K2's trillion-parameter training as half of MuonClip. Embeddings, norms, and other non-matrix parameters stay on AdamW. The lab demo is a straight race: same model, same data, same token budget, two optimizers, two loss curves. QK-clip A failure mode you can summon on demand. Attention logits are dot products between queries and keys; if the and matrices grow during training, those logits can explode — softmax saturates into one-hot attention, gradients spike, and long runs die with a loss chart that looks like a heart attack. Kimi's fix for K2 is blunt and effective: watch the maximum attention logit per head, and whenever it exceeds a threshold, rescale and down to cap it. Muon plus this guard is MuonClip, and K2's famously spike-free loss curve over 15 trillion tokens is its advertisement."
+	},
+	{
+		"id": "section-13-2",
+		"part": 13,
+		"title": "13.2 MTP, Muon, QK-Clip",
+		"text": "Our demo: provoke the explosion at toy scale — aggressive learning rate, weakened normalization — watch the max-logit gauge climb and the loss spike, then switch the clip on and rerun the same seed. Trick What it buys the frontier At our scale MTP Denser training signal, free draft head Trains fine; expect a wash to a small gain Muon Faster convergence per step The one most likely to genuinely win the race QK-clip Insurance against divergence at huge scale A reproducible failure-and-fix demo"
 	},
 	{
 		"id": "section-13-3",
 		"part": 13,
 		"title": "13.3 KV Cache & Sampling",
-		"text": "Without a cache, generating each token recomputes attention over everything before it. Toggle the KV cache and feel tokens-per-second jump — then finish the sampling toolbox with top-k and top-p, the dials temperature left unexplained in Part 5."
+		"text": "Without a cache, generating each token recomputes attention over everything before it. Toggle the KV cache and feel tokens-per-second jump — then finish the sampling toolbox with top-k and top-p, the dials temperature left unexplained in Part 5. Here's the naive cost story. To sample token 501, run the full 500-token prefix through the model. To sample token 502, run 501 tokens through again. Per-token cost grows with position; a whole generation costs roughly the square of its length. And it's pure waste, because of a fact you already know from Part 3: attention is causal. Position 17's key and value vectors depend only on tokens up to 17 — they will never change for the rest of the generation. So compute them once and keep them. That's the KV cache: per layer, per head, store every position's K and V. Each new token computes its own query, key, and value — one position of work — appends its K and V to the cache, and attends against everything stored. (Queries aren't cached; each is used once and discarded.) The lab's toggle makes it visceral: same model, same prompt, an order-of-magnitude jump in tokens per second."
+	},
+	{
+		"id": "section-13-3",
+		"part": 13,
+		"title": "13.3 KV Cache & Sampling",
+		"text": "The cache isn't free — you're trading memory for compute: For Quill that's a few megabytes — invisible. For a frontier model serving long contexts, the cache outweighs the activations and becomes the thing engineers fight. That fight is why grouped-query attention exists (several query heads share one K/V head — fewer in the formula) and why DeepSeek's MLA compresses K and V into a small latent vector and reconstructs them on the fly. Different tactics, same target: that formula. Finishing the sampling toolbox Part 5 gave you temperature: scale the logits before softmax to sharpen or flatten the distribution. Two truncation dials complete the set. Top-k keeps only the most probable tokens and renormalizes — simple, but blunt: it keeps the same count whether the model is confident or lost. Top-p (nucleus sampling) keeps the smallest set of tokens whose cumulative probability reaches — it adapts, trimming to a handful of candidates when the model is sure and widening when it isn't."
+	},
+	{
+		"id": "section-13-3",
+		"part": 13,
+		"title": "13.3 KV Cache & Sampling",
+		"text": "Dial What it does At the extremes temperature Reshapes the whole distribution Near 0 = greedy; high = word soup top-k Keeps a fixed number of candidates k = 1 is greedy; huge k is off top-p Keeps a probability mass, adaptively p = 1 is off; small p is near-greedy The dials compose in sequence: temperature reshapes the distribution, then top-k and top-p truncate it, then what survives is renormalized and sampled. Typical defaults you'll meet in the wild — temperature around 0.7 with top-p around 0.9 — are taste, not law. The lab lets you feel each one against Quill's prose."
 	},
 	{
 		"id": "section-13-4",
 		"part": 13,
 		"title": "13.4 Quantization",
-		"text": "Squeeze weights from 16 bits to 8 to 4 and watch memory shrink while Quill's prose slowly coarsens. Quantization is why big models fit on small machines — and reading degraded stories side by side makes its cost tangible."
+		"text": "Squeeze weights from 16 bits to 8 to 4 and watch memory shrink while Quill's prose slowly coarsens. Quantization is why big models fit on small machines — and reading degraded stories side by side makes its cost tangible. Training needs precision — gradients are tiny nudges, and fp16 is about as coarse as training tolerates. Inference is more forgiving: the weights are frozen, and what matters is that the matmuls land close enough. So store each block of weights as small integers plus one shared scale factor — with an int8 (256 levels) or int4 (16 levels) — and expand them on the fly inside the matmul. The memory math is immediate: Scale those numbers up and you get the modern deployment story: int4 is the reason multi-billion-parameter models run on laptops and phones, and the reason 13.6's guest star fits in this tab at all. The quality cost is real but smaller than intuition suggests."
+	},
+	{
+		"id": "section-13-4",
+		"part": 13,
+		"title": "13.4 Quantization",
+		"text": "Naive rounding hurts; the good methods — small per-group scales, error-compensating rounding, activation-aware choices about which weights deserve precision (the GPTQ/AWQ family) — keep 4-bit surprisingly close to full quality, with degradation showing up first in long-tail precision: rare words, delicate phrasing. The lab makes it a reading exercise: the same prompt at fp16, int8, and int4, side by side. Expect int8 to be imperceptible and int4 to occasionally flatten a phrase — a cost you can now see rather than take on faith. The time machine's scrubbable checkpoints ship as int4/int8 — that's what makes carrying a dozen snapshots per bird affordable. But the designated resume points ship fp16, because training on top of quantized weights with fresh optimizer state is not something that works, and we don't pretend otherwise. Inference forgives rounding; optimization doesn't."
 	},
 	{
 		"id": "section-13-5",
 		"part": 13,
 		"title": "13.5 Speculative Decoding",
-		"text": "Little live-Quill drafts a burst of tokens; big flagship-Quill checks the whole burst in one pass and keeps what it agrees with. Same output distribution, several times the speed — your two birds, cooperating at last."
+		"text": "Little live-Quill drafts a burst of tokens; big flagship-Quill checks the whole burst in one pass and keeps what it agrees with. Same output distribution, several times the speed — your two birds, cooperating at last. The trick rides on an asymmetry: generating is sequential, checking is parallel. A big model's per-token latency is dominated by reading its weights from memory — and one forward pass over five tokens reads the weights once, same as a pass over one. Verifying a burst costs about the same as generating a single token. So let something cheap write the burst. The protocol: the draft model (live-Quill, a few million parameters, fast) proposes, say, 5 tokens. The target model (flagship-Quill, 25M) runs one batched forward pass over all 5, which yields its own next-token distribution at every position. Compare, position by position: accept while the target agrees, stop at the first rejection, resample that one position from a corrected distribution, and hand the new tail back to the draft. The startling part is the guarantee."
+	},
+	{
+		"id": "section-13-5",
+		"part": 13,
+		"title": "13.5 Speculative Decoding",
+		"text": "The acceptance rule — take a drafted token with probability , and on rejection sample from the renormalized excess — makes the output distribution exactly what the target alone would have produced. Not approximately: token for token, mathematically identical. Speculative decoding is that rare deal — speed for free, quality untouched — paid for only in extra compute when the draft guesses wrong. So the speedup lives and dies by the acceptance rate. Most tokens of English are easy — \"the\", punctuation, the obvious next word — and a small model drafts them just as well as a big one, which is why acceptance runs high and the wins are real. When the models disagree often (say, after heavy RL reshapes one of them), the bursts shrink and the overhead wins. One hard requirement: both models must share a tokenizer — and yours do, by construction. The pocket-and-flagship pair already sitting in your browser's memory is the natural demo, and it arrives with the flagship milestone."
 	},
 	{
 		"id": "section-13-6",
 		"part": 13,
 		"title": "13.6 The SmolLM Cameo",
-		"text": "A real pretrained 135M-parameter model runs beside Quill for a direct conversation between scales. Same architecture, same sampling loop, just more of everything — the point of the whole course, made talkable."
+		"text": "A real pretrained 135M-parameter model runs beside Quill for a direct conversation between scales. Same organism, more scale — the point of the whole course, made talkable. The guest is a SmolLM-class model, 135M parameters, running in this same browser tab via transformers.js — the same download that powers the AI tutor and Part 8's generator, so it costs you nothing new. It arrives with a later milestone; what it teaches can be said now: almost everything you know transfers. Open its config file and you can read every field, because every field is a chapter you took. Byte-level BPE tokenizer — Part 2's algorithm with a bigger vocabulary. Decoder-only blocks with RoPE, pre-norm, a gated MLP — Part 3, stacked deeper and wider. Grouped-query attention — 13.3's cache formula, being fought. The sampling loop and KV cache serving its replies are the ones you just studied. Rough shape of the comparison: What actually changed is the exponents — above all the data: thousands of times more tokens, from carefully curated mixtures. And here's the kicker for anyone who took Part 8: a large share of SmolLM's training diet is synthetic textbooks , generated and filtered at industrial scale."
+	},
+	{
+		"id": "section-13-6",
+		"part": 13,
+		"title": "13.6 The SmolLM Cameo",
+		"text": "The reveal that TinyStories was synthetic wasn't a toy-course curiosity — it's how real small models are fed now. Put a prompt to Quill and the cameo side by side and you're not comparing two species. You're looking at the same organism at two points on the scaling curve — which is the cleanest possible setup for the epilogue's question: what, exactly, do the exponents buy?"
 	},
 	{
 		"id": "part-14",
@@ -447,18 +1053,48 @@
 		"id": "section-14-1",
 		"part": 14,
 		"title": "14.1 The Scale Map",
-		"text": "A guided walk from Quill and Rook to trillion-parameter systems: the surprising list of things that are literally identical — the loss, the block, the recipes — and the honest list of things that only exist at scale, from emergent abilities to entire data centers."
+		"text": "A guided walk from Quill and Rook to trillion-parameter systems: the surprising list of things that are literally identical — the loss, the block, the recipes — and the honest list of things that only exist at scale, from emergent abilities to entire data centers. Lay the two pipelines side by side and the punchline isn't the size gap — it's the shape match. Same stages, in the same order, for the same reasons. Different exponents."
+	},
+	{
+		"id": "section-14-1",
+		"part": 14,
+		"title": "14.1 The Scale Map",
+		"text": "Dimension Your birds A frontier lab Parameters 2–5M live pair; 15–25M flagships Hundreds of billions; trillions with MoE Training tokens Millions — a coffee break Tens of trillions Vocabulary ~2k UCI moves; small byte-BPE 100k+ byte-BPE — same algorithm Context window A few hundred tokens Hundreds of thousands and up Hardware One browser tab, one GPU Tens of thousands of accelerators Pretraining wall-clock ~3 minutes Months Data pipeline Curated slices of TinyStories + Lichess Web-scale crawls, petabyte dedup, curation teams Post-training labels Your ~100 clicks + a shipped set Thousands of annotator-hours, plus RLVR farms Evals Legal-move gauge, judge scores, OOD positions Sprawling benchmark suites, human evals, red teams Cost Free Nine figures and climbing Now the list that should genuinely surprise you — what is literally identical , not analogous: The loss. Cross-entropy on next-token prediction, unchanged since Part 4. The block. Attention, RoPE, pre-norm, gated MLP — Part 3's anatomy, stacked higher. The tokenizer algorithm — Part 2's byte-BPE, with a bigger merge table. The train/val discipline, and the eval anxiety that comes with it (Parts 4–5)."
+	},
+	{
+		"id": "section-14-1",
+		"part": 14,
+		"title": "14.1 The Scale Map",
+		"text": "The post-training arc: SFT, then preferences, then verifiable rewards (Parts 7–11). The serving stack: temperature, top-p, KV cache, quantization, speculation (Part 13). You did not run a simplified sketch of the pipeline. You ran the pipeline, small. What you never touched exists only at scale: capability jumps that arrive unannounced somewhere past a few billion parameters, in-context learning broad enough to feel general, and an entire engineering discipline — splitting one training step across thousands of chips (data, tensor, pipeline, and expert parallelism) — that a single browser tab never needs. Plus the parts that aren't math at all: data acquisition, safety review, eval institutes, teams. Nothing conceptual separates your birds from the frontier — that's the course's thesis, and by now it's your lived experience. What separates them is tokens, chips, and time. That should feel both comforting and sobering: comforting because you actually understand these systems now; sobering because understanding was never the bottleneck."
 	},
 	{
 		"id": "section-14-2",
 		"part": 14,
 		"title": "14.2 What Nobody Knows",
-		"text": "Why does grokking happen? What do models really represent? Why does the scaling line stay straight? The open problems of the field, stated plainly — along with a sober note on safety, and on what toy models can and cannot teach about it."
+		"text": "Why does grokking happen? What do models really represent? Why does the scaling line stay straight? The open problems of the field, stated plainly — along with a sober note on safety, and on what toy models can and cannot teach about it. Why does grokking happen? You watched it in Part 4: a hatchling memorizes its training set, sits at chance on validation for thousands of steps, then abruptly generalizes. There are stories — weight decay slowly favoring simpler circuits over lookup tables, competing sub-networks trading places — but no theory that predicts when a given run will grok, or whether it will at all. A phenomenon you can replay on demand in a browser remains genuinely unexplained. What do probes actually show? Part 6's linear probes read a board off Rook's residual stream, and patching flipped its move by editing its belief about one square. Convincing — and still contested. Does the model use a world model, or a bag of heuristics that happens to be linearly decodable? Where is the line between representing and correlating? Interpretability has sharp tools and no agreed success criterion, at 25M parameters or at a trillion. Does alignment hold under pressure?"
+	},
+	{
+		"id": "section-14-2",
+		"part": 14,
+		"title": "14.2 What Nobody Knows",
+		"text": "Parts 9 through 11 gave you the honest arc: learned rewards get hacked, KL is a leash and not a proof, and verifiable rewards close the gap only where a verifier exists. Most of what we actually want from models — honesty, judgment, care — has no checker. Whether oversight can scale to systems more capable than their overseers is arguably the field's most consequential open problem, and your reward-hacking scars are a miniature of why. Are emergent abilities real? Capabilities seem to appear suddenly at scale — arithmetic, translation, multi-step reasoning. But a sharp counter-argument says some of those jumps are artifacts of the measuring stick: underlying skill improves smoothly, while an all-or-nothing metric (exact-match answers, say) shows nothing until it shows everything. The debate is live, unresolved, and has real stakes: it decides whether the next order of magnitude holds surprises by default. Why are the scaling laws straight? Your Part 5 mini-lab plotted three hatchling sizes and saw the hint of a line."
+	},
+	{
+		"id": "section-14-2",
+		"part": 14,
+		"title": "14.2 What Nobody Knows",
+		"text": "The full version — loss against compute, straight on log axes across many orders of magnitude — is the empirical bedrock the industry plans nine-figure training runs on. Nobody has a first-principles derivation of why it holds, how long it continues, or what it is really measuring. The field's most load-bearing fact is a mystery with error bars. None of these are homework the field forgot to finish. They are the frontier — and the point of listing them here is that you now know enough to read the papers arguing about every single one."
 	},
 	{
 		"id": "section-14-3",
 		"part": 14,
 		"title": "14.3 Two Birds, Fully Grown",
-		"text": "A last look at the stat sheets: every stage badge earned, every eval score, every token seen since the moment you scrubbed both birds back to nothing. They're yours now — and so is the understanding of how they came to be."
+		"text": "A last look at the stat sheets: every stage badge earned, every eval score, every token seen since the moment you scrubbed both birds back to nothing. They're yours now — and so is the understanding of how they came to be. Quill hatched as noise and babbled its way to grammar while you watched the loss fall. It learned to follow instructions, then learned your taste from a hundred clicks, then hacked that taste until the KL leash reined it in, then submitted to rewards that were simply true — five sentences, one lantern. Somewhere along the way it stopped being a curve on a chart and started being a storyteller with habits you recognize, because you put them there. Rook went from random mover to legal player to something stranger: a model that holds a board in its activations, whose belief about one square you once flipped with your own cursor. It hung its king for a queen when you paid it to, and learned better when the reward was checkmate itself. Its Elo is on the stat sheet. Its opening habits are yours to blame. A sober note to carry out the door. Tiny models teach mechanism : you watched Goodhart's law fire, watched a KL term contain it, watched a verifier make reward honest."
+	},
+	{
+		"id": "section-14-3",
+		"part": 14,
+		"title": "14.3 Two Birds, Fully Grown",
+		"text": "They do not teach alignment at scale . A 25M-parameter storyteller cannot deceive you in ways that matter, pursue goals across contexts, or surprise its overseers — and the failure modes that might do those things may simply not miniaturize. Take the mechanisms with you. Do not take the comfort. The weights are yours — sitting in your browser's storage, scrubbable back to the moment they were noise. So is the recipe: every stage a frontier lab runs, you have run, small. When the next paper drops — a new optimizer, a routing trick, a post-training loop — it will land somewhere on a map you have personally walked. The field is young, its biggest questions are open, and the distance from your two birds to the frontier is exponents, not magic. Go raise something."
 	}
 ]
