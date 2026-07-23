@@ -2,6 +2,7 @@
 	import { Binary, HelpCircle, Combine, LayoutGrid, Search } from 'lucide-svelte';
 	import Callout from '../ui/Callout.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
+	import TokenizerDemo from '../lab/TokenizerDemo.svelte';
 </script>
 
 <section id="part-2" class="py-10">
@@ -43,8 +44,10 @@
 			<p class="mb-4 text-[14.5px] leading-relaxed" style="color: var(--color-text-secondary);">
 				Byte-pair encoding is simple enough to watch happen: start from raw bytes, repeatedly merge
 				the most frequent pair, and a vocabulary grows in front of you — "th", then "the", then
-				whole words. You'll train Quill's tokenizer yourself, live, on real story text.
+				whole words. The box below runs Quill's actual tokenizer — byte-level BPE with 512
+				tokens, trained on the same TinyStories slice Quill pretrains on in Part 5.
 			</p>
+			<TokenizerDemo />
 		</div>
 
 		<div id="section-2-3" class="mb-14">

@@ -10,6 +10,7 @@
 	} from 'lucide-svelte';
 	import Callout from '../ui/Callout.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
+	import TrainingLab from '../lab/TrainingLab.svelte';
 </script>
 
 <section id="part-5" class="py-10">
@@ -68,10 +69,28 @@
 				color="var(--color-primary)"
 			/>
 			<p class="mb-4 text-[14.5px] leading-relaxed" style="color: var(--color-text-secondary);">
-				Press start and pretrain the live pair for real — millions of tokens through a few million
-				parameters, on WebGPU, in your tab. The arc from noise to language happens while you watch,
-				and the checkpoints it leaves behind belong to you.
+				Press start and pretrain the live pair for real — real tokens through real parameters, on
+				your GPU, in this tab. Watch the loss fall from ln(V) — the uniform-guess ceiling — and
+				sample as you go: Quill's output climbs from byte soup toward words, and Rook's moves from
+				noise toward legal chess. Train longer and sample again; the difference is the lesson.
 			</p>
+			<TrainingLab
+				bird="quill"
+				title="Quill — pretraining live"
+				steps={200}
+				config={{ nLayer: 4, nEmbd: 128, nHead: 4, blockSize: 128 }}
+			/>
+			<TrainingLab
+				bird="rook"
+				title="Rook — pretraining live"
+				steps={200}
+				config={{ nLayer: 4, nEmbd: 128, nHead: 4, blockSize: 128 }}
+			/>
+			<Callout type="tip" title="What to look for">
+				Both labs share one architecture — only the corpus differs. Quill's loss starts near ln(512)
+				≈ 6.2, Rook's near ln(1931) ≈ 7.6, and both fall the same way: the transformer doesn't know
+				which world it's learning. That's the thesis of this course, live on your screen.
+			</Callout>
 		</div>
 
 		<div id="section-5-4" class="mb-14">
