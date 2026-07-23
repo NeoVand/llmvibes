@@ -6,9 +6,10 @@
 	// two IS the legal-probability-mass gauge.
 	import { onDestroy } from 'svelte';
 	import { Play, RotateCcw, Loader2, Swords } from 'lucide-svelte';
-	import { Chess, type Square } from 'chess.js';
+	import { Chess } from 'chess.js';
 	import { detectCapability, type ModelConfig } from '$lib/llm/engine';
 	import { WorkerEngine } from '$lib/llm/worker-engine';
+	import ChessBoard from '$lib/components/chess/ChessBoard.svelte';
 	import { base } from '$app/paths';
 
 	let { trainSteps = 300 }: { trainSteps?: number } = $props();
@@ -24,8 +25,6 @@
 
 	let chess = new Chess();
 	let fen = $state(chess.fen());
-	let selected = $state<Square | null>(null);
-	let legalTargets = $state<Square[]>([]);
 	let lastMove = $state<{ from: string; to: string } | null>(null);
 	let historyIds = $state<number[]>([0]);
 	let historyUci = $state<string[]>([]);
@@ -79,8 +78,6 @@
 	function newGame() {
 		chess = new Chess();
 		fen = chess.fen();
-		selected = null;
-		legalTargets = [];
 		lastMove = null;
 		historyIds = [0];
 		historyUci = [];
@@ -103,28 +100,31 @@
 		return true;
 	}
 
-	function clickSquare(sq: Square) {
+	function userMove(from: string, to: string) {
 		if (phase !== 'ready') return;
-		if (selected && legalTargets.includes(sq)) {
-			const move = chess.move({ from: selected, to: sq, promotion: 'q' });
-			fen = chess.fen();
-			lastMove = { from: move.from, to: move.to };
-			const uci = move.from + move.to + (move.promotion ?? '');
-			pushMove(uci);
-			selected = null;
-			legalTargets = [];
-			if (!endIfOver()) rookMove();
-			return;
-		}
-		const piece = chess.get(sq);
-		if (piece && piece.color === 'w') {
-			selected = sq;
-			legalTargets = chess.moves({ square: sq, verbose: true }).map((m) => m.to as Square);
-		} else {
-			selected = null;
-			legalTargets = [];
-		}
+		const move = chess.move({ from, to, promotion: 'q' });
+		fen = chess.fen();
+		lastMove = { from: move.from, to: move.to };
+		pushMove(move.from + move.to + (move.promotion ?? ''));
+		if (!endIfOver()) rookMove();
 	}
+
+	// board-facing derivations (chess.js isn't reactive; key off fen)
+	const legalMoves = $derived.by(() => {
+		void fen;
+		return chess.moves({ verbose: true }).map((m) => ({ from: m.from, to: m.to }));
+	});
+	const checkSquare = $derived.by(() => {
+		void fen;
+		if (!chess.inCheck()) return null;
+		const turn = chess.turn();
+		for (const row of chess.board()) {
+			for (const p of row) {
+				if (p && p.type === 'k' && p.color === turn) return p.square;
+			}
+		}
+		return null;
+	});
 
 	function pushMove(uci: string) {
 		historyUci = [...historyUci, uci];
@@ -197,50 +197,6 @@
 		}
 	}
 
-	// ── board rendering ────────────────────────────────────────────────────────
-	const GLYPHS: Record<string, string> = {
-		wk: '♔',
-		wq: '♕',
-		wr: '♖',
-		wb: '♗',
-		wn: '♘',
-		wp: '♙',
-		bk: '♚',
-		bq: '♛',
-		br: '♜',
-		bb: '♝',
-		bn: '♞',
-		bp: '♟'
-	};
-	const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-	interface Cell {
-		sq: Square;
-		x: number;
-		y: number;
-		dark: boolean;
-		glyph: string;
-		white: boolean;
-	}
-	const cells = $derived.by<Cell[]>(() => {
-		void fen;
-		const out: Cell[] = [];
-		const board = chess.board();
-		for (let r = 0; r < 8; r++) {
-			for (let f = 0; f < 8; f++) {
-				const piece = board[r][f];
-				out.push({
-					sq: (FILES[f] + (8 - r)) as Square,
-					x: f,
-					y: r,
-					dark: (r + f) % 2 === 1,
-					glyph: piece ? GLYPHS[piece.color + piece.type] : '',
-					white: piece?.color === 'w'
-				});
-			}
-		}
-		return out;
-	});
-
 	onDestroy(() => {
 		engine?.dispose();
 	});
@@ -284,59 +240,17 @@
 	{:else}
 		<div class="flex flex-wrap gap-5">
 			<div class="min-w-[260px] flex-1">
-				<svg
-					viewBox="0 0 800 800"
-					class="w-full max-w-[380px] rounded-lg"
-					role="img"
-					aria-label="chess board"
-				>
-					{#each cells as c (c.sq)}
-						<rect
-							x={c.x * 100}
-							y={c.y * 100}
-							width="100"
-							height="100"
-							fill={c.dark ? 'var(--color-surface-hover)' : 'var(--color-surface)'}
-							stroke={lastMove && (c.sq === lastMove.from || c.sq === lastMove.to)
-								? 'var(--color-important)'
-								: selected === c.sq
-									? 'var(--color-tip)'
-									: 'var(--color-border-light)'}
-							stroke-width={lastMove && (c.sq === lastMove.from || c.sq === lastMove.to)
-								? 6
-								: selected === c.sq
-									? 6
-									: 1.5}
-							role="button"
-							tabindex="0"
-							aria-label="square {c.sq}"
-							onclick={() => clickSquare(c.sq)}
-							onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && clickSquare(c.sq)}
-							style="cursor: pointer;"
-						/>
-						{#if legalTargets.includes(c.sq)}
-							<circle
-								cx={c.x * 100 + 50}
-								cy={c.y * 100 + 50}
-								r="14"
-								fill="var(--color-tip)"
-								opacity="0.7"
-								pointer-events="none"
-							/>
-						{/if}
-						{#if c.glyph}
-							<text
-								x={c.x * 100 + 50}
-								y={c.y * 100 + 78}
-								text-anchor="middle"
-								font-size="76"
-								pointer-events="none"
-								fill={c.white ? 'var(--color-text)' : 'var(--color-text-secondary)'}
-								style="user-select: none;">{c.glyph}</text
-							>
-						{/if}
-					{/each}
-				</svg>
+				<div class="w-full max-w-[380px] overflow-hidden rounded-lg shadow-sm">
+					<ChessBoard
+						{fen}
+						interactive={phase === 'ready'}
+						moveableColor="w"
+						{legalMoves}
+						{lastMove}
+						{checkSquare}
+						onmove={userMove}
+					/>
+				</div>
 				<div class="mt-2 flex items-center gap-2">
 					<button class="lab-btn" onclick={newGame}><RotateCcw size={13} /> New game</button>
 					{#if phase === 'thinking'}
