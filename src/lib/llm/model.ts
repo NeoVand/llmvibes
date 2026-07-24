@@ -153,6 +153,46 @@ export function forwardWithAttention(
 	return [nn.logSoftmax(logits, -1), attnPerLayer];
 }
 
+/**
+ * Single-sequence forward that ALSO returns the residual stream after every
+ * block: nLayer tensors of [S, nEmbd]. This is the surface a linear probe reads
+ * to test whether Rook's activations encode the board (the Othello-GPT /
+ * Karvonen experiment). Numerics mirror forwardLogprobs exactly. B=1; S is
+ * always cfg.blockSize; inference-only.
+ */
+export function forwardResiduals(
+	params: any,
+	cfg: ModelConfig,
+	tokenOH: any,
+	posOH: any
+): [any, any[]] {
+	const headDim = cfg.nEmbd / cfg.nHead;
+	let x = np.dot(tokenOH.reshape([-1, cfg.vocab]), params.wte);
+	const posEmb = np.dot(posOH.reshape([-1, cfg.blockSize]), params.wpe);
+	x = rmsnorm(x.add(posEmb));
+	const resPerLayer: any[] = [];
+	for (let li = 0; li < cfg.nLayer; li++) {
+		const layer = params.layers[li];
+		const xRes = x.ref;
+		x = rmsnorm(x);
+		const q = np.dot(x.ref, layer.wq);
+		const k = np.dot(x.ref, layer.wk);
+		const v = np.dot(x, layer.wv);
+		const qH = q.reshape([-1, cfg.blockSize, cfg.nHead, headDim]);
+		const kH = k.reshape([-1, cfg.blockSize, cfg.nHead, headDim]);
+		const vH = v.reshape([-1, cfg.blockSize, cfg.nHead, headDim]);
+		const attnOut = nn.dotProductAttention(qH, kH, vH, { isCausal: true });
+		x = np.dot(attnOut.reshape([-1, cfg.nEmbd]), layer.wo).add(xRes);
+		const mlpRes = x.ref;
+		x = rmsnorm(x);
+		x = nn.relu(np.dot(x, layer.mlpFc1));
+		x = np.dot(x, layer.mlpFc2).add(mlpRes);
+		resPerLayer.push(x.ref); // residual after this block: [S, nEmbd]
+	}
+	const logits = np.dot(x, params.lmHead);
+	return [nn.logSoftmax(logits, -1), resPerLayer];
+}
+
 /** Training loss: mean NLL over the batch. Consumes all three oneHot args. */
 export function lossFn(params: any, cfg: ModelConfig, tokenOH: any, posOH: any, targetOH: any) {
 	const logprobs = forwardLogprobs(params, cfg, cfg.blockSize, tokenOH, posOH);

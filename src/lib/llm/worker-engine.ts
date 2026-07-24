@@ -127,6 +127,29 @@ export class WorkerEngine implements LlmEngine {
 		await this.call('setlr', { lr });
 	}
 
+	/** Residual stream after each block for a token sequence. layers[li] is a
+	 * flat [seqLen · nEmbd] Float32Array (row-major by position). The surface a
+	 * linear probe reads to test whether the board is linearly decodable. */
+	async residuals(tokens: number[]): Promise<{
+		seqLen: number;
+		nEmbd: number;
+		nLayer: number;
+		layers: Float32Array[];
+	}> {
+		const r = await this.call<{
+			layers: ArrayBuffer[];
+			seqLen: number;
+			nEmbd: number;
+			nLayer: number;
+		}>('residual', { tokens: [...tokens] });
+		return {
+			seqLen: r.seqLen,
+			nEmbd: r.nEmbd,
+			nLayer: r.nLayer,
+			layers: r.layers.map((b) => new Float32Array(b))
+		};
+	}
+
 	/** Mean loss over fixed held-out batches (deterministic across calls). */
 	async valLoss(): Promise<number> {
 		const r = await this.call<{ valLoss: number }>('valloss');

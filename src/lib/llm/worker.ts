@@ -20,6 +20,7 @@ import {
 	lossFn,
 	forwardLogprobs,
 	forwardWithAttention,
+	forwardResiduals,
 	paramCount,
 	flattenParams,
 	loadParams,
@@ -48,6 +49,7 @@ let jitForward: any = null;
 let jitLoss: any = null;
 let jitGradNorms: any = null;
 let jitAttn: any = null;
+let jitResidual: any = null;
 let causalMask: any = null;
 let valStart = 0; // train windows come from [0, valStart); val from [valStart, end)
 let stepCounter = 0;
@@ -189,6 +191,7 @@ async function handleInit(req: RpcRequest) {
 	}
 	causalMask = np.array(mbuf).reshape([c.blockSize, c.blockSize]);
 	jitAttn = jit((p: any, a: any, b: any, m: any) => forwardWithAttention(p, c, a, b, m));
+	jitResidual = jit((p: any, a: any, b: any) => forwardResiduals(p, c, a, b));
 	// held-out tail: training samples from [0, valStart), validation from the rest
 	valStart = Math.floor(tokenData.length * 0.95);
 	const minVal = 4 * (c.blockSize + 1);
@@ -372,6 +375,31 @@ function handleAttention(req: RpcRequest) {
 	};
 }
 
+/** Residual stream after every block for a token sequence: nLayer buffers,
+ * each [seqLen · nEmbd] (sliced to the real length). The surface linear probes
+ * read to test whether the board is linearly decodable. Transferred. */
+function handleResidual(req: RpcRequest) {
+	const c = cfg!;
+	const S = c.blockSize;
+	const tokens = ((req.tokens as number[]) ?? []).slice(-S);
+	const seqLen = tokens.length;
+	const buf = new Int32Array(S);
+	for (let i = 0; i < seqLen; i++) buf[i] = tokens[i];
+	const inputIds = np.array(buf, { dtype: np.int32 }).reshape([1, S]);
+	const posIds = np.arange(S).astype(np.int32).reshape([1, S]);
+	const tokenOH = nn.oneHot(inputIds, c.vocab);
+	const posOH = nn.oneHot(posIds, c.blockSize);
+	const [logprobs, res] = jitResidual(tree.ref(params), tokenOH, posOH);
+	logprobs.dispose();
+	const layers: ArrayBuffer[] = [];
+	for (const r of res as any[]) {
+		const full = r.dataSync() as Float32Array; // [S · nEmbd]
+		const sliced = full.slice(0, seqLen * c.nEmbd); // real positions only
+		layers.push(sliced.buffer as ArrayBuffer);
+	}
+	return { layers, seqLen, nEmbd: c.nEmbd, nLayer: c.nLayer, __transfer: layers };
+}
+
 // ── dispatch ─────────────────────────────────────────────────────────────────
 const handlers: Record<string, (req: RpcRequest) => unknown | Promise<unknown>> = {
 	init: handleInit,
@@ -387,6 +415,7 @@ const handlers: Record<string, (req: RpcRequest) => unknown | Promise<unknown>> 
 	valloss: handleValLoss,
 	gradnorms: handleGradNorms,
 	attention: handleAttention,
+	residual: handleResidual,
 	setlr: handleSetLr,
 	dispose: () => {
 		if (params) disposeTree(params);
