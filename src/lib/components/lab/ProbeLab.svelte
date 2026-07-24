@@ -1,120 +1,100 @@
 <script lang="ts">
-	// Linear probes on Rook's residual stream — the Othello-GPT argument as an
-	// interactive illustration. Left: the TRUE occupancy of a mid-game position
-	// (closed Ruy Lopez). Middle: the residual stream h_ell at a layer you pick.
-	// Right: what a LINEAR readout W·h recovers — accuracy peaks mid-network,
-	// and flipping to an untrained model collapses it to chance. All error
-	// masks are precomputed with a seeded RNG so the panel is deterministic and
-	// honest about being an illustration, not a live probe.
-	import { Microscope } from 'lucide-svelte';
+	// Linear probes on Rook's residual stream — the Othello-GPT / Karvonen
+	// experiment, run for REAL on a flagship Rook we trained offline (see
+	// scripts/data/build-flagship-data.mjs + spikes/flagship/). Every number here
+	// is measured: a linear readout W·hℓ trained on the actual activations of a
+	// model that only ever saw move text, decoding each square as mine / theirs /
+	// empty (the Nanda frame). Accuracy climbs with depth and an untrained control
+	// stays flat — the board was built by training, not baked into the wiring.
+	import { onMount } from 'svelte';
+	import { Microscope, Loader2, Shuffle } from 'lucide-svelte';
 	import Formula from '../ui/Math.svelte';
 	import Slider from '../ui/Slider.svelte';
+	import { base } from '$app/paths';
 
-	function mulberry32(seed: number): () => number {
-		let a = seed >>> 0;
-		return () => {
-			a = (a + 0x6d2b79f5) | 0;
-			let t = Math.imul(a ^ (a >>> 15), 1 | a);
-			t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-			return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+	interface Probe {
+		config: {
+			nLayer: number;
+			nEmbd: number;
+			nHead: number;
+			params: number;
+			games: number;
+			trainMinutes: number;
+			valLoss: number;
 		};
+		baseline: number;
+		bestLayer: number;
+		layers: Array<{ trained: number; control: number }>;
+		perSquare: { trained: number[][]; control: number[][] };
+		examples: Array<{ ply: number; turn: string; trueOriented: number[]; predByLayer: number[][] }>;
 	}
 
-	// true occupancy after 8...O-O in a closed Ruy Lopez (rank 8 → rank 1)
-	// '.' empty · 'w' white piece · 'b' black piece
-	const ROWS = [
-		'b.bb.bb.',
-		'..b.bbbb',
-		'b.bb.b..',
-		'.b..b...',
-		'....w...',
-		'.ww..w..',
-		'ww.w.www',
-		'wwwww.w.'
-	];
-	const TRUE_BOARD: number[] = ROWS.join('')
-		.split('')
-		.map((c) => (c === 'w' ? 1 : c === 'b' ? 2 : 0));
-
-	const N_LAYERS = 8;
-	// wrong-square counts per layer → accuracies ~55/59/78/92/97/95/91/84%
-	const WRONG_TRAINED = [29, 26, 14, 5, 2, 3, 6, 10];
-	// untrained model: ~33% = 3-way chance
-	const WRONG_UNTRAINED = [43, 42, 44, 43, 42, 43, 44, 43];
-
-	function makePred(wrong: number, seed: number): number[] {
-		const rand = mulberry32(seed);
-		const idx = Array.from({ length: 64 }, (_, i) => i);
-		for (let i = 63; i > 0; i--) {
-			const j = Math.floor(rand() * (i + 1));
-			[idx[i], idx[j]] = [idx[j], idx[i]];
-		}
-		const pred = [...TRUE_BOARD];
-		for (let k = 0; k < wrong; k++) {
-			const s = idx[k];
-			pred[s] = (TRUE_BOARD[s] + 1 + (rand() < 0.5 ? 1 : 0)) % 3;
-		}
-		return pred;
-	}
-
-	const PRED_TRAINED = WRONG_TRAINED.map((w, l) =>
-		makePred(w, 0x600d ^ Math.imul(l + 1, 2654435761))
-	);
-	const PRED_UNTRAINED = WRONG_UNTRAINED.map((w, l) =>
-		makePred(w, 0xbad ^ Math.imul(l + 1, 2654435761))
-	);
-	const correctOf = (pred: number[]) =>
-		pred.reduce((a, p, i) => a + (p === TRUE_BOARD[i] ? 1 : 0), 0);
-	const ACC_TRAINED = PRED_TRAINED.map(correctOf); // counts out of 64
-	const ACC_UNTRAINED = PRED_UNTRAINED.map(correctOf);
-
-	// residual stream bars: deterministic per (mode, layer). Note they look
-	// equally "busy" either way — the difference is what's linearly READABLE.
-	const DIMS = 25;
-	const STREAM = [0x51ab, 0x7e57].map((base) =>
-		Array.from({ length: N_LAYERS }, (_, l) => {
-			const rand = mulberry32(base ^ Math.imul(l + 1, 40503));
-			return Array.from({ length: DIMS }, () => 0.12 + 0.88 * rand());
-		})
-	);
-
-	let layer = $state(5);
+	let data = $state<Probe | null>(null);
+	let error = $state('');
+	let layer = $state(5); // 0-indexed
 	let untrained = $state(false);
+	let exampleI = $state(0);
 
-	const li = $derived(layer - 1);
-	const pred = $derived(untrained ? PRED_UNTRAINED[li] : PRED_TRAINED[li]);
-	const correct = $derived(untrained ? ACC_UNTRAINED[li] : ACC_TRAINED[li]);
-	const accPct = $derived(((correct / 64) * 100).toFixed(1));
-	const stream = $derived(STREAM[untrained ? 1 : 0][li]);
-	const curve = $derived(untrained ? ACC_UNTRAINED : ACC_TRAINED);
-	const ghostCurve = $derived(untrained ? ACC_TRAINED : ACC_UNTRAINED);
+	onMount(async () => {
+		try {
+			const res = await fetch(`${base}/data/rook-probe.json`);
+			if (!res.ok) throw new Error(`fetch failed: ${res.status}`);
+			data = (await res.json()) as Probe;
+			layer = data.bestLayer;
+		} catch (e) {
+			error = e instanceof Error ? e.message : String(e);
+		}
+	});
 
-	// ── board geometry (SVG user units; renders ≈26px cells) ──
+	const nLayer = $derived(data?.config.nLayer ?? 6);
+	const ex = $derived(data?.examples[exampleI] ?? null);
+	const pred = $derived(ex?.predByLayer[layer] ?? null);
+	const heat = $derived(data ? data.perSquare[untrained ? 'control' : 'trained'][layer] : null);
+	const exAcc = $derived.by(() => {
+		if (!ex || !pred) return 0;
+		let c = 0;
+		for (let i = 0; i < 64; i++) if (pred[i] === ex.trueOriented[i]) c++;
+		return c;
+	});
+
+	// ── board geometry: oriented so the side-to-move's near rank is at the bottom.
+	// data index 0 = mover's rank 1; grid position 0 = top-left.
 	const CELL = 40;
-	const BX = 24; // board origin
+	const BX = 24;
 	const BY = 6;
-	const BV = 350; // viewBox size
-	const sqX = (i: number) => BX + (i % 8) * CELL;
-	const sqY = (i: number) => BY + Math.floor(i / 8) * CELL;
-	const FILES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+	const BV = 350;
+	const gx = (g: number) => BX + (g % 8) * CELL;
+	const gy = (g: number) => BY + Math.floor(g / 8) * CELL;
+	const dataIdx = (g: number) => (7 - Math.floor(g / 8)) * 8 + (g % 8);
+	const grid = Array.from({ length: 64 }, (_, g) => g);
 
-	const FILL = [
+	const OCC = [
 		'var(--color-bg-tertiary)',
-		'color-mix(in srgb, #d9a441 42%, var(--color-surface))',
-		'color-mix(in srgb, #6d5fae 55%, var(--color-surface))'
+		'color-mix(in srgb, #d9a441 45%, var(--color-surface))', // mine
+		'color-mix(in srgb, #6d5fae 58%, var(--color-surface))' // theirs
 	];
+	function heatFill(acc: number): string {
+		const t = Math.max(0, Math.min(1, (acc - 0.5) / 0.45));
+		return `color-mix(in srgb, var(--color-important) ${(t * 92).toFixed(0)}%, var(--color-surface))`;
+	}
 
-	// ── accuracy chart geometry ──
+	// ── depth-curve geometry ──
 	const CW = 520;
 	const CH = 190;
-	const CM = { top: 14, right: 18, bottom: 32, left: 44 };
+	const CM = { top: 14, right: 18, bottom: 30, left: 42 };
 	const cpw = CW - CM.left - CM.right;
 	const cph = CH - CM.top - CM.bottom;
-	const chX = (l: number) => CM.left + ((l - 1) / (N_LAYERS - 1)) * cpw;
-	const chY = (count: number) => CM.top + (1 - count / 64) * cph;
-	const linePts = (c: number[]) => c.map((v, l) => `${chX(l + 1)},${chY(v)}`).join(' ');
+	const Y0 = 0.55;
+	const Y1 = 0.85;
+	const cx = (l: number) => CM.left + (nLayer <= 1 ? 0 : (l / (nLayer - 1)) * cpw);
+	const cy = (a: number) => CM.top + (1 - (a - Y0) / (Y1 - Y0)) * cph;
+	const linePts = (key: 'trained' | 'control') =>
+		data ? data.layers.map((v, l) => `${cx(l)},${cy(v[key])}`).join(' ') : '';
 
 	const TEX = String.raw`\hat{s}_{\text{sq}} \;=\; W_{\text{probe}}\, h_{\ell}`;
+	function fmtM(n: number): string {
+		return `${(n / 1e6).toFixed(1)}M`;
+	}
 </script>
 
 <div
@@ -127,277 +107,276 @@
 			style="color: var(--color-important); font-family: var(--font-heading); letter-spacing: 0.08em;"
 		>
 			<Microscope size={16} strokeWidth={2.5} />
-			<span>Linear probes — is the board in there?</span>
+			<span>Linear probes — the board Rook built</span>
 		</div>
-		<span class="illus-chip">illustration</span>
+		<span class="measured-chip">measured · flagship Rook</span>
 	</div>
 	<p class="mb-4 text-xs" style="color: var(--color-text-muted);">
-		Rook only ever sees move text — nobody gives it a board. Train a <em>linear</em> readout on its residual
-		stream and ask each square "empty, white, or black?". Slide through the layers and watch where the
-		board lives.
+		Rook only ever saw move text — nobody gave it a board. We trained a <em>linear</em> readout on
+		its residual stream to decode every square as
+		<span style="color: #d9a441;">mine</span>, <span style="color: #8b7ed0;">theirs</span>, or empty
+		(from the side-to-move's view). It works — and where it works, and how well, is the whole story.
 	</p>
 
-	<div class="grid gap-x-5 gap-y-6 @[620px]:grid-cols-[1fr_170px_1fr]">
-		<!-- ── left: the true board ── -->
-		<div class="min-w-0">
-			<div class="panel-label mb-1">true occupancy — Rook's game, move 9</div>
-			<svg
-				viewBox="0 0 {BV} {BV}"
-				class="board"
-				role="img"
-				aria-label="True board occupancy of a mid-game chess position"
+	{#if error}
+		<p class="text-sm" style="color: var(--color-challenge);">
+			couldn't load the probe run: {error}
+		</p>
+	{:else if !data || !ex || !pred || !heat}
+		<div class="flex items-center gap-2 py-6 text-sm" style="color: var(--color-text-secondary);">
+			<Loader2 size={16} class="animate-spin" /> loading the measured probe run…
+		</div>
+	{:else}
+		<!-- ── ROW A: watch the trained model decode a real position ── -->
+		<div class="mb-2 flex items-baseline justify-between gap-2">
+			<span class="panel-label">the trained Rook decoding a held-out position</span>
+			<button
+				class="mini-btn"
+				onclick={() => data && (exampleI = (exampleI + 1) % data.examples.length)}
 			>
-				{#each TRUE_BOARD as cls, i (i)}
-					<rect
-						x={sqX(i) + 1}
-						y={sqY(i) + 1}
-						width={CELL - 2}
-						height={CELL - 2}
-						rx="4"
-						fill={FILL[cls]}
+				<Shuffle size={11} /> another position
+			</button>
+		</div>
+		<div class="grid gap-x-5 gap-y-4 @[560px]:grid-cols-2">
+			<!-- true board -->
+			<div class="min-w-0">
+				<div class="sub-label mb-1">true board (mover's view)</div>
+				<svg viewBox="0 0 {BV} {BV}" class="board" role="img" aria-label="true board occupancy">
+					{#each grid as g (g)}
+						{@const cls = ex.trueOriented[dataIdx(g)]}
+						<rect
+							x={gx(g) + 1}
+							y={gy(g) + 1}
+							width={CELL - 2}
+							height={CELL - 2}
+							rx="4"
+							fill={OCC[cls]}
+						/>
+						{#if cls > 0}
+							<circle
+								cx={gx(g) + 20}
+								cy={gy(g) + 20}
+								r="8.5"
+								fill={cls === 1 ? '#f7f2e2' : '#2b2450'}
+								stroke={cls === 1 ? '#8a6d1f' : '#0b0820'}
+								stroke-width="1.5"
+							/>
+						{/if}
+					{/each}
+				</svg>
+			</div>
+			<!-- reconstruction at layer L -->
+			<div class="min-w-0">
+				<div class="sub-label mb-1" style="color: var(--color-important);">
+					probe readout at layer {layer + 1} ·
+					<span style="font-family: var(--font-mono);">{exAcc}/64 right</span>
+				</div>
+				<svg viewBox="0 0 {BV} {BV}" class="board" role="img" aria-label="probe-decoded board">
+					{#each grid as g (g)}
+						{@const di = dataIdx(g)}
+						{@const cls = pred[di]}
+						<rect
+							x={gx(g) + 1}
+							y={gy(g) + 1}
+							width={CELL - 2}
+							height={CELL - 2}
+							rx="4"
+							fill={OCC[cls]}
+						/>
+						{#if cls > 0}
+							<circle
+								cx={gx(g) + 20}
+								cy={gy(g) + 20}
+								r="8.5"
+								fill={cls === 1 ? '#f7f2e2' : '#2b2450'}
+								stroke={cls === 1 ? '#8a6d1f' : '#0b0820'}
+								stroke-width="1.5"
+							/>
+						{/if}
+						{#if cls !== ex.trueOriented[di]}
+							<rect
+								x={gx(g) + 3}
+								y={gy(g) + 3}
+								width={CELL - 6}
+								height={CELL - 6}
+								rx="3"
+								fill="none"
+								stroke="var(--color-challenge)"
+								stroke-width="2.5"
+							/>
+						{/if}
+					{/each}
+				</svg>
+			</div>
+		</div>
+		<div class="mt-3 max-w-[520px]">
+			<Slider
+				label="read the stream at layer"
+				bind:value={layer}
+				min={0}
+				max={nLayer - 1}
+				step={1}
+				tone="violet"
+				format={(v) => `ℓ = ${v + 1} of ${nLayer}`}
+				hint="drag deeper and the reconstruction sharpens — the board is built up layer by layer"
+			/>
+		</div>
+
+		<!-- ── ROW B: per-square accuracy heatmap + depth curve ── -->
+		<div class="mt-6 grid gap-x-5 gap-y-5 @[620px]:grid-cols-[300px_1fr]">
+			<!-- heatmap board -->
+			<div class="min-w-0">
+				<div class="panel-label mb-1">
+					where the board lives — per-square accuracy, layer {layer + 1}
+				</div>
+				<svg
+					viewBox="0 0 {BV} {BV}"
+					class="board"
+					role="img"
+					aria-label="per-square probe accuracy heatmap"
+				>
+					{#each grid as g (g)}
+						{@const acc = heat[dataIdx(g)]}
+						<rect
+							x={gx(g) + 1}
+							y={gy(g) + 1}
+							width={CELL - 2}
+							height={CELL - 2}
+							rx="4"
+							fill={heatFill(acc)}
+						/>
+						<text x={gx(g) + 20} y={gy(g) + 24} text-anchor="middle" class="heatnum"
+							>{Math.round(acc * 100)}</text
+						>
+					{/each}
+				</svg>
+				<p class="mt-1 text-[10.5px]" style="color: var(--color-text-muted);">
+					the mover's own ranks (bottom) read near-perfectly; the far side is fuzzier — exactly what
+					a next-move predictor needs most.
+				</p>
+			</div>
+
+			<!-- depth curve -->
+			<div class="min-w-0">
+				<div class="panel-label mb-1">accuracy vs depth — trained vs an untrained control</div>
+				<svg viewBox="0 0 {CW} {CH}" class="chart" role="img" aria-label="probe accuracy per layer">
+					{#each [0.6, 0.7, 0.8] as g (g)}
+						<line
+							x1={CM.left}
+							y1={cy(g)}
+							x2={CM.left + cpw}
+							y2={cy(g)}
+							stroke="var(--color-border-light)"
+						/>
+						<text class="tick" x={CM.left - 5} y={cy(g) + 3} text-anchor="end"
+							>{(g * 100).toFixed(0)}%</text
+						>
+					{/each}
+					<!-- baseline (guess 'empty') -->
+					<line
+						x1={CM.left}
+						y1={cy(data.baseline)}
+						x2={CM.left + cpw}
+						y2={cy(data.baseline)}
+						stroke="var(--color-text-muted)"
+						stroke-dasharray="4 4"
+						opacity="0.6"
 					/>
-					{#if cls === 1}
+					<text
+						class="tick"
+						x={CM.left + cpw}
+						y={cy(data.baseline) - 4}
+						text-anchor="end"
+						fill="var(--color-text-muted)">guess "empty" ({(data.baseline * 100).toFixed(0)}%)</text
+					>
+					<!-- control (flat) -->
+					<polyline
+						points={linePts('control')}
+						fill="none"
+						stroke="var(--color-text-muted)"
+						stroke-width="2"
+						stroke-dasharray="3 4"
+						opacity="0.7"
+					/>
+					<!-- trained (rising) -->
+					<polyline
+						points={linePts('trained')}
+						fill="none"
+						stroke="#a855f7"
+						stroke-width="2.6"
+						stroke-linejoin="round"
+					/>
+					<line
+						x1={cx(layer)}
+						y1={CM.top}
+						x2={cx(layer)}
+						y2={CM.top + cph}
+						stroke="#a855f7"
+						stroke-dasharray="3 3"
+						opacity="0.5"
+					/>
+					{#each data.layers as v, l (l)}
 						<circle
-							cx={sqX(i) + 20}
-							cy={sqY(i) + 20}
-							r="9"
-							fill="#f7f2e2"
-							stroke="#8a6d1f"
-							stroke-width="1.5"
+							cx={cx(l)}
+							cy={cy(v.trained)}
+							r={l === layer ? 5.5 : 3}
+							fill={l === layer ? '#a855f7' : 'var(--color-surface)'}
+							stroke="#a855f7"
+							stroke-width="2"
 						/>
-					{:else if cls === 2}
-						<circle
-							cx={sqX(i) + 20}
-							cy={sqY(i) + 20}
-							r="9"
-							fill="#262040"
-							stroke="#0b0820"
-							stroke-width="1.5"
-						/>
-					{/if}
-				{/each}
-				{#each FILES as f, j (f)}
-					<text class="coord" x={BX + j * CELL + 20} y="342" text-anchor="middle">{f}</text>
-					<text class="coord" x="11" y={BY + j * CELL + 24} text-anchor="middle">{8 - j}</text>
-				{/each}
-			</svg>
-			<div class="mt-1 flex flex-wrap gap-x-3 gap-y-1">
-				<span class="legend"><span class="sw" style="background: {FILL[0]};"></span>empty</span>
-				<span class="legend"
-					><span class="sw" style="background: {FILL[1]};"></span>white piece</span
-				>
-				<span class="legend"
-					><span class="sw" style="background: {FILL[2]};"></span>black piece</span
-				>
+						<text class="tick" x={cx(l)} y={CH - 9} text-anchor="middle">{l + 1}</text>
+					{/each}
+					<text
+						class="serieslbl"
+						x={cx(nLayer - 1)}
+						y={cy(data.layers[nLayer - 1].trained) - 9}
+						text-anchor="end"
+						fill="#a855f7">trained</text
+					>
+					<text
+						class="serieslbl"
+						x={cx(nLayer - 1)}
+						y={cy(data.layers[nLayer - 1].control) + 15}
+						text-anchor="end"
+						fill="var(--color-text-muted)">untrained</text
+					>
+				</svg>
+				<p class="mt-1 text-[11px]" style="color: var(--color-text-secondary);">
+					The trained model's board gets <em>more</em> readable the deeper you look — it's
+					constructed, layer by layer. The same architecture with random weights (dashed) is flat:
+					<strong style="color: var(--color-text);">training put the board there.</strong>
+				</p>
 			</div>
 		</div>
 
-		<!-- ── middle: the residual stream + layer dial ── -->
-		<div class="min-w-0">
-			<div class="panel-label mb-1">residual stream h<sub>ℓ</sub></div>
-			<svg
-				viewBox="0 0 130 337"
-				class="stream"
-				role="img"
-				aria-label="Residual stream activations at the selected layer"
-			>
-				{#each stream as v, i (i)}
-					<rect
-						x="4"
-						y={4 + i * 13}
-						width={4 + v * 120}
-						height="9"
-						rx="2"
-						fill="#d9a441"
-						opacity={0.45 + 0.55 * v}
-					/>
-				{/each}
-			</svg>
-			<div class="mt-2">
-				<Slider
-					label="probe layer"
-					bind:value={layer}
-					min={1}
-					max={8}
-					step={1}
-					tone="violet"
-					format={(v) => `ℓ = ${v}`}
-					hint="where in the network you read the stream"
-				/>
-			</div>
-			<p class="mt-2 text-[10.5px]" style="color: var(--color-text-muted);">
-				the bars look equally busy at every layer — the question is what a linear map can
-				<em>read</em> out of them
+		<!-- formula + claim -->
+		<div
+			class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 rounded-lg border p-4"
+			style="border-color: var(--color-border-light);"
+		>
+			<div class="shrink-0"><Formula tex={TEX} display /></div>
+			<p class="min-w-[240px] flex-1 text-[11px]" style="color: var(--color-text-secondary);">
+				<strong style="color: var(--color-important);">W<sub>probe</sub> is one linear map</strong>
+				— no hidden layers, no computation of its own. That it can read a square off h<sub>ℓ</sub> means
+				the board is already sitting in the stream as directions. Rook was only ever graded on next-move
+				text; nobody put a board in there.
 			</p>
 		</div>
 
-		<!-- ── right: the probe's reconstruction ── -->
-		<div class="min-w-0">
-			<div class="panel-label mb-1" style="color: var(--color-important);">
-				probe readout W·h<sub>ℓ</sub> — {untrained ? 'untrained model' : `layer ${layer}`}
-			</div>
-			<svg
-				viewBox="0 0 {BV} {BV}"
-				class="board"
-				role="img"
-				aria-label="Board occupancy reconstructed by the linear probe"
+		<p class="footnote mt-4">
+			Real result, not an illustration. Flagship Rook — {fmtM(data.config.params)} parameters,
+			{data.config.nLayer} layers — trained from scratch for {data.config.trainMinutes} minutes on
+			{(data.config.games / 1000).toFixed(0)}k random-legal games (val loss {data.config.valLoss}),
+			then probed on held-out games. Best layer decodes the board at
+			<strong style="color: var(--color-important);"
+				>{(data.layers[data.bestLayer].trained * 100).toFixed(1)}%</strong
 			>
-				{#each pred as cls, i (i)}
-					<rect
-						x={sqX(i) + 1}
-						y={sqY(i) + 1}
-						width={CELL - 2}
-						height={CELL - 2}
-						rx="4"
-						fill={FILL[cls]}
-					/>
-					{#if cls !== TRUE_BOARD[i]}
-						<rect
-							x={sqX(i) + 3}
-							y={sqY(i) + 3}
-							width={CELL - 6}
-							height={CELL - 6}
-							rx="3"
-							fill="none"
-							stroke="var(--color-challenge)"
-							stroke-width="2.5"
-						/>
-					{/if}
-				{/each}
-				{#each FILES as f, j (f)}
-					<text class="coord" x={BX + j * CELL + 20} y="342" text-anchor="middle">{f}</text>
-					<text class="coord" x="11" y={BY + j * CELL + 24} text-anchor="middle">{8 - j}</text>
-				{/each}
-			</svg>
-			<div class="mt-1 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-				<span class="legend"><span class="ring"></span>probe wrong</span>
-				<span
-					class="acc"
-					style="color: {untrained ? 'var(--color-challenge)' : 'var(--color-important)'};"
-					>{accPct}% ({correct}/64)</span
-				>
-			</div>
-			<button
-				class="toggle mt-2"
-				class:on={untrained}
-				aria-pressed={untrained}
-				onclick={() => (untrained = !untrained)}
-			>
-				<span class="dot"></span> probe an untrained model
-			</button>
-		</div>
-	</div>
-
-	<!-- ── accuracy vs layer (full-width band) ── -->
-	<div class="mt-6">
-		<div class="panel-label mb-1">where does the board live? — probe accuracy vs layer</div>
-		<svg
-			viewBox="0 0 {CW} {CH}"
-			class="chart"
-			role="img"
-			aria-label="Line chart of probe accuracy per layer with the current layer highlighted"
-		>
-			{#each [64, 32] as g (g)}
-				<line
-					x1={CM.left}
-					y1={chY(g)}
-					x2={CM.left + cpw}
-					y2={chY(g)}
-					stroke="var(--color-border-light)"
-				/>
-				<text class="tick" x={CM.left - 5} y={chY(g) + 3} text-anchor="end"
-					>{Math.round((g / 64) * 100)}%</text
-				>
-			{/each}
-			<!-- chance line: 3 classes → 33% -->
-			<line
-				x1={CM.left}
-				y1={chY(64 / 3)}
-				x2={CM.left + cpw}
-				y2={chY(64 / 3)}
-				stroke="var(--color-challenge)"
-				stroke-dasharray="4 4"
-				opacity="0.55"
-			/>
-			<text
-				class="tick"
-				x={CM.left - 5}
-				y={chY(64 / 3) + 3}
-				text-anchor="end"
-				fill="var(--color-challenge)">33%</text
-			>
-			<text class="chance" x={CM.left + cpw} y={chY(64 / 3) - 5} text-anchor="end"
-				>chance (3 classes)</text
-			>
-
-			<!-- ghost of the other mode, for contrast -->
-			<polyline
-				points={linePts(ghostCurve)}
-				fill="none"
-				stroke="var(--color-text-muted)"
-				stroke-width="1.5"
-				stroke-dasharray="3 4"
-				opacity="0.45"
-			/>
-			<!-- active curve -->
-			<polyline
-				points={linePts(curve)}
-				fill="none"
-				stroke="#a855f7"
-				stroke-width="2.5"
-				stroke-linejoin="round"
-			/>
-			<line
-				x1={chX(layer)}
-				y1={CM.top}
-				x2={chX(layer)}
-				y2={CM.top + cph}
-				stroke="#a855f7"
-				stroke-dasharray="3 3"
-				opacity="0.5"
-			/>
-			{#each curve as v, l (l)}
-				<circle
-					cx={chX(l + 1)}
-					cy={chY(v)}
-					r={l + 1 === layer ? 5.5 : 3}
-					fill={l + 1 === layer ? '#a855f7' : 'var(--color-surface)'}
-					stroke="#a855f7"
-					stroke-width="2"
-				/>
-				<text class="tick" x={chX(l + 1)} y={CH - 10} text-anchor="middle">{l + 1}</text>
-			{/each}
-		</svg>
-		<p class="mt-2 text-[11px]" style="color: var(--color-text-secondary);">
-			{#if untrained}
-				Flat at chance. Same architecture, same probe recipe, no training — the board-reading only
-				exists because prediction pressure built it.
-			{:else}
-				Accuracy peaks mid-network: early layers still carry surface move-text features, late layers
-				rotate toward picking the next move — the cleanest board sits in the middle.
-			{/if}
+			per square, vs {(data.baseline * 100).toFixed(1)}% for guessing "empty" and
+			{(data.layers[data.bestLayer].control * 100).toFixed(1)}% for the untrained control. Not the
+			~99% of Karvonen's million-game chess-GPT (Li et al. 2023 · Karvonen 2024) — but the same
+			emergent board, reproduced on a laptop.
 		</p>
-	</div>
-
-	<!-- ── the formula and the claim (full-width band) ── -->
-	<div
-		class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 rounded-lg border p-4"
-		style="border-color: var(--color-border-light);"
-	>
-		<div class="shrink-0"><Formula tex={TEX} display /></div>
-		<p class="min-w-[240px] flex-1 text-[11px]" style="color: var(--color-text-secondary);">
-			<strong style="color: var(--color-important);">W<sub>probe</sub> is one linear map</strong>
-			— no hidden layers, no computation of its own. If it can read a square off h<sub>ℓ</sub>, the
-			board state must already be sitting in the stream as directions. Rook was only ever graded on
-			next-move text; nobody put a board in there.
-		</p>
-	</div>
-
-	<p class="footnote mt-4">
-		Illustration only: the numbers above are drawn to match the shape of the Othello-GPT result (Li
-		et al., 2023), transposed to Rook. Training real linear probes on Rook's own activations is a
-		planned lab later in the course.
-	</p>
+	{/if}
 </div>
 
 <style>
@@ -408,111 +387,64 @@
 		letter-spacing: 0.05em;
 		color: var(--color-text-secondary);
 	}
+	.sub-label {
+		font-family: var(--font-mono);
+		font-size: 10.5px;
+		color: var(--color-text-muted);
+	}
 	.board {
 		width: 100%;
-		max-width: 320px;
-		margin-inline: auto;
-		display: block;
-	}
-	.stream {
-		width: 100%;
-		max-width: 120px;
+		max-width: 300px;
 		margin-inline: auto;
 		display: block;
 	}
 	.chart {
 		width: 100%;
-		max-width: 680px;
-		margin-inline: auto;
+		max-width: 640px;
 		display: block;
 	}
-	.coord {
-		fill: var(--color-text-muted);
+	.heatnum {
+		fill: var(--color-text);
 		font-family: var(--font-mono);
 		font-size: 12px;
+		opacity: 0.75;
 	}
 	.tick {
 		fill: var(--color-text-muted);
 		font-family: var(--font-mono);
 		font-size: 11px;
 	}
-	.chance {
-		fill: var(--color-challenge);
-		font-size: 11px;
-		opacity: 0.8;
-	}
-
-	.legend {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
-		font-size: 10.5px;
-		color: var(--color-text-muted);
-	}
-	.sw {
-		width: 10px;
-		height: 10px;
-		border-radius: 3px;
-		border: 1px solid var(--color-border);
-	}
-	.ring {
-		width: 10px;
-		height: 10px;
-		border-radius: 3px;
-		border: 2px solid var(--color-challenge);
-	}
-	.acc {
-		font-family: var(--font-mono);
+	.serieslbl {
+		font-family: var(--font-heading);
 		font-size: 12px;
 		font-weight: 700;
 	}
-
-	.toggle {
+	.mini-btn {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.45rem;
+		gap: 0.3rem;
 		border: 1px solid var(--color-border);
-		border-radius: 999px;
-		padding: 0.25rem 0.7rem;
+		border-radius: 0.4rem;
+		padding: 0.15rem 0.55rem;
 		font-size: 11px;
 		font-weight: 600;
 		color: var(--color-text-secondary);
 		background: transparent;
 		cursor: pointer;
-		transition:
-			border-color 120ms ease,
-			background 120ms ease;
 	}
-	.toggle:hover {
-		border-color: var(--color-challenge);
+	.mini-btn:hover {
+		border-color: var(--color-important);
 	}
-	.toggle .dot {
-		width: 8px;
-		height: 8px;
-		border-radius: 999px;
-		background: var(--color-border);
-		transition: background 120ms ease;
-	}
-	.toggle.on {
-		border-color: var(--color-challenge);
-		background: color-mix(in srgb, var(--color-challenge) 9%, transparent);
-		color: var(--color-challenge);
-	}
-	.toggle.on .dot {
-		background: var(--color-challenge);
-	}
-
-	.illus-chip {
-		border: 1px solid var(--color-border);
+	.measured-chip {
+		border: 1px solid color-mix(in srgb, var(--color-tip) 40%, var(--color-border));
 		border-radius: 999px;
 		padding: 0.1rem 0.55rem;
 		font-family: var(--font-mono);
 		font-size: 10px;
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
-		color: var(--color-text-muted);
+		color: var(--color-tip);
 	}
-
 	.footnote {
 		border-top: 1px solid var(--color-border-light);
 		padding-top: 0.6rem;

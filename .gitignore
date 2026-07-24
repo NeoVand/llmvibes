@@ -27,3 +27,11 @@ test-results
 # Spike artifacts
 spikes/m0/parity/.venv
 spikes/m0/parity/fixture.json
+
+# Flagship offline training artifacts (regenerable; too big to commit)
+spikes/flagship/*.bin
+spikes/flagship/*-tokens.bin
+spikes/flagship/rook-flagship-probe.json
+spikes/flagship/rook-flagship-vocab.json
+spikes/flagship/probe-results.json
+__pycache__/

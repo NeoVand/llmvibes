@@ -33,9 +33,11 @@
 		</p>
 
 		<Callout type="note" title="Hands-on">
-			Probing and patching labs on your own Rook arrive with the flagship milestone — they need the
-			bigger offline-trained model to be worth dissecting. This chapter teaches the published
-			science those labs will reproduce, so read it as the lab manual for an experiment you'll run.
+			The linear-probe lab in 6.1 is <strong>live and real</strong> — a flagship Rook we trained
+			from scratch offline, then probed square by square on your screen. Activation patching (6.2) —
+			reaching in to <em>edit</em> its board mid-forward-pass — still needs a hooked forward pass and
+			arrives with a later engine milestone; read that section as the manual for the experiment you'll
+			run next.
 		</Callout>
 
 		<p class="mb-8 text-[15px] leading-relaxed" style="color: var(--color-text-secondary);">
@@ -123,8 +125,10 @@
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				The explorer below walks the whole argument: slide through the layers to see where the board
-				is most readable, then flip to the untrained control and watch the readability vanish.
+				And you don't have to take the published papers' word for it — the explorer below is our own
+				Rook. We trained a flagship on 100,000 random-legal games, then trained real linear probes
+				on its actual activations. Slide through the layers to watch the board sharpen, and compare
+				the trained model to an untrained control:
 			</p>
 
 			<ProbeLab />
@@ -146,11 +150,12 @@
 				to try. The model owes you nothing about <em>your</em> ontology.
 			</p>
 
-			<Callout type="note" title="Rook's turn comes later">
-				These published results are on other people's models. Rook's UCI move tokens make it an
-				unusually clean probing target — every single token defines a complete board state to
-				predict. Probe training on flagship Rook, square by square on your screen, ships with the
-				flagship milestone.
+			<Callout type="note" title="This is the frame the probe above uses">
+				That mine/theirs reframing isn't just history — it's exactly what the lab above decodes:
+				every square relative to whoever moves next, re-oriented each ply. It's why a plain linear
+				readout recovers the board at all, and why the heatmap's hot squares sit on the mover's own
+				side. Karvonen's million-game models hit ~99% this way; our laptop-scale flagship reaches
+				the low 80s — same phenomenon, smaller budget.
 			</Callout>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -290,8 +295,9 @@
 				model the world or just interpolate an enormous bag of heuristics?" is <em>the</em>
 				argument people are having about the model you talked to this morning — usually with vibes for
 				evidence. Rook is small enough to settle pieces of it with experiments you can run: probe, patch,
-				and test the edge cases where the two stories come apart. When the flagship lab lands, you'll
-				do all three — and you'll have earned an opinion.
+				and test the edge cases where the two stories come apart. You've just done the first — probing
+				a real flagship Rook and watching its board light up; patching and the edge-case tests arrive
+				with the hooked-forward-pass lab, and then you'll have earned an opinion.
 			</p>
 
 			<VibeBox
