@@ -16,11 +16,11 @@
 		height?: string;
 	} = $props();
 
-	let code = $state('');
-	$effect.pre(() => {
-		// initialize once from the prop (edits shouldn't be clobbered by HMR reruns)
-		if (code === '') code = initialCode.replace(/^\n+/, '').trimEnd();
-	});
+	// Initialize synchronously so the highlight layer has content at first render.
+	// (Initializing inside an effect left the prerendered {@html} empty and it
+	// never re-patched on hydration — the editor rendered blank.)
+	// svelte-ignore state_referenced_locally
+	let code = $state(initialCode.replace(/^\n+/, '').trimEnd());
 
 	type Entry = { kind: 'log' | 'error' | 'note'; text: string };
 	let outputs = $state<Entry[]>([]);
