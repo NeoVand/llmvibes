@@ -17,3 +17,6 @@ bun.lockb
 
 # A git worktree checked out under .claude/ is a second copy of the repo
 .claude/
+
+# Offline spike/experiment artifacts (not shipped source)
+spikes/
