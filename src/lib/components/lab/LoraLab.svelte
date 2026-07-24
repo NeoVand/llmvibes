@@ -34,29 +34,106 @@
 	const pct = $derived((loraParams / fullParams) * 100);
 	const pctLabel = $derived(pct >= 99.95 ? '100' : pct >= 1 ? pct.toFixed(1) : pct.toFixed(2));
 
-	// ── geometry: W drawn at 140 SVG units = d; r scales relative to d ──
-	const DPX = 140;
-	const rpxTrue = $derived((DPX * r) / d);
-	const rpx = $derived(Math.max(3, rpxTrue));
-	const rClamped = $derived(rpxTrue < 3);
+	// ── geometry: every matrix is a pixel field. d ↦ a fixed GRID×GRID downsample
+	// so 768² never emits 590k rects; r shows directly as A's columns / B's rows. ──
+	const DPX = 140; // the d×d block edge, in SVG units
+	const GRID = 24; // d ↦ 24 cells per side (576 cells, capped ≤ 600)
+	const P = DPX / GRID; // shared cell pitch — A/B cells match W's size exactly
+	const rpxTrue = $derived((DPX * r) / d); // the true-to-scale adapter width
+	const rClamped = $derived(rpxTrue < P); // true width is thinner than one cell
+	// A/B expose the rank as pixels: r columns (A) / r rows (B), capped at 12.
+	const rbCells = $derived(Math.max(1, Math.min(r, 12)));
+	const aW = $derived(rbCells * P); // A: tall-thin, width grows with r
+	const aX = $derived(365 - aW / 2); // centred on the bypass lane
+	const bH = $derived(rbCells * P); // B: thin-wide, height grows with r
+	const bY = $derived(290 - bH / 2);
 
 	function fmtInt(n: number): string {
 		return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 	}
 
-	// rank-r stripes for the merged view: r diagonal directions inside a d×d block
-	function stripesFor(count: number, x0: number, y0: number) {
-		return Array.from({ length: count }, (_, i) => {
-			const c = ((i + 0.5) / count) * 2 * DPX; // 0..2·DPX across the anti-diagonal
-			const xa = Math.min(c, DPX);
-			const ya = c - xa;
-			const xb = Math.max(0, c - DPX);
-			const yb = Math.min(c, DPX);
-			return { x1: x0 + xa, y1: y0 + ya, x2: x0 + xb, y2: y0 + yb };
-		});
+	// ── deterministic pixel textures — no Math.random at render ──
+	// integer hash (xxHash-flavoured) → [0,1); pure, so cells are stable per (row,col).
+	function hash01(a: number, b: number, salt: number): number {
+		let h =
+			(Math.imul(a + 1, 374761393) ^
+				Math.imul(b + 1, 668265263) ^
+				Math.imul(salt + 1, 2246822519)) >>>
+			0;
+		h = Math.imul(h ^ (h >>> 13), 1274126177);
+		h ^= h >>> 16;
+		return (h >>> 0) / 4294967296;
 	}
-	const dwStripes = $derived(stripesFor(r, 300, 50));
-	const mergedStripes = $derived(stripesFor(r, 540, 50));
+	function hx(n: number): string {
+		return Math.max(0, Math.min(255, Math.round(n)))
+			.toString(16)
+			.padStart(2, '0');
+	}
+	function lerpHex(a: string, b: string, t: number): string {
+		const k = Math.max(0, Math.min(1, t));
+		const ar = parseInt(a.slice(1, 3), 16),
+			ag = parseInt(a.slice(3, 5), 16),
+			ab = parseInt(a.slice(5, 7), 16);
+		const br = parseInt(b.slice(1, 3), 16),
+			bg = parseInt(b.slice(3, 5), 16),
+			bb = parseInt(b.slice(5, 7), 16);
+		return '#' + hx(ar + (br - ar) * k) + hx(ag + (bg - ag) * k) + hx(ab + (bb - ab) * k);
+	}
+
+	// W — frozen pretrained weights: a busy field of cool-slate noise, value → lightness.
+	const W_LO = '#334155';
+	const W_HI = '#c3cdda';
+	const wFill = (i: number, j: number) => lerpHex(W_LO, W_HI, 0.16 + 0.72 * hash01(i, j, 11));
+	// A / B — the trained adapter, amber (down d→r) and bronze (up r→d).
+	const aFill = (i: number, j: number) =>
+		lerpHex('#9a6a1f', '#f6dc94', 0.2 + 0.7 * hash01(i, j, 23));
+	const bFill = (i: number, j: number) =>
+		lerpHex('#7d551e', '#e0ab55', 0.2 + 0.7 * hash01(i, j, 37));
+
+	// ΔW = (α/r)·B·A — built as an ACTUAL rank-r product so it visibly reads low-rank.
+	// Sum r deterministic outer products u_k ⊗ v_k over the visible grid; at r=1 the
+	// whole block is one clean outer-product pattern, and it enriches (never noisifies)
+	// as r climbs. Normalised by peak magnitude so the diverging ramp always fills.
+	function lowRankGrid(rank: number): number[] {
+		const K = Math.max(1, Math.min(rank, GRID)); // can't out-rank the grid
+		const us: number[][] = [];
+		const vs: number[][] = [];
+		for (let k = 0; k < K; k++) {
+			const fu = 1 + Math.floor(hash01(k, 0, 5) * 3); // gentle spatial frequency 1..3
+			const pu = hash01(k, 1, 5) * Math.PI * 2;
+			const su = hash01(k, 2, 5) < 0.5 ? -1 : 1;
+			const fv = 1 + Math.floor(hash01(k, 0, 9) * 3);
+			const pv = hash01(k, 1, 9) * Math.PI * 2;
+			us.push(
+				Array.from({ length: GRID }, (_, i) => su * Math.sin((i / (GRID - 1)) * Math.PI * fu + pu))
+			);
+			vs.push(
+				Array.from({ length: GRID }, (_, j) => Math.sin((j / (GRID - 1)) * Math.PI * fv + pv))
+			);
+		}
+		const g = new Array(GRID * GRID).fill(0);
+		let maxAbs = 1e-6;
+		for (let i = 0; i < GRID; i++) {
+			for (let j = 0; j < GRID; j++) {
+				let s = 0;
+				for (let k = 0; k < K; k++) s += us[k][i] * vs[k][j];
+				g[i * GRID + j] = s;
+				if (Math.abs(s) > maxAbs) maxAbs = Math.abs(s);
+			}
+		}
+		for (let n = 0; n < g.length; n++) g[n] = 0.5 + 0.5 * (g[n] / maxAbs); // → [0,1], 0.5 = zero
+		return g;
+	}
+	const dwGrid = $derived(lowRankGrid(r));
+	// diverging ramp: blue (−) → neutral slate → amber (+), so the structure pops.
+	const dwFill = (i: number, j: number) => {
+		const t = dwGrid[i * GRID + j];
+		return t < 0.5
+			? lerpHex('#3b6fe0', '#8b93a1', t * 2)
+			: lerpHex('#8b93a1', '#e8b84b', (t - 0.5) * 2);
+	};
+	// W′ = W + ΔW — the frozen slate field with a whisper of the low-rank update mixed in.
+	const wpFill = (i: number, j: number) => lerpHex(wFill(i, j), dwFill(i, j), 0.22);
 
 	const EQ_TEX = String.raw`h \;=\; \textcolor{#64748b}{W}\,x \;+\; \frac{\alpha}{r}\,\textcolor{#c08a38}{B}\,\textcolor{#cf9a33}{A}\,x`;
 </script>
@@ -113,13 +190,40 @@
 				alpha over r, summed into h</title
 			>
 			<defs>
-				<pattern id="{gid}-grid" width="14" height="14" patternUnits="userSpaceOnUse">
-					<path d="M14 0H0V14" fill="none" stroke={C_W} stroke-opacity="0.28" stroke-width="1" />
-				</pattern>
 				<marker id="{gid}-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
 					<path d="M0 0L8 4L0 8Z" fill="var(--color-text-muted)" />
 				</marker>
 			</defs>
+
+			<!-- reusable pixel-grid: rows×cols little weight cells inside a box, coloured by fill(i,j).
+			     Defined inside the <svg> so the <rect>s inherit the SVG namespace. -->
+			{#snippet cells(
+				x: number,
+				y: number,
+				w: number,
+				h: number,
+				rows: number,
+				cols: number,
+				fill: (i: number, j: number) => string
+			)}
+				{@const ix = Math.min(2.5, w * 0.12)}
+				{@const iy = Math.min(2.5, h * 0.12)}
+				{@const cw = (w - ix * 2) / cols}
+				{@const ch = (h - iy * 2) / rows}
+				{@const gap = Math.min(0.9, cw * 0.16, ch * 0.16)}
+				{#each Array.from({ length: rows }, (_, i) => i) as i (i)}
+					{#each Array.from({ length: cols }, (_, j) => j) as j (j)}
+						<rect
+							x={x + ix + j * cw + gap / 2}
+							y={y + iy + i * ch + gap / 2}
+							width={Math.max(0.3, cw - gap)}
+							height={Math.max(0.3, ch - gap)}
+							rx="0.5"
+							fill={fill(i, j)}
+						/>
+					{/each}
+				{/each}
+			{/snippet}
 
 			<!-- lanes (drawn first, blocks sit on top) -->
 			<line
@@ -141,20 +245,20 @@
 			<circle cx="100" cy="180" r="3.5" fill="var(--color-text-muted)" />
 			<text class="io-label" x="30" y="185">x</text>
 
-			<!-- W: the frozen d×d slab -->
+			<!-- W: the frozen d×d slab — a dense pixel field of pretrained weights -->
 			<rect
 				x="150"
 				y="110"
 				width={DPX}
 				height={DPX}
 				rx="6"
-				fill="color-mix(in srgb, {C_W} 18%, var(--color-surface))"
+				fill="color-mix(in srgb, {C_W} 24%, var(--color-surface))"
 				stroke={C_W}
 				stroke-opacity="0.6"
 				stroke-width="1.5"
 			/>
-			<rect x="150" y="110" width={DPX} height={DPX} rx="6" fill="url(#{gid}-grid)" />
-			<text class="block-letter" x="220" y="188" fill={C_W}>W</text>
+			{@render cells(150, 110, DPX, DPX, GRID, GRID, wFill)}
+			<text class="block-letter" x="220" y="188" fill="var(--color-text)">W</text>
 			<!-- lock: shackle + body, paths only -->
 			<circle
 				cx="283"
@@ -175,33 +279,35 @@
 			<text class="dim-label" x="140" y="184" text-anchor="end">d</text>
 			<text class="dim-label" x="220" y="266" text-anchor="middle">d</text>
 
-			<!-- A: tall-thin, height d, width r -->
+			<!-- A: tall-thin — GRID rows, r amber columns (few, and they grow with the slider) -->
 			<rect
-				x={365 - rpx / 2}
+				x={aX}
 				y="220"
-				width={rpx}
+				width={aW}
 				height={DPX}
 				rx="2.5"
-				fill={C_A}
+				fill="color-mix(in srgb, {C_A_DARK} 50%, var(--color-surface))"
 				stroke={C_B}
 				stroke-width="1.2"
 				style="transition: x 300ms ease, width 300ms ease;"
 			/>
+			{@render cells(aX, 220, aW, DPX, GRID, rbCells, aFill)}
 			<text class="block-letter-sm" x="365" y="212" fill={C_A_DARK}>A</text>
 			<text class="dim-label" x="326" y="294" text-anchor="end">d</text>
 
-			<!-- B: thin-wide, width d, height r -->
+			<!-- B: thin-wide — GRID cols, r bronze rows (few, and they grow with the slider) -->
 			<rect
 				x="430"
-				y={290 - rpx / 2}
+				y={bY}
 				width={DPX}
-				height={rpx}
+				height={bH}
 				rx="2.5"
-				fill={C_B}
+				fill="color-mix(in srgb, {C_B_DARK} 50%, var(--color-surface))"
 				stroke={C_B_DARK}
 				stroke-width="1.2"
 				style="transition: y 300ms ease, height 300ms ease;"
 			/>
+			{@render cells(430, bY, DPX, bH, rbCells, GRID, bFill)}
 			<text class="block-letter-sm" x="500" y="246" fill={C_B_DARK}>B</text>
 
 			<!-- α/r scale chip on the bypass -->
@@ -244,7 +350,8 @@
 		</svg>
 		{#if rClamped}
 			<p class="mt-1 text-[10.5px]" style="color: var(--color-text-muted); font-style: italic;">
-				At d = {d}, r = {r} the true stripe would be thinner than a pixel — drawn at minimum width.
+				At d = {d}, r = {r} the true adapter is a sub-pixel sliver of W — its cells are drawn oversized
+				so the r columns stay countable.
 			</p>
 		{/if}
 	{:else}
@@ -253,52 +360,65 @@
 				>Merging LoRA: W plus the scaled rank-r update BA collapses into a single matrix W prime of
 				the same shape</title
 			>
-			<defs>
-				<pattern id="{gid}-grid-m" width="14" height="14" patternUnits="userSpaceOnUse">
-					<path d="M14 0H0V14" fill="none" stroke={C_W} stroke-opacity="0.28" stroke-width="1" />
-				</pattern>
-			</defs>
+			<!-- reusable pixel-grid, re-declared so its <rect>s inherit this <svg>'s namespace -->
+			{#snippet cells(
+				x: number,
+				y: number,
+				w: number,
+				h: number,
+				rows: number,
+				cols: number,
+				fill: (i: number, j: number) => string
+			)}
+				{@const ix = Math.min(2.5, w * 0.12)}
+				{@const iy = Math.min(2.5, h * 0.12)}
+				{@const cw = (w - ix * 2) / cols}
+				{@const ch = (h - iy * 2) / rows}
+				{@const gap = Math.min(0.9, cw * 0.16, ch * 0.16)}
+				{#each Array.from({ length: rows }, (_, i) => i) as i (i)}
+					{#each Array.from({ length: cols }, (_, j) => j) as j (j)}
+						<rect
+							x={x + ix + j * cw + gap / 2}
+							y={y + iy + i * ch + gap / 2}
+							width={Math.max(0.3, cw - gap)}
+							height={Math.max(0.3, ch - gap)}
+							rx="0.5"
+							fill={fill(i, j)}
+						/>
+					{/each}
+				{/each}
+			{/snippet}
 
-			<!-- W -->
+			<!-- W — frozen pretrained pixel field -->
 			<rect
 				x="80"
 				y="50"
 				width={DPX}
 				height={DPX}
 				rx="6"
-				fill="color-mix(in srgb, {C_W} 18%, var(--color-surface))"
+				fill="color-mix(in srgb, {C_W} 24%, var(--color-surface))"
 				stroke={C_W}
 				stroke-opacity="0.6"
 				stroke-width="1.5"
 			/>
-			<rect x="80" y="50" width={DPX} height={DPX} rx="6" fill="url(#{gid}-grid-m)" />
-			<text class="block-letter" x="150" y="128" fill={C_W}>W</text>
+			{@render cells(80, 50, DPX, DPX, GRID, GRID, wFill)}
+			<text class="block-letter" x="150" y="128" fill="var(--color-text)">W</text>
 			<text class="name-label" x="150" y="214" text-anchor="middle">W — pretrained</text>
 
 			<text class="op" x="255" y="132" text-anchor="middle">+</text>
 
-			<!-- ΔW = (α/r)·B·A: full d×d shape, but only r directions inside -->
+			<!-- ΔW = (α/r)·B·A: full d×d shape, but an ACTUAL rank-r product inside -->
 			<rect
 				x="300"
 				y="50"
 				width={DPX}
 				height={DPX}
 				rx="6"
-				fill="color-mix(in srgb, {C_A} 24%, var(--color-surface))"
+				fill="color-mix(in srgb, {C_W} 12%, var(--color-surface))"
 				stroke={C_B}
 				stroke-width="1.5"
 			/>
-			{#each dwStripes as s, i (i)}
-				<line
-					x1={s.x1}
-					y1={s.y1}
-					x2={s.x2}
-					y2={s.y2}
-					stroke={C_B}
-					stroke-opacity="0.5"
-					stroke-width="1.2"
-				/>
-			{/each}
+			{@render cells(300, 50, DPX, DPX, GRID, GRID, dwFill)}
 			<rect
 				x="345"
 				y="22"
@@ -316,33 +436,25 @@
 
 			<text class="op" x="495" y="132" text-anchor="middle">=</text>
 
-			<!-- W′: merged -->
+			<!-- W′: merged pixel field — W with the low-rank update baked in -->
 			<rect
 				x="540"
 				y="50"
 				width={DPX}
 				height={DPX}
 				rx="6"
-				fill="color-mix(in srgb, {C_W} 18%, var(--color-surface))"
+				fill="color-mix(in srgb, {C_W} 24%, var(--color-surface))"
 				stroke={C_B}
 				stroke-width="1.5"
 			/>
-			<rect x="540" y="50" width={DPX} height={DPX} rx="6" fill="url(#{gid}-grid-m)" />
-			{#each mergedStripes as s, i (i)}
-				<line
-					x1={s.x1}
-					y1={s.y1}
-					x2={s.x2}
-					y2={s.y2}
-					stroke={C_B}
-					stroke-opacity="0.18"
-					stroke-width="1.2"
-				/>
-			{/each}
-			<text class="block-letter" x="610" y="128" fill={C_W}>W′</text>
+			{@render cells(540, 50, DPX, DPX, GRID, GRID, wpFill)}
+			<text class="block-letter" x="610" y="128" fill="var(--color-text)">W′</text>
 			<text class="name-label" x="610" y="214" text-anchor="middle">W′ — merged</text>
 			<text class="sub-label" x="610" y="232" text-anchor="middle">same shape, same cost as W</text>
 		</svg>
+		<p class="mt-2 text-xs" style="color: var(--color-text-muted);">
+			rank r means only r independent patterns — that's the whole savings.
+		</p>
 		<div class="mt-2 grid gap-2 sm:grid-cols-2">
 			<div class="note-card">
 				<b>Zero latency tax.</b> After merging, inference is one d×d matmul — exactly what it cost before

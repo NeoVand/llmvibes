@@ -22,18 +22,19 @@
 		<marker
 			id="{uid}-arrow"
 			viewBox="0 0 10 10"
-			refX="9"
+			refX="8.2"
 			refY="5"
-			markerWidth="7"
-			markerHeight="7"
+			markerWidth="11"
+			markerHeight="11"
+			markerUnits="userSpaceOnUse"
 			orient="auto-start-reverse"
 		>
-			<path d="M0,0 L10,5 L0,10 z" fill="var(--color-text-muted)" />
+			<path d="M 1 1.4 L 9 5 L 1 8.6 L 3.2 5 Z" fill="var(--color-text-muted)" />
 		</marker>
 	</defs>
 
 	<!-- edges -->
-	<g stroke="var(--color-text-muted)" stroke-width="1.5" fill="none">
+	<g stroke="var(--color-text-muted)" stroke-width="1.7" fill="none" stroke-linecap="round">
 		<line x1="160" y1="53" x2="214" y2="53" marker-end="url(#{uid}-arrow)" />
 		<line x1="480" y1="53" x2="534" y2="53" marker-end="url(#{uid}-arrow)" />
 		<path d="M665,86 C665,160 150,128 150,198" marker-end="url(#{uid}-arrow)" />

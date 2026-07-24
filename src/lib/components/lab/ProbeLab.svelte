@@ -105,9 +105,9 @@
 	];
 
 	// ── accuracy chart geometry ──
-	const CW = 380;
-	const CH = 175;
-	const CM = { top: 10, right: 12, bottom: 28, left: 36 };
+	const CW = 520;
+	const CH = 190;
+	const CM = { top: 14, right: 18, bottom: 32, left: 44 };
 	const cpw = CW - CM.left - CM.right;
 	const cph = CH - CM.top - CM.bottom;
 	const chX = (l: number) => CM.left + ((l - 1) / (N_LAYERS - 1)) * cpw;
@@ -118,7 +118,7 @@
 </script>
 
 <div
-	class="my-6 rounded-xl border p-5"
+	class="@container my-6 rounded-xl border p-5"
 	style="border-color: var(--color-border); background: var(--color-surface);"
 >
 	<div class="mb-1 flex flex-wrap items-center justify-between gap-2">
@@ -137,9 +137,9 @@
 		board lives.
 	</p>
 
-	<div class="flex flex-wrap gap-5">
+	<div class="grid gap-x-5 gap-y-6 @[620px]:grid-cols-[1fr_170px_1fr]">
 		<!-- ── left: the true board ── -->
-		<div class="min-w-[200px] flex-1 basis-[220px]">
+		<div class="min-w-0">
 			<div class="panel-label mb-1">true occupancy — Rook's game, move 9</div>
 			<svg
 				viewBox="0 0 {BV} {BV}"
@@ -193,7 +193,7 @@
 		</div>
 
 		<!-- ── middle: the residual stream + layer dial ── -->
-		<div class="min-w-[150px] flex-1 basis-[160px]">
+		<div class="min-w-0">
 			<div class="panel-label mb-1">residual stream h<sub>ℓ</sub></div>
 			<svg
 				viewBox="0 0 130 337"
@@ -232,7 +232,7 @@
 		</div>
 
 		<!-- ── right: the probe's reconstruction ── -->
-		<div class="min-w-[200px] flex-1 basis-[220px]">
+		<div class="min-w-0">
 			<div class="panel-label mb-1" style="color: var(--color-important);">
 				probe readout W·h<sub>ℓ</sub> — {untrained ? 'untrained model' : `layer ${layer}`}
 			</div>
@@ -288,111 +288,109 @@
 		</div>
 	</div>
 
-	<div class="mt-4 flex flex-wrap gap-5">
-		<!-- ── accuracy vs layer ── -->
-		<div class="min-w-[260px] flex-1 basis-[320px]">
-			<div class="panel-label mb-1">where does the board live? — probe accuracy vs layer</div>
-			<svg
-				viewBox="0 0 {CW} {CH}"
-				class="w-full"
-				role="img"
-				aria-label="Line chart of probe accuracy per layer with the current layer highlighted"
-			>
-				{#each [64, 32] as g (g)}
-					<line
-						x1={CM.left}
-						y1={chY(g)}
-						x2={CM.left + cpw}
-						y2={chY(g)}
-						stroke="var(--color-border-light)"
-					/>
-					<text class="tick" x={CM.left - 5} y={chY(g) + 3} text-anchor="end"
-						>{Math.round((g / 64) * 100)}%</text
-					>
-				{/each}
-				<!-- chance line: 3 classes → 33% -->
+	<!-- ── accuracy vs layer (full-width band) ── -->
+	<div class="mt-6">
+		<div class="panel-label mb-1">where does the board live? — probe accuracy vs layer</div>
+		<svg
+			viewBox="0 0 {CW} {CH}"
+			class="chart"
+			role="img"
+			aria-label="Line chart of probe accuracy per layer with the current layer highlighted"
+		>
+			{#each [64, 32] as g (g)}
 				<line
 					x1={CM.left}
-					y1={chY(64 / 3)}
+					y1={chY(g)}
 					x2={CM.left + cpw}
-					y2={chY(64 / 3)}
-					stroke="var(--color-challenge)"
-					stroke-dasharray="4 4"
-					opacity="0.55"
+					y2={chY(g)}
+					stroke="var(--color-border-light)"
 				/>
-				<text
-					class="tick"
-					x={CM.left - 5}
-					y={chY(64 / 3) + 3}
-					text-anchor="end"
-					fill="var(--color-challenge)">33%</text
+				<text class="tick" x={CM.left - 5} y={chY(g) + 3} text-anchor="end"
+					>{Math.round((g / 64) * 100)}%</text
 				>
-				<text class="chance" x={CM.left + cpw} y={chY(64 / 3) - 5} text-anchor="end"
-					>chance (3 classes)</text
-				>
+			{/each}
+			<!-- chance line: 3 classes → 33% -->
+			<line
+				x1={CM.left}
+				y1={chY(64 / 3)}
+				x2={CM.left + cpw}
+				y2={chY(64 / 3)}
+				stroke="var(--color-challenge)"
+				stroke-dasharray="4 4"
+				opacity="0.55"
+			/>
+			<text
+				class="tick"
+				x={CM.left - 5}
+				y={chY(64 / 3) + 3}
+				text-anchor="end"
+				fill="var(--color-challenge)">33%</text
+			>
+			<text class="chance" x={CM.left + cpw} y={chY(64 / 3) - 5} text-anchor="end"
+				>chance (3 classes)</text
+			>
 
-				<!-- ghost of the other mode, for contrast -->
-				<polyline
-					points={linePts(ghostCurve)}
-					fill="none"
-					stroke="var(--color-text-muted)"
-					stroke-width="1.5"
-					stroke-dasharray="3 4"
-					opacity="0.45"
-				/>
-				<!-- active curve -->
-				<polyline
-					points={linePts(curve)}
-					fill="none"
+			<!-- ghost of the other mode, for contrast -->
+			<polyline
+				points={linePts(ghostCurve)}
+				fill="none"
+				stroke="var(--color-text-muted)"
+				stroke-width="1.5"
+				stroke-dasharray="3 4"
+				opacity="0.45"
+			/>
+			<!-- active curve -->
+			<polyline
+				points={linePts(curve)}
+				fill="none"
+				stroke="#a855f7"
+				stroke-width="2.5"
+				stroke-linejoin="round"
+			/>
+			<line
+				x1={chX(layer)}
+				y1={CM.top}
+				x2={chX(layer)}
+				y2={CM.top + cph}
+				stroke="#a855f7"
+				stroke-dasharray="3 3"
+				opacity="0.5"
+			/>
+			{#each curve as v, l (l)}
+				<circle
+					cx={chX(l + 1)}
+					cy={chY(v)}
+					r={l + 1 === layer ? 5.5 : 3}
+					fill={l + 1 === layer ? '#a855f7' : 'var(--color-surface)'}
 					stroke="#a855f7"
-					stroke-width="2.5"
-					stroke-linejoin="round"
+					stroke-width="2"
 				/>
-				<line
-					x1={chX(layer)}
-					y1={CM.top}
-					x2={chX(layer)}
-					y2={CM.top + cph}
-					stroke="#a855f7"
-					stroke-dasharray="3 3"
-					opacity="0.5"
-				/>
-				{#each curve as v, l (l)}
-					<circle
-						cx={chX(l + 1)}
-						cy={chY(v)}
-						r={l + 1 === layer ? 5.5 : 3}
-						fill={l + 1 === layer ? '#a855f7' : 'var(--color-surface)'}
-						stroke="#a855f7"
-						stroke-width="2"
-					/>
-					<text class="tick" x={chX(l + 1)} y={CH - 10} text-anchor="middle">{l + 1}</text>
-				{/each}
-			</svg>
-			<p class="mt-1 text-[11px]" style="color: var(--color-text-secondary);">
-				{#if untrained}
-					Flat at chance. Same architecture, same probe recipe, no training — the board-reading only
-					exists because prediction pressure built it.
-				{:else}
-					Accuracy peaks mid-network: early layers still carry surface move-text features, late
-					layers rotate toward picking the next move — the cleanest board sits in the middle.
-				{/if}
-			</p>
-		</div>
+				<text class="tick" x={chX(l + 1)} y={CH - 10} text-anchor="middle">{l + 1}</text>
+			{/each}
+		</svg>
+		<p class="mt-2 text-[11px]" style="color: var(--color-text-secondary);">
+			{#if untrained}
+				Flat at chance. Same architecture, same probe recipe, no training — the board-reading only
+				exists because prediction pressure built it.
+			{:else}
+				Accuracy peaks mid-network: early layers still carry surface move-text features, late layers
+				rotate toward picking the next move — the cleanest board sits in the middle.
+			{/if}
+		</p>
+	</div>
 
-		<!-- ── the formula and the claim ── -->
-		<div class="min-w-[220px] flex-1 basis-[240px]">
-			<div class="rounded-lg border p-3" style="border-color: var(--color-border-light);">
-				<Formula tex={TEX} display />
-				<p class="mt-1 text-[11px]" style="color: var(--color-text-secondary);">
-					<strong style="color: var(--color-important);">W<sub>probe</sub> is one linear map</strong
-					>
-					— no hidden layers, no computation of its own. If it can read a square off h<sub>ℓ</sub>,
-					the board state must already be sitting in the stream as directions. Rook was only ever
-					graded on next-move text; nobody put a board in there.
-				</p>
-			</div>
-		</div>
+	<!-- ── the formula and the claim (full-width band) ── -->
+	<div
+		class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3 rounded-lg border p-4"
+		style="border-color: var(--color-border-light);"
+	>
+		<div class="shrink-0"><Formula tex={TEX} display /></div>
+		<p class="min-w-[240px] flex-1 text-[11px]" style="color: var(--color-text-secondary);">
+			<strong style="color: var(--color-important);">W<sub>probe</sub> is one linear map</strong>
+			— no hidden layers, no computation of its own. If it can read a square off h<sub>ℓ</sub>, the
+			board state must already be sitting in the stream as directions. Rook was only ever graded on
+			next-move text; nobody put a board in there.
+		</p>
 	</div>
 
 	<p class="footnote mt-4">
@@ -412,27 +410,35 @@
 	}
 	.board {
 		width: 100%;
-		max-width: 240px;
+		max-width: 320px;
+		margin-inline: auto;
 		display: block;
 	}
 	.stream {
 		width: 100%;
-		max-width: 130px;
+		max-width: 120px;
+		margin-inline: auto;
+		display: block;
+	}
+	.chart {
+		width: 100%;
+		max-width: 680px;
+		margin-inline: auto;
 		display: block;
 	}
 	.coord {
 		fill: var(--color-text-muted);
 		font-family: var(--font-mono);
-		font-size: 10px;
+		font-size: 12px;
 	}
 	.tick {
 		fill: var(--color-text-muted);
 		font-family: var(--font-mono);
-		font-size: 10px;
+		font-size: 11px;
 	}
 	.chance {
 		fill: var(--color-challenge);
-		font-size: 10px;
+		font-size: 11px;
 		opacity: 0.8;
 	}
 

@@ -1254,14 +1254,14 @@
 	}
 	.sliders {
 		display: grid;
-		grid-template-columns: repeat(2, minmax(9rem, 1fr));
-		gap: 0.5rem 1.25rem;
-		flex: 1;
-		min-width: 16rem;
-	}
-	@media (min-width: 720px) {
-		.sliders {
-			grid-template-columns: repeat(4, minmax(8rem, 1fr));
-		}
+		/* auto-fit + minmax(_, 1fr) so columns always fit their track box:
+		   they reflow 4 → 3 → 2 → 1 as space shrinks and can never push the
+		   last slider (thumb + value) past the card's right edge. */
+		grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+		gap: 0.55rem 1.1rem;
+		flex: 1 1 16rem;
+		/* breathing room so a house-Slider thumb (16px) parked at 100% stays
+		   fully inside the card border. */
+		padding-inline: 0.5rem;
 	}
 </style>

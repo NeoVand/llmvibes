@@ -12,13 +12,14 @@
 			<marker
 				id="{uid}-a"
 				viewBox="0 0 10 10"
-				refX="8.5"
+				refX="8.2"
 				refY="5"
-				markerWidth="7.5"
-				markerHeight="7.5"
+				markerWidth="11"
+				markerHeight="11"
+				markerUnits="userSpaceOnUse"
 				orient="auto-start-reverse"
 			>
-				<path d="M 0 1 L 9 5 L 0 9 z" fill="var(--color-text-muted)" />
+				<path d="M 1 1.4 L 9 5 L 1 8.6 L 3.2 5 Z" fill="var(--color-text-muted)" />
 			</marker>
 			<filter id="{uid}-sh" x="-30%" y="-30%" width="160%" height="160%">
 				<feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-opacity="0.14" />
@@ -37,7 +38,7 @@
 			class="edge"
 			d="M 463 185.5 A 26 26 0 1 1 425.6 199.1"
 			marker-end="url(#{uid}-a)"
-			style="stroke-width: 2;"
+			style="stroke-width: 1.9;"
 		/>
 		<text class="hd" x="450" y="262" font-size="14.5">the loop</text>
 		<text class="cap" x="450" y="282" font-size="11.5">run thousands of times</text>
@@ -187,5 +188,6 @@
 		stroke: var(--color-text-muted);
 		stroke-width: 1.7;
 		fill: none;
+		stroke-linecap: round;
 	}
 </style>

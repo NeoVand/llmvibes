@@ -21,18 +21,19 @@
 		<marker
 			id="{uid}-arrow"
 			viewBox="0 0 10 10"
-			refX="9"
+			refX="8.2"
 			refY="5"
-			markerWidth="7"
-			markerHeight="7"
+			markerWidth="11"
+			markerHeight="11"
+			markerUnits="userSpaceOnUse"
 			orient="auto-start-reverse"
 		>
-			<path d="M0,0 L10,5 L0,10 z" fill="var(--color-text-muted)" />
+			<path d="M 1 1.4 L 9 5 L 1 8.6 L 3.2 5 Z" fill="var(--color-text-muted)" />
 		</marker>
 	</defs>
 
 	<!-- clockwise arcs between the stages -->
-	<g stroke="var(--color-text-muted)" stroke-width="1.5" fill="none">
+	<g stroke="var(--color-text-muted)" stroke-width="1.7" fill="none" stroke-linecap="round">
 		<path d="M550,117 A200 200 0 0 1 596,154" marker-end="url(#{uid}-arrow)" />
 		<path d="M639,225 A200 200 0 0 1 639,355" marker-end="url(#{uid}-arrow)" />
 		<path d="M599,424 A200 200 0 0 1 562,456" marker-end="url(#{uid}-arrow)" />

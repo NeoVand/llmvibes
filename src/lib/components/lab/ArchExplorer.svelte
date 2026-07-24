@@ -200,9 +200,9 @@
 		>.
 	</p>
 
-	<div class="flex flex-wrap gap-5">
+	<div class="flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:items-start">
 		<!-- ── the spine: one continuous residual band with stage nodes ── -->
-		<div class="flex min-w-[230px] flex-shrink-0 items-start">
+		<div class="flex w-full items-start sm:w-auto sm:min-w-[230px] sm:flex-shrink-0">
 			<svg
 				width={SPINE_W}
 				height={spineH}
@@ -336,7 +336,7 @@
 		</div>
 
 		<!-- ── the stage detail: vignette + caption + prose + math ── -->
-		<div class="min-w-[300px] flex-1 basis-[420px]">
+		<div class="w-full flex-1 sm:min-w-[19rem] sm:basis-[26rem]">
 			{#key selected.id}
 				<div class="stage-detail">
 					<div class="mb-1 flex items-baseline justify-between">
@@ -355,7 +355,7 @@
 					</div>
 
 					<div
-						class="mb-2 rounded-lg border px-2 py-2"
+						class="vignette-box mb-3 rounded-lg border px-3 py-3"
 						style="border-color: var(--color-border-light); background: color-mix(in srgb, var(--color-surface-hover) 55%, transparent);"
 					>
 						{#if selected.id === 'tokens'}
@@ -422,7 +422,22 @@
 		font-size: 10px;
 		fill: var(--color-text-muted);
 	}
+	/* A constant-height illustration frame: the vignette is centered inside it
+	   and capped in height, so switching stages no longer jolts the panel. */
+	.vignette-box {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		min-height: 15rem;
+	}
+	.vignette-box :global(svg) {
+		display: block;
+		width: 100%;
+		height: auto;
+		max-height: 12rem;
+	}
 	.stage-detail {
+		min-height: 24rem;
 		animation: stage-in 200ms ease;
 	}
 	@keyframes stage-in {

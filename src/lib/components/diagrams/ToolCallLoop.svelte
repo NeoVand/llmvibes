@@ -22,13 +22,14 @@
 		<marker
 			id="{uid}-arrow"
 			viewBox="0 0 10 10"
-			refX="9"
+			refX="8.2"
 			refY="5"
-			markerWidth="7"
-			markerHeight="7"
+			markerWidth="11"
+			markerHeight="11"
+			markerUnits="userSpaceOnUse"
 			orient="auto-start-reverse"
 		>
-			<path d="M0,0 L10,5 L0,10 z" fill="var(--color-text-muted)" />
+			<path d="M 1 1.4 L 9 5 L 1 8.6 L 3.2 5 Z" fill="var(--color-text-muted)" />
 		</marker>
 	</defs>
 
@@ -64,7 +65,7 @@
 	</g>
 
 	<!-- messages, in time order -->
-	<g stroke="var(--color-text-muted)" stroke-width="1.5" fill="none">
+	<g stroke="var(--color-text-muted)" stroke-width="1.7" fill="none" stroke-linecap="round">
 		<line x1="155" y1="110" x2="441" y2="110" marker-end="url(#{uid}-arrow)" />
 		<line x1="455" y1="170" x2="741" y2="170" marker-end="url(#{uid}-arrow)" />
 		<line x1="745" y1="230" x2="459" y2="230" marker-end="url(#{uid}-arrow)" />

@@ -5,6 +5,8 @@
 	import EquationAnatomy from '../ui/EquationAnatomy.svelte';
 	import AttentionDataflow from '../diagrams/AttentionDataflow.svelte';
 	import ResidualStream from '../diagrams/ResidualStream.svelte';
+	import RopeDemo from '../diagrams/RopeDemo.svelte';
+	import NonlinearityPlot from '../diagrams/NonlinearityPlot.svelte';
 	import SectionHeader from '../ui/SectionHeader.svelte';
 	import ArchExplorer from '../lab/ArchExplorer.svelte';
 	import AttentionLab from '../lab/AttentionLab.svelte';
@@ -291,6 +293,12 @@ log('output = weights · V =', np.dot(weights, V));`}
 				read="at position p, rotate each two-dimensional slice of the query (and key) by p times that slice's own angle."
 			/>
 
+			<p class="mt-4 mb-2 text-[14px]" style="color: var(--color-text-secondary);">
+				Drag the position and watch the rotation — then shift both and watch the angle hold:
+			</p>
+
+			<RopeDemo />
+
 			<p class="mt-4 mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				That relative-position property is the entire sales pitch. A dot product between two rotated
 				vectors depends on the angle <em>between</em> them, and that angle is proportional to the
@@ -435,6 +443,12 @@ log('output = weights · V =', np.dot(weights, V));`}
 				]}
 				read="expand into a wide space, let one expansion gate the other, contract back down."
 			/>
+
+			<p class="mt-4 mb-2 text-[14px]" style="color: var(--color-text-secondary);">
+				See the three gates side by side:
+			</p>
+
+			<NonlinearityPlot />
 
 			<Callout type="warning" title="What the pocket pair actually uses">
 				Same honesty rule as RoPE: the live pocket models use the classic ReLU MLP — two matrices,

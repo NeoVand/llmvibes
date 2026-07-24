@@ -12,46 +12,50 @@
 			<marker
 				id="{uid}-a"
 				viewBox="0 0 10 10"
-				refX="8.5"
+				refX="8.2"
 				refY="5"
-				markerWidth="7.5"
-				markerHeight="7.5"
+				markerWidth="11"
+				markerHeight="11"
+				markerUnits="userSpaceOnUse"
 				orient="auto-start-reverse"
 			>
-				<path d="M 0 1 L 9 5 L 0 9 z" fill="var(--color-text-muted)" />
+				<path d="M 1 1.4 L 9 5 L 1 8.6 L 3.2 5 Z" fill="var(--color-text-muted)" />
 			</marker>
 			<marker
 				id="{uid}-aq"
 				viewBox="0 0 10 10"
-				refX="8.5"
+				refX="8.2"
 				refY="5"
-				markerWidth="7.5"
-				markerHeight="7.5"
+				markerWidth="11"
+				markerHeight="11"
+				markerUnits="userSpaceOnUse"
 				orient="auto-start-reverse"
 			>
-				<path d="M 0 1 L 9 5 L 0 9 z" fill="#5a8fc0" />
+				<path d="M 1 1.4 L 9 5 L 1 8.6 L 3.2 5 Z" fill="#5a8fc0" />
 			</marker>
 			<marker
 				id="{uid}-ak"
 				viewBox="0 0 10 10"
-				refX="8.5"
+				refX="8.2"
 				refY="5"
-				markerWidth="7.5"
-				markerHeight="7.5"
+				markerWidth="11"
+				markerHeight="11"
+				markerUnits="userSpaceOnUse"
 				orient="auto-start-reverse"
 			>
-				<path d="M 0 1 L 9 5 L 0 9 z" fill="#c87142" />
+				<path d="M 1 1.4 L 9 5 L 1 8.6 L 3.2 5 Z" fill="#c87142" />
 			</marker>
 			<marker
 				id="{uid}-av"
 				viewBox="0 0 10 10"
-				refX="8.5"
+				refX="8.2"
 				refY="5"
-				markerWidth="7.5"
-				markerHeight="7.5"
+				markerWidth="11"
+				markerHeight="11"
+				markerUnits="userSpaceOnUse"
 				orient="auto-start-reverse"
 			>
-				<path d="M 0 1 L 9 5 L 0 9 z" fill="#56a884" />
+				<path d="M 1 1.4 L 9 5 L 1 8.6 L 3.2 5 Z" fill="#56a884" />
 			</marker>
 			<filter id="{uid}-sh" x="-30%" y="-30%" width="160%" height="160%">
 				<feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-opacity="0.14" />
@@ -254,6 +258,7 @@
 		stroke: var(--color-text-muted);
 		stroke-width: 1.7;
 		fill: none;
+		stroke-linecap: round;
 	}
 
 	.edge.q {
