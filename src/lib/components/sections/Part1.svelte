@@ -9,6 +9,7 @@
 	import QuillCorpusLab from '../lab/QuillCorpusLab.svelte';
 	import RookGamesLab from '../lab/RookGamesLab.svelte';
 	import NextTokenLab from '../lab/NextTokenLab.svelte';
+	import TimeMachineLab from '../lab/TimeMachineLab.svelte';
 </script>
 
 <section id="part-1" class="py-10">
@@ -23,7 +24,8 @@
 		</p>
 
 		<Callout type="note" title="Hands-on">
-			This chapter's interactive playground arrives with a later milestone.
+			This chapter is already live: scrub both birds through their entire training history in the
+			time machine below, then dig into what each one eats in the corpus explorers.
 		</Callout>
 
 		<div id="section-1-1" class="mb-14">
@@ -171,14 +173,17 @@
 			</div>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
-				The flagships come with their whole training history saved as checkpoints, which powers the
-				course's favorite instrument: the <strong style="color: var(--color-text);"
+				Both the live pair and the flagships save their training history as checkpoints, which
+				powers the course's favorite instrument: the <strong style="color: var(--color-text);"
 					>time machine</strong
 				>. Drag a slider and the model rewinds — from fluent, back through broken grammar, back
 				through word soup, back to the uniform static of random weights. Every scrap of skill a
 				model has lives in its parameters, and the scrubber lets you watch those parameters mean
-				less and less until they mean nothing.
+				less and less until they mean nothing. Here it is on the live pair — the two birds you just
+				met, their whole run on one slider:
 			</p>
+
+			<TimeMachineLab />
 
 			<Callout type="tip" title="Why tiny models?">
 				Frontier models have hundreds of billions of parameters; Quill and Rook have a few million.

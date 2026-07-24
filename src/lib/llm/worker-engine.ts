@@ -188,6 +188,13 @@ export class WorkerEngine implements LlmEngine {
 		return r.checkpoint;
 	}
 
+	/** Swap the resident weights for a checkpoint in place (cheaper than a full
+	 * re-init: no tokenData re-transfer). The buffer is transferred. Used by the
+	 * time-machine scrubber to re-roll a waypoint's dequantized weights live. */
+	async loadWeights(checkpoint: ArrayBuffer): Promise<void> {
+		await this.call('load', { checkpoint }, [checkpoint]);
+	}
+
 	async dispose(): Promise<void> {
 		try {
 			await this.call('dispose');

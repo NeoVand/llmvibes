@@ -14,6 +14,7 @@
 	import ChessLab from '../lab/ChessLab.svelte';
 	import SoftmaxLab from '../lab/SoftmaxLab.svelte';
 	import ScalingLawsLab from '../lab/ScalingLawsLab.svelte';
+	import TimeMachineLab from '../lab/TimeMachineLab.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
@@ -287,17 +288,21 @@ to the pigs. She scared it and did lack. It was hip.`}
 				color="var(--color-primary)"
 			/>
 			<p class="mb-4 text-[14.5px] leading-relaxed" style="color: var(--color-text-secondary);">
-				The flagship models trained for days offline, and their history ships with the course: drag
-				a slider through their checkpoints and watch ability assemble itself — including the sudden
-				step where in-context copying clicks into place.
+				A training run isn't a before and an after — it's a trajectory, and its whole history can be
+				saved as checkpoints you scrub like video. Here is the live pair's run, a dozen waypoints on
+				one slider; the flagships get the same treatment at far greater length, where the sudden
+				step of in-context copying becomes a visible bend in the curve.
 			</p>
+
+			<TimeMachineLab />
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
 				Your live pair tops out around five million parameters — the price of training in a browser
 				tab. The course's <strong style="color: var(--color-text);">flagship</strong> Quill and Rook
 				are 15–25M-parameter versions of the same architecture, trained offline for days on the full
-				corpora. You don't get to train them live. You get something arguably better: their entire
-				<em>history</em>, saved as checkpoints you can scrub through like video.
+				corpora. You don't get to train them live. They arrive with something arguably better than a
+				live run: their entire <em>history</em>, saved as checkpoints you can scrub through like
+				video — the same instrument you just used on the live pair, stretched over a far longer run.
 			</p>
 
 			<p class="mb-3 text-[14px]" style="color: var(--color-text-secondary);">
@@ -329,11 +334,13 @@ to the pigs. She scared it and did lack. It was hip.`}
 				runs is a bonus, not a promise.
 			</p>
 
-			<Callout type="note" title="Arrives with a later milestone">
-				The time machine — checkpoint scrubbers for both flagships, with the induction bump
-				annotated on the real logged curve — ships once the flagship training pipeline lands. The
-				concept is here now because 5.5 and 5.6 build on it: checkpoints are how you measure
-				<em>when</em> an ability arrived, not just whether it did.
+			<Callout type="note" title="Live now — with a flagship upgrade coming">
+				The time machine above is real and live: the live pair's own recorded run, scrubbable end to
+				end (on WebGPU you can re-roll any checkpoint from its shipped weights). What still waits on
+				the flagship training pipeline is the <em>long</em> version — a run deep enough that the
+				induction bump stands out as a labelled bend on the logged curve. The concept lands here
+				because 5.5 and 5.6 build on it: checkpoints are how you measure <em>when</em> an ability arrived,
+				not just whether it did.
 			</Callout>
 		</div>
 

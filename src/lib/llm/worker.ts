@@ -291,6 +291,24 @@ async function handleExport() {
 	return { checkpoint: flat.buffer, __transfer: [flat.buffer] };
 }
 
+/** Replace the resident weights with a checkpoint, in place — the config, jits
+ * and token data are preserved, so this is far cheaper than a full re-init (no
+ * tokenData re-transfer). Powers the time-machine scrubber: load a waypoint's
+ * dequantized weights, then sample. Requires a prior init with the matching
+ * config. Adam moments are reset (a loaded snapshot carries no optimizer
+ * history); the time machine only samples, so that cost is inert there. */
+async function handleLoad(req: RpcRequest) {
+	if (!cfg || !solver) throw new Error('load before init');
+	const flat = new Float32Array(req.checkpoint as ArrayBuffer);
+	if (params) disposeTree(params);
+	params = loadParams(cfg, flat);
+	await blockUntilReady(params);
+	if (optState) disposeTree(optState);
+	optState = solver.init(tree.ref(params));
+	stepCounter = 0;
+	return { paramCount: paramCount(params) };
+}
+
 /** Swap the optimizer's learning rate. Rebuilds Adam state (moments reset —
  * honest cost of changing γ mid-flight; the lab says so). */
 function handleSetLr(req: RpcRequest) {
@@ -412,6 +430,7 @@ const handlers: Record<string, (req: RpcRequest) => unknown | Promise<unknown>> 
 	nextdist: handleNextDist,
 	inspect: handleInspect,
 	export: handleExport,
+	load: handleLoad,
 	valloss: handleValLoss,
 	gradnorms: handleGradNorms,
 	attention: handleAttention,
