@@ -17,6 +17,7 @@
 	import TimeMachineLab from '../lab/TimeMachineLab.svelte';
 	import InductionLab from '../lab/InductionLab.svelte';
 	import RookEvalLab from '../lab/RookEvalLab.svelte';
+	import RookStockfishLab from '../lab/RookStockfishLab.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
@@ -456,6 +457,8 @@ to the pigs. She scared it and did lack. It was hip.`}
 			</p>
 
 			<RookEvalLab />
+
+			<RookStockfishLab />
 
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
 				Quill: When There's No Answer Key
