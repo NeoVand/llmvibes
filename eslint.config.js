@@ -20,6 +20,9 @@ export default defineConfig(
 	// A git worktree checked out under .claude/ is a second full copy of this
 	// repo. Linting it reports every finding twice and buries the real ones.
 	{ ignores: ['.claude/**'] },
+	// static/ is shipped assets, not source — including vendored engine builds
+	// (e.g. the Emscripten-generated stockfish.wasm.js). Never lint it.
+	{ ignores: ['static/**'] },
 	js.configs.recommended,
 	ts.configs.recommended,
 	svelte.configs.recommended,
