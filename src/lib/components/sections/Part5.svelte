@@ -16,6 +16,7 @@
 	import ScalingLawsLab from '../lab/ScalingLawsLab.svelte';
 	import TimeMachineLab from '../lab/TimeMachineLab.svelte';
 	import InductionLab from '../lab/InductionLab.svelte';
+	import RookEvalLab from '../lab/RookEvalLab.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
@@ -454,6 +455,8 @@ to the pigs. She scared it and did lack. It was hip.`}
 				first piece of evidence.
 			</p>
 
+			<RookEvalLab />
+
 			<h4 class="mt-6 mb-2 text-[14px] font-semibold" style="color: var(--color-text);">
 				Quill: When There's No Answer Key
 			</h4>
@@ -497,7 +500,7 @@ to the pigs. She scared it and did lack. It was hip.`}
 			<VibeBox
 				prompts={[
 					'Design an eval for Quill that a judge model could score unfairly — then fix the rubric',
-					'Rook has a 98% legal-move rate on openings but 71% on the OOD position set. What does that gap tell me?'
+					'Rook plays 99.9% legal moves near the opening but 76% deep in never-seen positions. What does that gap tell me?'
 				]}
 			/>
 		</div>
