@@ -15,6 +15,7 @@
 	import SoftmaxLab from '../lab/SoftmaxLab.svelte';
 	import ScalingLawsLab from '../lab/ScalingLawsLab.svelte';
 	import TimeMachineLab from '../lab/TimeMachineLab.svelte';
+	import InductionLab from '../lab/InductionLab.svelte';
 	import CodeBlock from '../ui/CodeBlock.svelte';
 	import VibeBox from '../ui/VibeBox.svelte';
 </script>
@@ -329,18 +330,21 @@ to the pigs. She scared it and did lack. It was hip.`}
 					again</em
 				>. It's the moment in-context copying clicks. Before it, flagship Quill treats a character's
 				name as a rare token and fumbles it; after it, a name introduced once is reused correctly —
-				the model has learned to consult its own context instead of relying on global statistics.
-				This bend is marked on the flagship's logged training curve; catching it live in your own
-				runs is a bonus, not a promise.
+				the model has learned to consult its own context instead of relying on global statistics. We
+				went looking for exactly this. Below is a copying probe run on two of our own Quills — and
+				the ability is unmistakably <em>there</em>, and unmistakably stronger in the bigger one.
 			</p>
 
-			<Callout type="note" title="Live now — with a flagship upgrade coming">
-				The time machine above is real and live: the live pair's own recorded run, scrubbable end to
-				end (on WebGPU you can re-roll any checkpoint from its shipped weights). What still waits on
-				the flagship training pipeline is the <em>long</em> version — a run deep enough that the
-				induction bump stands out as a labelled bend on the logged curve. The concept lands here
-				because 5.5 and 5.6 build on it: checkpoints are how you measure <em>when</em> an ability arrived,
-				not just whether it did.
+			<InductionLab />
+
+			<Callout type="note" title="A taste of it — and honestly scoped">
+				What you're seeing is the <em>behavioural</em> signature of induction — the model predicting
+				a repeated token better the second time — measured on our own flagship (~5M) and live-pair
+				(~0.9M) Quills. It emerges as a bump and grows clearly with scale. What our models are too
+				small to show cleanly is the sharp, single-circuit induction <em>head</em> that
+				interpretability work isolates at larger scale; we don't pretend otherwise. The concept
+				lands here because 5.5 and 5.6 build on it: checkpoints are how you measure <em>when</em> an ability
+				arrived, not just whether it did.
 			</Callout>
 		</div>
 
