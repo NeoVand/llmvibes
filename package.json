@@ -51,7 +51,7 @@
 	},
 	"dependencies": {
 		"@huggingface/transformers": "^4.2.0",
-		"@jax-js/jax": "^0.1.18",
+		"@jax-js/jax": "^0.1.19",
 		"@jax-js/optax": "^0.1.2",
 		"@langchain/core": "^1.2.3",
 		"@langchain/langgraph": "^1.4.8",
