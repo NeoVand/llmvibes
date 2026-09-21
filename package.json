@@ -50,18 +50,18 @@
 		"vitest": "^4.1.9"
 	},
 	"dependencies": {
-		"@huggingface/transformers": "^4.2.0",
-		"@jax-js/jax": "^0.1.18",
+		"@huggingface/transformers": "^4.3.0",
+		"@jax-js/jax": "^0.1.25",
 		"@jax-js/optax": "^0.1.2",
-		"@langchain/core": "^1.2.3",
-		"@langchain/langgraph": "^1.4.8",
+		"@langchain/core": "^1.2.11",
+		"@langchain/langgraph": "^1.4.15",
 		"@types/d3-contour": "^3.0.6",
 		"@types/d3-scale-chromatic": "^3.1.0",
 		"chess.js": "^1.4.0",
 		"d3-contour": "^4.0.2",
 		"d3-scale-chromatic": "^3.1.0",
-		"katex": "^0.18.1",
+		"katex": "^0.18.7",
 		"lucide-svelte": "^1.0.1",
-		"zod": "^4.4.3"
+		"zod": "^4.6.5"
 	}
 }
